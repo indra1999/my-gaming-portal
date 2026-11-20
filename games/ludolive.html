@@ -59,15 +59,15 @@
       animation: pulseRing 1.6s ease-in-out infinite;
     }
 
-    /* ================= CUSTOMIZE PAGE (matches "Play with AI" setup page) ================= */
+    /* ================= CUSTOMIZE PAGE ================= */
     #customizeView {
       position: fixed; inset: 0; z-index: 50; display: none;
       overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
       font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background:
-        radial-gradient(75% 38% at 100% 0%, rgba(160,125,70,.36) 0%, rgba(160,125,70,0) 70%),
-        radial-gradient(60% 30% at 0% 0%, rgba(30,50,120,.18) 0%, rgba(30,50,120,0) 70%),
-        linear-gradient(180deg, #0d1020 0%, #0a0d19 55%, #090b15 100%);
+        radial-gradient(120% 55% at 100% 8%, rgba(190,150,70,.34) 0%, rgba(190,150,70,0) 60%),
+        radial-gradient(90% 50% at 0% 0%, rgba(40,70,170,.35) 0%, rgba(40,70,170,0) 65%),
+        linear-gradient(180deg, #0f1430 0%, #0a0d1d 55%, #090b16 100%);
     }
     #customizeView.open { display: block; }
     #customizeView .cz-dots { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
@@ -82,28 +82,23 @@
       100% { transform: translateY(-120px) translateX(14px); opacity: 0; }
     }
     .cz-wrap { position: relative; max-width: 520px; margin: 0 auto; padding: 14px 16px 40px; }
-    .cz-head { display: flex; align-items: center; gap: 26px; padding: 10px 6px 46px; }
-    .cz-back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #a8afc8; font-size: 18px; background: none; border: 0; cursor: pointer; padding: 0; }
-    .cz-title { font-size: 24px; font-weight: 800; color: #f4f6ff; letter-spacing: -.2px; }
+    .cz-head { display: flex; align-items: center; gap: 18px; padding: 10px 6px 16px; }
+    .cz-back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #a8afc8; font-size: 18px; background: none; border: 0; cursor: pointer; }
+    .cz-title { font-size: 23px; font-weight: 800; color: #f4f6ff; letter-spacing: -.2px; }
 
-    /* glass card — same as the setup cards */
-    .cz-card, .cz-preview {
-      position: relative; margin-top: 20px; border-radius: 22px; padding: 18px 16px 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.055));
-      border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 8px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+    .cz-preview {
+      position: relative; border-radius: 24px; padding: 18px 16px 18px; text-align: center;
+      background: linear-gradient(180deg, rgba(10,12,26,.75), rgba(8,9,20,.9));
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
     }
-    .cz-preview { margin-top: 0; text-align: left; }
     .cz-preview::before {
-      content: ""; position: absolute; inset: 0; border-radius: 22px; pointer-events: none;
-      background: radial-gradient(70% 60% at 50% 48%, var(--cz-glow, rgba(245,185,66,.14)), transparent 70%);
+      content: ""; position: absolute; inset: 0; border-radius: 24px; pointer-events: none;
+      background: radial-gradient(70% 60% at 50% 38%, var(--cz-glow, rgba(245,185,66,.18)), transparent 70%);
     }
-    .cz-label { position: relative; z-index: 2; margin: 0 0 14px; font-size: 14px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #a4a9c0; }
-    .cz-helper { margin: 14px 0 0; font-size: 13.5px; line-height: 1.4; color: #9ca1b8; }
     .cz-expand {
-      position: absolute; top: 12px; right: 12px; width: 38px; height: 38px; border-radius: 13px;
-      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #eef0ff; font-size: 15px;
+      position: absolute; top: 14px; right: 14px; width: 42px; height: 42px; border-radius: 14px;
+      background: rgba(8,10,22,.85); border: 1px solid rgba(255,255,255,.07); color: #eef0ff; font-size: 16px;
       display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3;
     }
     .cz-stage { position: relative; height: 150px; display: flex; align-items: center; justify-content: center; cursor: pointer; perspective: 600px; z-index: 2; }
@@ -135,48 +130,37 @@
     .cz-f5 { transform: rotateY(-90deg) translateZ(39px); }
     .cz-f3 { transform: rotateX(90deg) translateZ(39px); }
     .cz-f4 { transform: rotateX(-90deg) translateZ(39px); }
-    .cz-name { position: relative; z-index: 2; margin-top: 8px; text-align: center; font-size: 14px; font-weight: 700; color: #f1f3ff; }
-    .cz-sub { position: relative; z-index: 2; margin: 6px auto 0; max-width: 280px; text-align: center; font-size: 12.5px; line-height: 1.45; color: #9ca1b8; }
+    .cz-name { position: relative; z-index: 2; margin-top: 6px; font-size: 14px; font-weight: 700; color: #f1f3ff; }
+    .cz-sub { position: relative; z-index: 2; margin: 6px auto 0; max-width: 270px; font-size: 11.5px; line-height: 1.45; color: #7f86a3; }
 
-    .cz-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 12px; }
-    .cz-item { background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 9px; color: #9ca1b8; font: inherit; }
-    .cz-item span { font-size: 12.5px; font-weight: 600; }
-    .cz-item.sel span { color: #f2ce74; }
-    .cz-tilewrap { position: relative; width: 100%; display: flex; justify-content: center; }
+    .cz-card {
+      margin-top: 16px; border-radius: 24px; padding: 18px 16px 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.09); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 8px 30px rgba(0,0,0,.25);
+    }
+    .cz-card h3 { margin: 0; font-size: 16px; font-weight: 700; color: #f4f6ff; }
+    .cz-card p { margin: 3px 0 14px; font-size: 12px; line-height: 1.4; color: #8c93ae; }
+    .cz-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 12px; }
+    .cz-item { background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #8c93ae; font: inherit; }
+    .cz-item span { font-size: 12px; font-weight: 600; }
+    .cz-item.sel span { color: #e8b84a; }
     .cz-dice-tile {
-      width: 52px; height: 52px; border-radius: 16px; display: grid; grid-template: repeat(3,1fr)/repeat(3,1fr);
-      place-items: center; padding: 10px; border: 0;
+      width: 58px; height: 58px; border-radius: 17px; display: grid; grid-template: repeat(3,1fr)/repeat(3,1fr);
+      place-items: center; padding: 11px; border: 2px solid transparent;
       box-shadow: 0 6px 14px rgba(0,0,0,.35), inset 0 1px 2px rgba(255,255,255,.15);
-      transition: transform .15s ease, box-shadow .15s ease;
+      transition: transform .15s ease;
     }
     .cz-item:active .cz-dice-tile, .cz-item:active .cz-theme-tile { transform: scale(.94); }
-    .cz-dice-tile i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+    .cz-dice-tile i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+    .cz-item.sel .cz-dice-tile { outline: 2px solid #e8b84a; outline-offset: 2px; border-color: transparent; }
     .cz-theme-tile {
-      width: 100%; height: 52px; border-radius: 16px; border: 1px solid rgba(255,255,255,.08);
+      width: 100%; height: 56px; border-radius: 17px; border: 1px solid rgba(255,255,255,.07);
       box-shadow: 0 6px 14px rgba(0,0,0,.35), inset 0 1px 2px rgba(255,255,255,.06);
-      transition: transform .15s ease, box-shadow .15s ease;
+      transition: transform .15s ease;
     }
-    /* selected = dark gap + coloured ring (like the selected colour ball) */
-    .cz-item.sel .cz-dice-tile { box-shadow: 0 0 0 3px #0b0e1a, 0 0 0 5px var(--ring, #e8b84a), 0 6px 14px rgba(0,0,0,.35); }
-    .cz-item.sel .cz-theme-tile { box-shadow: 0 0 0 3px #0b0e1a, 0 0 0 5px #e8b84a, 0 6px 14px rgba(0,0,0,.35); }
-    .cz-tick {
-      position: absolute; right: calc(50% - 33px); top: -7px; width: 20px; height: 20px; border-radius: 50%;
-      background: linear-gradient(180deg, #f4d27c, #e6b44f); color: #1a1406; font-size: 10px;
-      display: none; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.5); z-index: 2;
-    }
-    .cz-theme-tick { right: -6px; }
-    .cz-item.sel .cz-tick { display: flex; }
-
-    /* gold CTA — same as "Start game" */
-    .cz-btn {
-      display: block; width: 100%; margin-top: 20px; padding: 15px 16px; border: 0; border-radius: 20px; cursor: pointer;
-      font-family: inherit; font-size: 18px; font-weight: 800; color: #1a1406; letter-spacing: -.1px;
-      background: linear-gradient(180deg, #f7d97c 0%, #e9b84f 100%);
-      box-shadow: 0 8px 28px rgba(245,185,66,.28), inset 0 1px 0 rgba(255,255,255,.55);
-      transition: transform .12s ease, filter .12s ease;
-    }
-    .cz-btn:active { transform: scale(.985); filter: brightness(.96); }
-    .cz-foot { margin: 16px 8px 0; text-align: center; font-size: 12.5px; line-height: 1.5; color: #7f86a3; }
+    .cz-item.sel .cz-theme-tile { outline: 2px solid #e8b84a; outline-offset: 2px; }
+    .cz-foot { margin: 16px 8px 0; text-align: center; font-size: 12px; line-height: 1.5; color: #7f86a3; }
 
     /* Full preview overlay */
     #czPreview {
@@ -202,6 +186,87 @@
     .cz-pod.me { border: 2px solid #e8b84a; box-shadow: 0 0 22px rgba(245,185,66,.35); }
     .cz-chev { text-align: center; color: #e8b84a; font-size: 14px; margin: -6px 0 -8px; }
     .cz-board { width: 100%; aspect-ratio: 1; display: block; filter: drop-shadow(0 10px 24px rgba(0,0,0,.5)); }
+
+    /* ================= PLAY WITH AI SETUP (xerox of playludolive.in) ================= */
+    #aiSetupView {
+      position: fixed; inset: 0; z-index: 60; display: none;
+      overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #f4f6ff;
+      background:
+        radial-gradient(120% 55% at 100% 8%, rgba(190,150,70,.30) 0%, rgba(190,150,70,0) 60%),
+        radial-gradient(90% 50% at 0% 0%, rgba(40,70,170,.28) 0%, rgba(40,70,170,0) 65%),
+        linear-gradient(180deg, #0e1128 0%, #0a0c1b 55%, #080a14 100%);
+    }
+    #aiSetupView.open { display: block; }
+    #aiSetupView * { user-select: none; }
+    #aiSetupView .ai-dots { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+    #aiSetupView .ai-dots i {
+      position: absolute; border-radius: 50%; background: rgba(245,185,66,.55);
+      animation: czDrift linear infinite;
+    }
+    .ai-wrap { position: relative; max-width: 520px; margin: 0 auto; padding: 22px 16px 48px; }
+    .ai-head { display: flex; align-items: center; gap: 22px; padding: 22px 6px 0; margin-bottom: 40px; }
+    .ai-back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #a8afc8; background: none; border: 0; cursor: pointer; padding: 0; }
+    .ai-title { font-size: 24px; font-weight: 800; letter-spacing: -.2px; color: #f4f6ff; margin: 0; }
+
+    .ai-card {
+      position: relative; border-radius: 24px; padding: 18px 16px 16px; margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 12px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    }
+    #aiSetupView.open .ai-rise { animation: aiRise .5s cubic-bezier(.2,.8,.2,1) both; }
+    #aiSetupView.open .ai-rise:nth-of-type(1) { animation-delay: .02s; }
+    #aiSetupView.open .ai-rise:nth-of-type(2) { animation-delay: .08s; }
+    #aiSetupView.open .ai-rise:nth-of-type(3) { animation-delay: .14s; }
+    #aiSetupView.open .ai-rise:nth-of-type(4) { animation-delay: .20s; }
+    @keyframes aiRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .ai-label { font-size: 13px; line-height: 16px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #a3a9c0; margin-bottom: 19px; }
+
+    .ai-orbs { display: flex; gap: 6px; padding: 2px 0 1px; }
+    .ai-orb {
+      position: relative; width: 40px; height: 40px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; flex: none;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 24px; font-weight: 700; line-height: 1;
+      box-shadow: inset 0 -4px 8px rgba(0,0,0,.25), inset 0 3px 5px rgba(255,255,255,.28), 0 4px 10px rgba(0,0,0,.35);
+      transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
+    }
+    .ai-orb:active { transform: scale(.92); }
+    .ai-orb.sel { box-shadow: 0 0 0 3px #0b0e1d, 0 0 0 5px var(--ring), inset 0 -4px 8px rgba(0,0,0,.25), inset 0 3px 5px rgba(255,255,255,.28); }
+    .ai-orb .ck { opacity: 0; transform: scale(.5); transition: all .22s cubic-bezier(.2,.9,.3,1.3); text-shadow: 0 1px 3px rgba(0,0,0,.4); }
+    .ai-orb.sel .ck { opacity: 1; transform: scale(1); }
+
+    .ai-seg {
+      position: relative; display: flex; padding: 3px; border-radius: 18px;
+      background: rgba(24,26,44,.42); border: 1px solid rgba(255,255,255,.11);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,.18);
+    }
+    .ai-seg button {
+      position: relative; z-index: 1; flex: 1 1 auto; height: 44px; border: 0; background: none; cursor: pointer;
+      font-family: inherit; font-size: 16px; font-weight: 600; color: #9ba1b9; border-radius: 15px; padding: 0 14px;
+      transition: color .25s ease;
+    }
+    #aiOppSeg button { flex: 1 1 0; padding: 0; font-size: 17px; }
+    .ai-seg button.on { color: #1a1305; font-weight: 700; }
+    .ai-thumb {
+      position: absolute; top: 3px; left: 3px; height: 44px; width: 0; border-radius: 15px; z-index: 0;
+      background: linear-gradient(180deg, #f4d47f 0%, #e5b04a 100%);
+      box-shadow: 0 4px 14px rgba(229,176,74,.28), inset 0 1px 0 rgba(255,255,255,.35);
+      transition: transform .32s cubic-bezier(.3,.9,.3,1), width .32s cubic-bezier(.3,.9,.3,1);
+    }
+    .ai-thumb.no-anim { transition: none; }
+    .ai-hint { font-size: 13.5px; line-height: 18px; font-weight: 500; color: #8a90a8; margin: 13px 0 0 1px; }
+
+    .ai-start {
+      width: 100%; height: 55px; border: 0; border-radius: 22px; margin-top: 8px; cursor: pointer;
+      font-family: inherit; font-size: 18px; font-weight: 800; color: #1b1405; letter-spacing: .1px;
+      background: linear-gradient(180deg, #f3d27e 0%, #e5b24d 100%);
+      box-shadow: 0 10px 36px rgba(245,185,66,.30), inset 0 1px 0 rgba(255,255,255,.4);
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .ai-start:active { transform: scale(.985); filter: brightness(.96); }
   </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -515,6 +580,49 @@
     </div>
   </div>
 
+  <!-- ==================== 2b. PLAY WITH AI SETUP SCREEN ==================== -->
+  <div id="aiSetupView">
+    <div class="ai-dots" id="aiDots"></div>
+    <div class="ai-wrap">
+      <div class="ai-head">
+        <button class="ai-back" onclick="closeAiSetup(true)" aria-label="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 5l-7 7 7 7"/></svg>
+        </button>
+        <h1 class="ai-title">Play with AI</h1>
+      </div>
+
+      <div class="ai-card ai-rise">
+        <div class="ai-label">Your color</div>
+        <div class="ai-orbs" id="aiOrbs"></div>
+      </div>
+
+      <div class="ai-card ai-rise">
+        <div class="ai-label">Opponents</div>
+        <div class="ai-seg" id="aiOppSeg">
+          <span class="ai-thumb"></span>
+          <button type="button" data-v="1" onclick="aiPickOpp(1)">1</button>
+          <button type="button" data-v="2" onclick="aiPickOpp(2)">2</button>
+          <button type="button" data-v="3" onclick="aiPickOpp(3)">3</button>
+          <button type="button" data-v="4" onclick="aiPickOpp(4)">4</button>
+          <button type="button" data-v="5" onclick="aiPickOpp(5)">5</button>
+        </div>
+        <div class="ai-hint" id="aiHint">2 players · the classic square board</div>
+      </div>
+
+      <div class="ai-card ai-rise">
+        <div class="ai-label">Difficulty</div>
+        <div class="ai-seg" id="aiDiffSeg">
+          <span class="ai-thumb"></span>
+          <button type="button" data-v="easy" onclick="aiPickDiff('easy')">Easy</button>
+          <button type="button" data-v="medium" onclick="aiPickDiff('medium')">Medium</button>
+          <button type="button" data-v="hard" onclick="aiPickDiff('hard')">Hard</button>
+        </div>
+      </div>
+
+      <button class="ai-start ai-rise" onclick="aiStart()">Start game</button>
+    </div>
+  </div>
+
   <!-- ==================== 3. PLAYER CUSTOMIZATION SETUP VIEW ==================== -->
   <div id="setupView" class="hidden flex-1 flex flex-col max-w-lg w-full mx-auto px-4 pb-10">
     <div class="py-4 flex items-center justify-between">
@@ -622,7 +730,6 @@
 
       <div class="cz-preview" id="czPreviewCard">
         <button class="cz-expand" onclick="openFullPreview()" aria-label="Full preview"><i class="fas fa-expand"></i></button>
-        <div class="cz-label" style="margin-bottom:4px">Preview</div>
         <div class="cz-stage" onclick="rollPreviewDice()">
           <div class="cz-ring" id="czRing"></div>
           <div class="cz-float">
@@ -636,18 +743,16 @@
       </div>
 
       <div class="cz-card">
-        <div class="cz-label">Dice</div>
+        <h3>🎲 Dice</h3>
+        <p>Choose your dice — this never changes the background</p>
         <div class="cz-grid" id="czDiceGrid"></div>
-        <div class="cz-helper">Choose your dice · this never changes the background</div>
       </div>
 
       <div class="cz-card">
-        <div class="cz-label">Theme</div>
+        <h3>🎨 Theme</h3>
+        <p>Choose your game background — this never changes the dice</p>
         <div class="cz-grid" id="czThemeGrid"></div>
-        <div class="cz-helper">Choose your game background · this never changes the dice</div>
       </div>
-
-      <button class="cz-btn" onclick="closeCustomizeModal()">Done</button>
 
       <div class="cz-foot">Cosmetics are yours alone — other players keep their own look, and games play exactly the same.</div>
     </div>
@@ -865,6 +970,7 @@
 
     window.selectGameMode = function (mode) {
       selectedMode = mode;
+      if (mode === "ai") { openAiSetup(); return; }
       const diffBox = document.getElementById("aiDifficultyBox");
       const sub = document.getElementById("countModalSub");
       if (mode === "ai") {
@@ -885,6 +991,111 @@
           : "py-2 rounded-xl text-gray-400";
       });
     };
+
+    // ---------------- PLAY WITH AI SETUP SCREEN ----------------
+    const AI_ORBS = [
+      { l: "#ff9096", m: "#e5505c", d: "#b02a39", ring: "#e8444f" },
+      { l: "#ffc766", m: "#e8962f", d: "#b5620f", ring: "#f0a53a" },
+      { l: "#76e6a0", m: "#2cb467", d: "#167548", ring: "#34c070" },
+      { l: "#86e3f0", m: "#2fa9bf", d: "#17728a", ring: "#38b6cc" },
+      { l: "#95adff", m: "#4a6ff0", d: "#2b41b5", ring: "#5b7cf5" },
+      { l: "#d6aeff", m: "#9a5cf0", d: "#682fc2", ring: "#a468f2" }
+    ];
+    const AI_HINTS = {
+      1: "2 players · the classic square board",
+      2: "3 players · the classic square board",
+      3: "4 players · the classic square board",
+      4: "5 players · five seats on a pentagon board",
+      5: "6 players · six seats on a hexagon board"
+    };
+    const aiSetup = { color: 0, opp: 1, diff: "medium" };
+
+    function aiMoveThumb(segId, animate) {
+      const seg = document.getElementById(segId);
+      const thumb = seg.querySelector(".ai-thumb");
+      const btn = seg.querySelector("button.on");
+      if (!btn || !seg.offsetWidth) return;
+      if (!animate) thumb.classList.add("no-anim");
+      thumb.style.width = btn.offsetWidth + "px";
+      thumb.style.transform = "translateX(" + (btn.offsetLeft - 4) + "px)";
+      if (!animate) { void thumb.offsetWidth; thumb.classList.remove("no-anim"); }
+    }
+
+    function aiRenderAll(animate) {
+      document.getElementById("aiOrbs").innerHTML = AI_ORBS.map((o, i) =>
+        `<button type="button" class="ai-orb${aiSetup.color === i ? " sel" : ""}" onclick="aiPickColor(${i})"
+          aria-label="${COLOR_PALETTE[i].name}"
+          style="--ring:${o.ring};background:radial-gradient(circle at 36% 28%, ${o.l} 0%, ${o.m} 58%, ${o.d} 130%)"><span class="ck">✓</span></button>`
+      ).join("");
+      document.querySelectorAll("#aiOppSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === aiSetup.opp));
+      document.querySelectorAll("#aiDiffSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === aiSetup.diff));
+      document.getElementById("aiHint").textContent = AI_HINTS[aiSetup.opp];
+      aiMoveThumb("aiOppSeg", animate);
+      aiMoveThumb("aiDiffSeg", animate);
+    }
+
+    window.aiPickColor = function (i) {
+      aiSetup.color = i;
+      document.querySelectorAll("#aiOrbs .ai-orb").forEach((b, k) => b.classList.toggle("sel", k === i));
+    };
+    window.aiPickOpp = function (n) {
+      aiSetup.opp = n;
+      document.querySelectorAll("#aiOppSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === n));
+      document.getElementById("aiHint").textContent = AI_HINTS[n];
+      aiMoveThumb("aiOppSeg", true);
+    };
+    window.aiPickDiff = function (d) {
+      aiSetup.diff = d;
+      aiDifficulty = d;
+      document.querySelectorAll("#aiDiffSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === d));
+      aiMoveThumb("aiDiffSeg", true);
+    };
+
+    window.openAiSetup = function () {
+      aiSetup.diff = aiDifficulty || "medium";
+      const dots = document.getElementById("aiDots");
+      if (!dots.children.length) {
+        for (let k = 0; k < 14; k++) {
+          const d = document.createElement("i");
+          const sz = 2 + Math.random() * 3;
+          d.style.cssText = `left:${Math.random() * 100}%;top:${20 + Math.random() * 80}%;width:${sz}px;height:${sz}px;animation-duration:${6 + Math.random() * 8}s;animation-delay:${-Math.random() * 10}s`;
+          dots.appendChild(d);
+        }
+      }
+      document.getElementById("lobbyView").classList.add("hidden");
+      const v = document.getElementById("aiSetupView");
+      v.classList.add("open");
+      v.scrollTop = 0;
+      aiRenderAll(false);
+      requestAnimationFrame(() => aiRenderAll(false));
+    };
+
+    window.closeAiSetup = function (backToLobby) {
+      document.getElementById("aiSetupView").classList.remove("open");
+      if (backToLobby) document.getElementById("lobbyView").classList.remove("hidden");
+    };
+
+    window.aiStart = function () {
+      selectedMode = "ai";
+      aiDifficulty = aiSetup.diff;
+      const count = aiSetup.opp + 1;
+      const others = COLOR_PALETTE.map((_, i) => i).filter(i => i !== aiSetup.color);
+      setupPlayerCount = count;
+      setupConfigs = [];
+      for (let i = 0; i < count; i++) {
+        setupConfigs.push({
+          name: i === 0 ? "Lucky Tiger" : `AI Bot ${i}`,
+          colorIndex: i === 0 ? aiSetup.color : others[i - 1],
+          avatarIndex: i % AVATARS.length,
+          isAI: i > 0
+        });
+      }
+      closeAiSetup(false);
+      startMatchFromSetup();
+    };
+    window.addEventListener("resize", () => {
+      if (document.getElementById("aiSetupView").classList.contains("open")) aiRenderAll(false);
+    });
 
     window.openPlayerCountModal = function () {
       const m = document.getElementById("playerCountModal");
@@ -1195,20 +1406,14 @@
     function czRenderGrids() {
       document.getElementById("czDiceGrid").innerHTML = Object.keys(DICE_SKINS).map(k => {
         const s = DICE_SKINS[k];
-        return `<button class="cz-item ${k === diceSkinKey ? "sel" : ""}" style="--ring:${s.ring}" onclick="setDiceSkin('${k}')">
-          <div class="cz-tilewrap">
-            <div class="cz-dice-tile" style="background:linear-gradient(145deg, ${s.f[0]}, ${s.f[1]})">${czIconPips(s)}</div>
-            <div class="cz-tick"><i class="fas fa-check"></i></div>
-          </div>
+        return `<button class="cz-item ${k === diceSkinKey ? "sel" : ""}" onclick="setDiceSkin('${k}')">
+          <div class="cz-dice-tile" style="background:linear-gradient(145deg, ${s.f[0]}, ${s.f[1]})">${czIconPips(s)}</div>
           <span>${s.name}</span></button>`;
       }).join("");
       document.getElementById("czThemeGrid").innerHTML = Object.keys(BOARD_THEMES).map(k => {
         const t = BOARD_THEMES[k];
         return `<button class="cz-item ${k === boardThemeKey ? "sel" : ""}" onclick="setBoardTheme('${k}')">
-          <div class="cz-tilewrap">
-            <div class="cz-theme-tile" style="background:linear-gradient(160deg, ${t.bgA}, ${t.bgB})"></div>
-            <div class="cz-tick cz-theme-tick"><i class="fas fa-check"></i></div>
-          </div>
+          <div class="cz-theme-tile" style="background:linear-gradient(160deg, ${t.bgA}, ${t.bgB})"></div>
           <span>${t.name}</span></button>`;
       }).join("");
     }
