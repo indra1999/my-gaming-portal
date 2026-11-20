@@ -430,13 +430,13 @@
           </div>
         </div>
 
-        <!-- Title, Rating, Play Button & Action Pill Bar -->
-        <div class="px-4 text-center space-y-3.5 -mt-2 relative z-10 max-w-lg mx-auto">
+        <!-- Title, Rating, Play Button & Exact Pill Action Buttons -->
+        <div class="px-5 text-center space-y-3.5 -mt-2 relative z-10 max-w-md mx-auto">
           <div>
             <h1 id="detailGameTitle" class="text-2xl sm:text-3xl font-black tracking-tight text-white">Game Title</h1>
             <div class="flex items-center justify-center gap-3 text-xs sm:text-sm text-gray-300 font-semibold mt-1">
               <span class="flex items-center gap-1">
-                <i class="fas fa-sparkles text-purple-400"></i>
+                <i class="fas fa-sparkles text-gray-300"></i>
                 <span id="detailGameRating">8.8/10</span>
               </span>
               <span class="text-gray-600">•</span>
@@ -446,29 +446,47 @@
             </div>
           </div>
 
-          <!-- Purple Play Now Button -->
+          <!-- Purple Play Now Button with Arcade Joystick Icon -->
           <button onclick="launchActiveGame()" class="w-full bg-[#6842ff] hover:bg-[#5732e8] active:scale-[0.99] text-white font-extrabold text-base py-3.5 rounded-full shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2.5 transition">
-            <i class="fas fa-gamepad text-lg"></i>
+            <svg class="w-5 h-5 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
+              <circle cx="12" cy="5" r="2.5" />
+              <line x1="12" y1="7.5" x2="12" y2="14" />
+              <path d="M5 15l7-3 7 3v3l-7 3-7-3v-3z" stroke-linejoin="round" />
+            </svg>
             <span>Play now</span>
           </button>
 
-          <!-- Segmented Action Bar -->
-          <div class="bg-[#1c1f30] rounded-2xl grid grid-cols-5 divide-x divide-white/10 overflow-hidden border border-white/5">
-            <button id="detailLikeBtn" onclick="toggleCurrentGameLike()" class="py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-gray-200 hover:bg-[#262a40] transition">
-              <i class="far fa-thumbs-up text-base"></i>
-              <span id="detailLikeCount">12.4K</span>
-            </button>
-            <button id="detailDislikeBtn" onclick="toggleCurrentGameDislike()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
-              <i class="far fa-thumbs-down text-base"></i>
-            </button>
-            <button id="detailBookmarkBtn" onclick="toggleCurrentGameBookmark()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
+          <!-- Exact Screenshot Action Row: [Like | Dislike] Pill + 3 Circular Buttons (Bookmark, Share, Report) -->
+          <div class="flex items-center justify-between gap-2.5 pt-0.5">
+            <!-- Combined Like & Dislike Capsule -->
+            <div class="flex items-center bg-[#1c1f30] rounded-full h-11 overflow-hidden border border-white/5 shrink-0">
+              <button id="detailLikeBtn" onclick="toggleCurrentGameLike()" class="h-full px-4 flex items-center gap-2 text-xs sm:text-sm font-extrabold text-white hover:bg-[#262a40] transition">
+                <i class="far fa-thumbs-up text-base"></i>
+                <span id="detailLikeCount">8.2K</span>
+              </button>
+              <div class="w-[1px] h-6 bg-white/15"></div>
+              <button id="detailDislikeBtn" onclick="toggleCurrentGameDislike()" class="h-full px-4 flex items-center justify-center text-white hover:bg-[#262a40] transition" title="Dislike">
+                <i class="far fa-thumbs-down text-base"></i>
+              </button>
+            </div>
+
+            <!-- Circular Bookmark Button -->
+            <button id="detailBookmarkBtn" onclick="toggleCurrentGameBookmark()" class="w-11 h-11 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-white border border-white/5 transition shrink-0" title="Bookmark">
               <i class="far fa-bookmark text-base"></i>
             </button>
-            <button onclick="shareCurrentGame()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
+
+            <!-- Circular Share Button -->
+            <button onclick="shareCurrentGame()" class="w-11 h-11 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-white border border-white/5 transition shrink-0" title="Share">
               <i class="fas fa-share text-base"></i>
             </button>
-            <button onclick="showToast('Report submitted. Thank you!')" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
-              <i class="far fa-message text-base"></i>
+
+            <!-- Circular Report Button (Speech Bubble with Exclamation Mark) -->
+            <button onclick="showToast('Report submitted. Thank you!')" class="w-11 h-11 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-white border border-white/5 transition shrink-0" title="Report issue">
+              <svg class="w-5 h-5 fill-none stroke-current stroke-[1.9]" viewBox="0 0 24 24">
+                <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4V5z" stroke-linejoin="round" />
+                <line x1="12" y1="7.5" x2="12" y2="11.5" stroke-linecap="round" />
+                <circle cx="12" cy="14" r="0.8" fill="currentColor" stroke="none" />
+              </svg>
             </button>
           </div>
 
@@ -480,7 +498,7 @@
           </div>
         </div>
 
-        <!-- BELOW THE FOLD CONTENT (Matches Video 00:07 - 00:22) -->
+        <!-- BELOW THE FOLD CONTENT -->
         <div id="detailBelowFold" class="px-3.5 mt-3 space-y-4 max-w-3xl mx-auto">
 
           <!-- Related Games Grid + Show More Button -->
@@ -493,7 +511,6 @@
 
           <!-- Structured Metadata & Tag Pills Card -->
           <div class="bg-[#141622] rounded-2xl p-4 border border-white/5 space-y-4">
-            <!-- Breadcrumb -->
             <div class="flex items-center flex-wrap gap-1.5 text-xs font-bold text-gray-400">
               <span onclick="switchTab('home')" class="hover:text-white cursor-pointer">Games</span>
               <i class="fas fa-chevron-right text-[9px] text-gray-600"></i>
@@ -504,7 +521,6 @@
 
             <h2 id="metaGameHeading" class="text-xl font-black text-white">Ludo Classic</h2>
 
-            <!-- Key-Value Spec Table -->
             <div class="grid grid-cols-[115px_1fr] gap-y-2.5 text-xs">
               <span class="text-gray-400 font-medium">Developer:</span>
               <span class="text-purple-400 font-bold">IndroGames Studio</span>
@@ -531,7 +547,6 @@
               <span id="metaOrientationVal" class="text-gray-200 font-medium">Portrait & Landscape</span>
             </div>
 
-            <!-- Clickable Tag Chips with Counts -->
             <div id="metaTagChips" class="flex flex-wrap gap-2 pt-1"></div>
           </div>
 
@@ -771,7 +786,7 @@
 
   <script>
     // =========================================================================
-    // 1. GAMES DATABASE (Full Metadata, Rules, Features & Controls)
+    // 1. GAMES DATABASE
     // =========================================================================
     const GAMES_DB = [
       {
@@ -835,8 +850,8 @@
         title: "Call Break Pro",
         category: "Card",
         rating: "8.4",
-        likesText: "64.5K",
-        votesText: "64.5K likes and 1.9K dislikes",
+        likesText: "8.2K",
+        votesText: "8.2K likes and 210 dislikes",
         orientation: "Portrait",
         tags: ["Card", "Strategy", "Classic", "2D", "Casual"],
         featured: false,
@@ -1043,7 +1058,6 @@
 
       activeGameId = game.id;
 
-      // Top Hero & Action Bar
       document.getElementById("detailBackdropImg").src = game.image;
       document.getElementById("detailThumbImg").src = game.image;
       document.getElementById("detailGameTitle").innerText = game.title;
@@ -1051,11 +1065,9 @@
       document.getElementById("detailGameCategory").innerHTML = `<i class="fas fa-chess-board text-sky-400"></i> ${game.category}`;
       document.getElementById("detailLikeCount").innerText = game.likesText;
 
-      // Related Games Grid
       const related = GAMES_DB.filter(g => g.id !== game.id);
       document.getElementById("detailRelatedGrid").innerHTML = related.map(createSquareCard).join("");
 
-      // Metadata Card
       document.getElementById("metaBreadcrumbCat").innerText = game.category;
       document.getElementById("metaBreadcrumbCat").onclick = () => openCategoryView(game.category);
       document.getElementById("metaGameHeading").innerText = game.title;
@@ -1063,7 +1075,6 @@
       document.getElementById("metaVotesVal").innerText = game.votesText;
       document.getElementById("metaOrientationVal").innerText = game.orientation;
 
-      // Tag Chips with Game Counts
       const tagChipsHtml = game.tags.map(tag => {
         const count = tag === "Mobile" || tag === "2D"
           ? GAMES_DB.length
@@ -1078,7 +1089,6 @@
       }).join("");
       document.getElementById("metaTagChips").innerHTML = tagChipsHtml;
 
-      // Rich Description, How to Play, Rules, Features & Preview
       document.getElementById("detailGameIntroText").innerText = game.intro;
       document.getElementById("detailHowToPlayHeading").innerText = `How to Play ${game.title}`;
       document.getElementById("detailHowToPlayText").innerText = game.howToPlay;
@@ -1087,7 +1097,6 @@
       document.getElementById("detailControlsText").innerText = game.controls;
       document.getElementById("detailGameplayPreviewImg").src = game.image;
 
-      // Switch View
       ["home", "search", "mygames", "you"].forEach(name => {
         document.getElementById(`view-${name}`).classList.add("hidden");
       });
@@ -1180,13 +1189,17 @@
 
       if (dLike) {
         dLike.className = isLiked
-          ? "py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-[#9fe870] bg-[#262a40] transition"
-          : "py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-gray-200 hover:bg-[#262a40] transition";
+          ? "h-full px-4 flex items-center gap-2 text-xs sm:text-sm font-extrabold text-[#9fe870] bg-[#262a40] transition"
+          : "h-full px-4 flex items-center gap-2 text-xs sm:text-sm font-extrabold text-white hover:bg-[#262a40] transition";
+        const likeIcon = dLike.querySelector("i");
+        if (likeIcon) likeIcon.className = isLiked ? "fas fa-thumbs-up text-base" : "far fa-thumbs-up text-base";
       }
       if (dDislike) {
         dDislike.className = isDisliked
-          ? "py-3 flex items-center justify-center text-rose-400 bg-[#262a40] transition"
-          : "py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition";
+          ? "h-full px-4 flex items-center justify-center text-rose-400 bg-[#262a40] transition"
+          : "h-full px-4 flex items-center justify-center text-white hover:bg-[#262a40] transition";
+        const dislikeIcon = dDislike.querySelector("i");
+        if (dislikeIcon) dislikeIcon.className = isDisliked ? "fas fa-thumbs-down text-base" : "far fa-thumbs-down text-base";
       }
       if (dBookmark) {
         dBookmark.innerHTML = isBookmarked
