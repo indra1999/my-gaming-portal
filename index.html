@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>GameZone - Play Free Online Games</title>
+  <title>IndroGames - Play Free Online Games</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
   <style>
@@ -47,7 +47,7 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 bg-[#0c0d14]/95 backdrop-blur-md border-b border-white/5 px-3.5 py-2.5 flex items-center justify-between">
+  <header id="mainHeader" class="sticky top-0 z-40 bg-[#0c0d14]/95 backdrop-blur-md border-b border-white/5 px-3.5 py-2.5 flex items-center justify-between">
     <!-- Brand Logo -->
     <div onclick="switchTab('home')" class="flex items-center gap-2 cursor-pointer select-none">
       <div class="w-9 h-9 rounded-xl bg-[#6842ff] flex items-center justify-center shadow-lg shadow-purple-600/30">
@@ -131,7 +131,7 @@
           <div id="continuePlayingRow" class="flex gap-3 overflow-x-auto no-scrollbar pb-1"></div>
         </div>
 
-        <!-- Promo / Offline Banner (Matches Video Style) -->
+        <!-- Promo Banner -->
         <div class="bg-gradient-to-r from-[#282157] via-[#342875] to-[#1e1b4b] rounded-2xl p-4 flex items-center justify-between border border-purple-500/20 shadow-lg">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-2xl bg-[#6842ff] flex items-center justify-center shrink-0 shadow-md">
@@ -158,7 +158,7 @@
           <!-- Featured Hero Game Card -->
           <div id="featuredHeroCard" class="mb-3"></div>
 
-          <!-- 3-Column Icon Grid (Mobile) / 6-Column (Desktop) -->
+          <!-- Icon Grid -->
           <div id="topGamesGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5"></div>
         </div>
 
@@ -182,7 +182,7 @@
           <div id="row-CardStrategy" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5"></div>
         </div>
 
-        <!-- About Box + Quick Category Chips (Matches Video Footer Section) -->
+        <!-- About Box + Quick Category Chips -->
         <div class="bg-[#141622] rounded-2xl p-4 border border-white/5 space-y-4">
           <div>
             <h3 class="text-base font-extrabold mb-1">About IndroGames</h3>
@@ -196,7 +196,7 @@
               <span class="text-xs font-bold">Board</span>
             </button>
             <button onclick="openCategoryView('Card')" class="bg-[#1c1f30] hover:bg-[#262a40] p-3 rounded-xl flex flex-col items-start gap-2 transition">
-              <i class="fas fa-spade text-rose-400 text-base"></i>
+              <i class="fas fa-layer-group text-rose-400 text-base"></i>
               <span class="text-xs font-bold">Card</span>
             </button>
             <button onclick="openCategoryView('Puzzle')" class="bg-[#1c1f30] hover:bg-[#262a40] p-3 rounded-xl flex flex-col items-start gap-2 transition">
@@ -212,13 +212,13 @@
               <span class="text-xs font-bold">Multiplayer</span>
             </button>
             <button onclick="openCategoryView('All')" class="bg-[#1c1f30] hover:bg-[#262a40] p-3 rounded-xl flex flex-col items-start gap-2 transition">
-              <i class="fas fa-grid-2 text-indigo-400 text-base"></i>
+              <i class="fas fa-border-all text-indigo-400 text-base"></i>
               <span class="text-xs font-bold">All Games</span>
             </button>
           </div>
         </div>
 
-        <!-- Bottom Pill Buttons (Random Game & Back to Top) -->
+        <!-- Bottom Pill Buttons -->
         <div class="space-y-2.5 pt-1 pb-4">
           <button onclick="playRandomGame()" class="w-full bg-[#1c1f30] hover:bg-[#262a40] text-white font-bold text-sm py-3 rounded-full flex items-center justify-center gap-2 transition">
             <i class="fas fa-dice text-rose-400"></i> Random game
@@ -231,7 +231,6 @@
 
       <!-- ==================== 2. SEARCH & EXPLORE TAB ==================== -->
       <section id="view-search" class="hidden space-y-5">
-        <!-- Mobile Search Input -->
         <div class="relative">
           <i class="fas fa-search absolute left-4 top-3.5 text-gray-400 text-sm"></i>
           <input type="text" id="mobileSearchInput" onkeyup="handleSearch(this.value)" placeholder="Search games and categories"
@@ -253,7 +252,7 @@
             <h3 class="text-base font-extrabold mb-2.5">Featured</h3>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               <button onclick="openCategoryView('All')" class="bg-[#1c1f30] hover:bg-[#262a40] p-3.5 rounded-xl flex flex-col items-start gap-2 transition">
-                <i class="fas fa-sparkles text-sky-400"></i>
+                <i class="fas fa-wand-magic-sparkles text-sky-400"></i>
                 <span class="text-sm font-bold">New</span>
               </button>
               <button onclick="openCategoryView('All')" class="bg-[#1c1f30] hover:bg-[#262a40] p-3.5 rounded-xl flex flex-col items-start gap-2 transition">
@@ -279,7 +278,7 @@
                 <i class="fas fa-chevron-right text-xs text-gray-500"></i>
               </button>
               <button onclick="openCategoryView('Card')" class="w-full px-4 py-3.5 flex items-center justify-between hover:bg-[#1c1f30] transition">
-                <span class="flex items-center gap-3 text-sm font-bold"><i class="fas fa-spade w-5 text-rose-400"></i> Card</span>
+                <span class="flex items-center gap-3 text-sm font-bold"><i class="fas fa-layer-group w-5 text-rose-400"></i> Card</span>
                 <i class="fas fa-chevron-right text-xs text-gray-500"></i>
               </button>
               <button onclick="openCategoryView('Puzzle')" class="w-full px-4 py-3.5 flex items-center justify-between hover:bg-[#1c1f30] transition">
@@ -325,26 +324,29 @@
 
         <!-- Profile Header Card -->
         <div class="bg-[#141622] rounded-2xl overflow-hidden border border-white/5">
-          <div class="h-24 bg-gradient-to-r from-[#6842ff] via-indigo-600 to-purple-900 relative"></div>
-          <div class="px-4 pb-4 -mt-9">
+          <div class="h-28 bg-gradient-to-r from-[#6842ff] via-indigo-600 to-purple-900 relative overflow-hidden">
+            <img id="profileCoverImg" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80" alt="Cover" class="w-full h-full object-cover opacity-80" />
+          </div>
+          <div class="px-4 pb-4 -mt-9 relative">
             <div class="flex items-end justify-between">
-              <div class="w-18 h-18 w-[72px] h-[72px] rounded-2xl bg-[#1c1f30] border-4 border-[#141622] flex items-center justify-center shadow-lg">
-                <i class="fas fa-user-astronaut text-3xl text-[#6842ff]"></i>
+              <div class="w-[74px] h-[74px] rounded-full bg-[#fde047] border-4 border-[#141622] flex items-center justify-center shadow-lg overflow-hidden">
+                <img id="profileAvatarImg" src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=Indro007" alt="Avatar" class="w-full h-full object-cover" />
               </div>
-              <button onclick="triggerFirebaseLogin()" class="bg-[#6842ff] hover:bg-[#5732e8] text-white font-bold text-xs px-4 py-2 rounded-full transition">
+              <button onclick="triggerFirebaseLogin()" class="bg-[#6842ff] hover:bg-[#5732e8] text-white font-bold text-xs px-4 py-2 rounded-full transition shadow">
                 <i class="fab fa-google mr-1.5"></i> Sign in with Firebase
               </button>
             </div>
 
             <div class="mt-2.5">
-              <h3 id="profileName" class="text-lg font-black">Player007</h3>
-              <p class="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                <i class="fas fa-location-dot text-gray-500"></i> Guest Account
+              <h3 id="profileName" class="text-lg font-black">Indro007</h3>
+              <p class="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
+                <i class="fas fa-location-dot text-gray-500"></i>
+                <span id="profileCountry">India</span>
               </p>
             </div>
 
             <div class="grid grid-cols-2 gap-2.5 mt-4">
-              <button onclick="editUsername()" class="bg-[#1c1f30] hover:bg-[#262a40] py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition">
+              <button onclick="openEditProfileModal()" class="bg-[#1c1f30] hover:bg-[#262a40] py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition">
                 <i class="fas fa-pen"></i> Edit profile
               </button>
               <button onclick="openFriendsModal()" class="bg-[#1c1f30] hover:bg-[#262a40] py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition">
@@ -395,10 +397,110 @@
         </div>
       </section>
 
+      <!-- ==================== 5. GAME DETAILS (PRE-PLAY SCREEN) ==================== -->
+      <section id="view-game-details" class="hidden -mx-3.5 -mt-4 pb-6">
+        <!-- Top Overlay Bar -->
+        <div class="relative w-full">
+          <!-- Top Action Row -->
+          <div class="absolute top-3 inset-x-3 z-20 flex items-center justify-between">
+            <button onclick="closeGameDetails()" class="w-10 h-10 rounded-full bg-[#1c1f30]/90 backdrop-blur flex items-center justify-center text-white shadow-lg">
+              <i class="fas fa-chevron-left text-sm"></i>
+            </button>
+            <div class="flex items-center gap-2">
+              <button onclick="showToast('No new notifications')" class="w-10 h-10 rounded-full bg-[#1c1f30]/90 backdrop-blur flex items-center justify-center text-white shadow-lg">
+                <i class="fas fa-bell text-sm"></i>
+              </button>
+              <button onclick="openFriendsModal()" class="w-10 h-10 rounded-full bg-[#1c1f30]/90 backdrop-blur flex items-center justify-center text-white shadow-lg">
+                <i class="fas fa-user-group text-sm"></i>
+              </button>
+              <button onclick="launchActiveGame()" class="bg-[#9fe870] text-[#0c0d14] font-extrabold text-xs px-4 py-2.5 rounded-full shadow-lg">
+                Play
+              </button>
+            </div>
+          </div>
+
+          <!-- Blurred Hero Backdrop + Centered Thumbnail -->
+          <div class="relative h-64 sm:h-72 w-full overflow-hidden flex items-center justify-center">
+            <img id="detailBackdropImg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-md scale-110 opacity-45" />
+            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-[#0c0d14]"></div>
+
+            <!-- Centered Game Card Thumbnail -->
+            <div class="relative z-10 mt-10 w-56 sm:w-64 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-[#1c1f30]">
+              <img id="detailThumbImg" src="" alt="" class="w-full h-full object-cover" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Title, Rating, Play Button & Action Pill Bar -->
+        <div class="px-4 text-center space-y-3.5 -mt-2 relative z-10 max-w-lg mx-auto">
+          <div>
+            <h1 id="detailGameTitle" class="text-2xl sm:text-3xl font-black tracking-tight text-white">Game Title</h1>
+            <div class="flex items-center justify-center gap-3 text-xs sm:text-sm text-gray-300 font-semibold mt-1">
+              <span class="flex items-center gap-1">
+                <i class="fas fa-sparkles text-purple-400"></i>
+                <span id="detailGameRating">8.4/10</span>
+              </span>
+              <span class="text-gray-600">•</span>
+              <span id="detailGameCategory" class="flex items-center gap-1.5">
+                <i class="fas fa-gamepad text-sky-400"></i> Board
+              </span>
+            </div>
+          </div>
+
+          <!-- Full-Width Purple Play Now Button -->
+          <button onclick="launchActiveGame()" class="w-full bg-[#6842ff] hover:bg-[#5732e8] active:scale-[0.99] text-white font-extrabold text-base py-3.5 rounded-full shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2.5 transition">
+            <i class="fas fa-gamepad text-lg"></i>
+            <span>Play now</span>
+          </button>
+
+          <!-- Segmented Action Pill Bar (Like, Dislike, Bookmark, Share, Report) -->
+          <div class="bg-[#1c1f30] rounded-2xl grid grid-cols-5 divide-x divide-white/10 overflow-hidden border border-white/5">
+            <button id="detailLikeBtn" onclick="toggleCurrentGameLike()" class="py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-gray-200 hover:bg-[#262a40] transition">
+              <i class="far fa-thumbs-up text-base"></i>
+              <span id="detailLikeCount">8.2K</span>
+            </button>
+            <button id="detailDislikeBtn" onclick="toggleCurrentGameDislike()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
+              <i class="far fa-thumbs-down text-base"></i>
+            </button>
+            <button id="detailBookmarkBtn" onclick="toggleCurrentGameBookmark()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
+              <i class="far fa-bookmark text-base"></i>
+            </button>
+            <button onclick="shareCurrentGame()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
+              <i class="fas fa-share text-base"></i>
+            </button>
+            <button onclick="showToast('Report submitted. Thank you!')" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
+              <i class="far fa-message text-base"></i>
+            </button>
+          </div>
+
+          <!-- Scroll Indicator -->
+          <div class="pt-1">
+            <button onclick="document.getElementById('detailRelatedSection').scrollIntoView({behavior: 'smooth'})" class="text-gray-400 hover:text-white transition">
+              <i class="fas fa-chevron-down text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Game Description & Related Games -->
+        <div id="detailRelatedSection" class="px-3.5 mt-4 space-y-5 max-w-6xl mx-auto">
+          <div class="bg-[#141622] rounded-2xl p-4 border border-white/5">
+            <h3 class="text-sm font-extrabold text-white mb-1">About this game</h3>
+            <p id="detailGameDesc" class="text-xs text-gray-400 leading-relaxed">
+              Enjoy smooth browser gameplay on both mobile and desktop devices. Challenge yourself or play with friends anytime!
+            </p>
+          </div>
+
+          <div>
+            <h3 class="text-base font-extrabold mb-2.5">More games like this</h3>
+            <div id="detailRelatedGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5"></div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR (Exact CrazyGames 4-Tab Layout) -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR (4-Tab CrazyGames Layout) -->
   <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#141622]/95 backdrop-blur-md border-t border-white/10 grid grid-cols-4 py-1.5">
     <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center justify-center gap-1 py-1 text-white">
       <i class="fas fa-home text-base"></i>
@@ -413,18 +515,18 @@
       <span class="text-[10px] font-bold">My games</span>
     </button>
     <button onclick="switchTab('you')" id="nav-you" class="flex flex-col items-center justify-center gap-1 py-1 text-gray-400">
-      <div class="w-5 h-5 rounded-full bg-[#6842ff] flex items-center justify-center text-[10px] text-white">
-        <i class="fas fa-user"></i>
+      <div class="w-5 h-5 rounded-full bg-[#fde047] overflow-hidden flex items-center justify-center">
+        <img id="navAvatarMini" src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=Indro007" alt="You" class="w-full h-full object-cover" />
       </div>
       <span class="text-[10px] font-bold">You</span>
     </button>
   </nav>
 
-  <!-- ==================== IN-BROWSER GAME PLAYER MODAL ==================== -->
+  <!-- ==================== FULLSCREEN IN-BROWSER GAME PLAYER MODAL ==================== -->
   <div id="playerModal" class="fixed inset-0 z-50 bg-[#0c0d14] hidden flex-col">
     <div class="bg-[#141622] px-3 py-2 flex items-center justify-between border-b border-white/10">
       <div class="flex items-center gap-2.5 min-w-0">
-        <button onclick="closeGame()" class="w-9 h-9 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-white shrink-0">
+        <button onclick="closeGamePlayer()" class="w-9 h-9 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-white shrink-0">
           <i class="fas fa-arrow-left text-sm"></i>
         </button>
         <h3 id="activeGameTitle" class="font-extrabold text-sm sm:text-base truncate">Game Title</h3>
@@ -445,6 +547,91 @@
 
     <div class="flex-1 w-full h-full bg-black relative">
       <iframe id="gameFrame" src="" class="w-full h-full border-0" allow="fullscreen; autoplay"></iframe>
+    </div>
+  </div>
+
+  <!-- ==================== EDIT YOUR PROFILE MODAL (Matches Screenshot) ==================== -->
+  <div id="editProfileModal" class="fixed inset-0 z-50 bg-[#141622] hidden flex-col overflow-y-auto">
+    <div class="max-w-md w-full mx-auto px-4 py-4 space-y-5 flex-1">
+      <!-- Top Header -->
+      <div class="relative flex items-center justify-center py-1">
+        <h2 class="text-base font-extrabold text-white">Edit your profile</h2>
+        <button onclick="closeEditProfileModal()" class="absolute right-0 w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-200 text-xl">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Cover Banner + Circular Avatar with Camera Badges -->
+      <div class="relative pb-9">
+        <div class="relative h-32 w-full rounded-xl overflow-hidden bg-[#1c1f30]">
+          <img id="editCoverPreview" src="" alt="Cover Preview" class="w-full h-full object-cover" />
+          <button type="button" onclick="cycleCoverImage()" class="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-[#6842ff] hover:bg-[#5732e8] text-white flex items-center justify-center shadow-lg transition" title="Change cover">
+            <i class="fas fa-camera text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Centered Avatar Overlapping Bottom of Cover -->
+        <div class="absolute left-1/2 -translate-x-1/2 bottom-0">
+          <div class="relative w-20 h-20 rounded-full bg-[#fde047] border-4 border-[#141622] overflow-hidden shadow-xl">
+            <img id="editAvatarPreview" src="" alt="Avatar Preview" class="w-full h-full object-cover" />
+          </div>
+          <button type="button" onclick="cycleAvatarImage()" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#6842ff] hover:bg-[#5732e8] text-white flex items-center justify-center shadow-lg border-2 border-[#141622] transition" title="Change avatar">
+            <i class="fas fa-camera text-[11px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Username & Country Fields -->
+      <div class="space-y-3">
+        <div class="bg-[#141622] border border-white/15 focus-within:border-[#6842ff] rounded-xl px-3.5 py-2">
+          <label class="block text-[11px] text-gray-400 font-medium">Username</label>
+          <input type="text" id="editUsernameInput" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none mt-0.5" placeholder="Enter username" />
+        </div>
+
+        <div class="bg-[#141622] border border-white/15 focus-within:border-[#6842ff] rounded-xl px-3.5 py-3 relative">
+          <select id="editCountryInput" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none appearance-none cursor-pointer">
+            <option value="India" class="bg-[#141622]">India</option>
+            <option value="Bangladesh" class="bg-[#141622]">Bangladesh</option>
+            <option value="United States" class="bg-[#141622]">United States</option>
+            <option value="United Kingdom" class="bg-[#141622]">United Kingdom</option>
+            <option value="Canada" class="bg-[#141622]">Canada</option>
+            <option value="Global" class="bg-[#141622]">Global</option>
+          </select>
+          <i class="fas fa-chevron-down text-xs text-gray-300 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        </div>
+      </div>
+
+      <!-- Personal Details Section -->
+      <div class="space-y-3 pt-2">
+        <div>
+          <h3 class="text-base font-extrabold text-white">Personal Details</h3>
+          <p class="text-xs text-gray-400 leading-relaxed mt-1">
+            This information is shared exclusively with IndroGames and will not be visible on your profile.
+          </p>
+        </div>
+
+        <div class="bg-[#141622] border border-white/15 focus-within:border-[#6842ff] rounded-xl px-3.5 py-2">
+          <label class="block text-[11px] text-gray-400 font-medium">Birthday</label>
+          <input type="text" id="editBirthdayInput" placeholder="1 January 1995" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none mt-0.5" />
+        </div>
+
+        <div class="bg-[#141622] border border-white/15 focus-within:border-[#6842ff] rounded-xl px-3.5 py-3 relative">
+          <select id="editGenderInput" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none appearance-none cursor-pointer">
+            <option value="Male" class="bg-[#141622]">Male</option>
+            <option value="Female" class="bg-[#141622]">Female</option>
+            <option value="Other" class="bg-[#141622]">Other</option>
+            <option value="Prefer not to say" class="bg-[#141622]">Prefer not to say</option>
+          </select>
+          <i class="fas fa-chevron-down text-xs text-gray-300 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="pt-3 pb-6">
+        <button onclick="saveProfileChanges()" class="w-full bg-[#6842ff] hover:bg-[#5732e8] text-white font-extrabold text-sm py-3.5 rounded-full shadow-lg transition">
+          Save changes
+        </button>
+      </div>
     </div>
   </div>
 
@@ -472,7 +659,6 @@
         <i class="fas fa-qrcode"></i> Share profile QR code
       </button>
 
-      <!-- QR Code Box -->
       <div id="qrShareBox" class="hidden bg-[#141622] rounded-2xl p-5 text-center border border-white/10 space-y-3">
         <p class="text-xs text-gray-300">Show this QR code to your friends so they can scan it and join your games</p>
         <div class="bg-white p-3 rounded-2xl inline-block">
@@ -495,15 +681,18 @@
 
   <script>
     // =========================================================================
-    // 1. GAMES DATABASE (Add or edit your HTML games here)
+    // 1. GAMES DATABASE
     // =========================================================================
     const GAMES_DB = [
       {
         id: "ludo-classic",
         title: "Ludo Classic",
         category: "Board",
+        rating: "8.8/10",
+        likesText: "12.4K",
         tags: ["Board", "Multiplayer"],
         featured: true,
+        description: "Roll the dice and race your tokens to the center in this classic multiplayer board game.",
         image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=600&q=80",
         url: "games/ludo.html"
       },
@@ -511,8 +700,11 @@
         id: "grand-chess",
         title: "Grand Chess",
         category: "Board",
+        rating: "9.1/10",
+        likesText: "9.8K",
         tags: ["Board", "Strategy", "Multiplayer"],
         featured: false,
+        description: "Test your tactical skills on the 64-square board against smart AI or local friends.",
         image: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=600&q=80",
         url: "games/chess.html"
       },
@@ -520,8 +712,11 @@
         id: "call-break",
         title: "Call Break Pro",
         category: "Card",
+        rating: "8.4/10",
+        likesText: "8.2K",
         tags: ["Card", "Strategy"],
         featured: false,
+        description: "Bid your tricks wisely and dominate the spade trump rounds in this strategic card game.",
         image: "https://images.unsplash.com/photo-1541278107931-e006523892df?auto=format&fit=crop&w=600&q=80",
         url: "games/callbreak.html"
       },
@@ -529,8 +724,11 @@
         id: "ultimate-tictactoe",
         title: "Ultimate Tic-Tac-Toe",
         category: "Board",
+        rating: "8.6/10",
+        likesText: "6.5K",
         tags: ["Board", "Puzzle", "Strategy", "Multiplayer"],
         featured: false,
+        description: "Nine interconnected Tic-Tac-Toe boards where every move dictates your opponent's next grid.",
         image: "https://images.unsplash.com/photo-1668901382969-8c73e450a1f5?auto=format&fit=crop&w=600&q=80",
         url: "games/ultimate-tictactoe.html"
       },
@@ -538,37 +736,63 @@
         id: "2048-puzzle",
         title: "2048 Neon",
         category: "Puzzle",
+        rating: "8.5/10",
+        likesText: "7.1K",
         tags: ["Puzzle", "Strategy"],
         featured: false,
+        description: "Slide and merge matching neon number tiles to reach the elusive 2048 block.",
         image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=600&q=80",
         url: "games/2048.html"
       }
     ];
 
+    const AVATAR_PRESETS = [
+      "https://api.dicebear.com/7.x/fun-emoji/svg?seed=Indro007",
+      "https://api.dicebear.com/7.x/bottts/svg?seed=GamerPro",
+      "https://api.dicebear.com/7.x/adventurer/svg?seed=ShadowNinja",
+      "https://api.dicebear.com/7.x/pixel-art/svg?seed=RetroKing",
+      "https://api.dicebear.com/7.x/lorelei/svg?seed=CyberAce"
+    ];
+
+    const COVER_PRESETS = [
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
+    ];
+
     // =========================================================================
-    // 2. LOCAL STORAGE STATE (Ready to sync with Firebase later)
+    // 2. LOCAL STORAGE STATE (Ready for Firebase sync)
     // =========================================================================
-    let userState = JSON.parse(localStorage.getItem("indro_games_state")) || {
-      username: "Player007",
+    let userState = JSON.parse(localStorage.getItem("indro_games_state_v2")) || {
+      username: "Indro007",
+      country: "India",
+      birthday: "1 January 1995",
+      gender: "Male",
+      avatarIndex: 0,
+      coverIndex: 0,
       recentIds: [],
       bookmarkedIds: [],
-      likedIds: []
+      likedIds: [],
+      dislikedIds: []
     };
 
     let activeGameId = null;
     let currentMyGamesTab = "list";
+    let tempAvatarIndex = userState.avatarIndex || 0;
+    let tempCoverIndex = userState.coverIndex || 0;
 
     function saveState() {
-      localStorage.setItem("indro_games_state", JSON.stringify(userState));
+      localStorage.setItem("indro_games_state_v2", JSON.stringify(userState));
       updateProfileUI();
     }
 
     // =========================================================================
-    // 3. RENDER CARDS (CrazyGames Square Icon Cards & Hero Card)
+    // 3. RENDER CARDS
     // =========================================================================
     function createSquareCard(game) {
       return `
-        <div onclick="openGame('${game.id}')" class="game-icon-card cursor-pointer group">
+        <div onclick="openGameDetails('${game.id}')" class="game-icon-card cursor-pointer group">
           <div class="relative aspect-square rounded-2xl overflow-hidden bg-[#1c1f30] border border-white/5 shadow-sm">
             <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy" />
           </div>
@@ -578,10 +802,9 @@
     }
 
     function renderHome() {
-      // Hero Featured Game
       const heroGame = GAMES_DB.find(g => g.featured) || GAMES_DB[0];
       document.getElementById("featuredHeroCard").innerHTML = `
-        <div onclick="openGame('${heroGame.id}')" class="relative aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden bg-[#1c1f30] border border-white/10 cursor-pointer group shadow-lg">
+        <div onclick="openGameDetails('${heroGame.id}')" class="relative aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden bg-[#1c1f30] border border-white/10 cursor-pointer group shadow-lg">
           <img src="${heroGame.image}" alt="${heroGame.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
           <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
@@ -599,18 +822,14 @@
         </div>
       `;
 
-      // Top Games Grid
       document.getElementById("topGamesGrid").innerHTML = GAMES_DB.map(createSquareCard).join("");
 
-      // Board Games Row
       const boardGames = GAMES_DB.filter(g => g.tags.includes("Board"));
       document.getElementById("row-Board").innerHTML = boardGames.map(createSquareCard).join("");
 
-      // Card & Strategy Row
       const cardStrategyGames = GAMES_DB.filter(g => g.tags.includes("Card") || g.tags.includes("Strategy"));
       document.getElementById("row-CardStrategy").innerHTML = cardStrategyGames.map(createSquareCard).join("");
 
-      // Continue Playing Row
       renderContinuePlaying();
     }
 
@@ -631,7 +850,7 @@
         .filter(Boolean);
 
       row.innerHTML = recentGames.map(game => `
-        <div onclick="openGame('${game.id}')" class="w-24 shrink-0 cursor-pointer game-icon-card">
+        <div onclick="openGameDetails('${game.id}')" class="w-24 shrink-0 cursor-pointer game-icon-card">
           <div class="aspect-square rounded-2xl overflow-hidden bg-[#1c1f30] border border-white/10">
             <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover" />
           </div>
@@ -640,7 +859,7 @@
       `).join("");
 
       activityRow.innerHTML = recentGames.map(game => `
-        <div onclick="openGame('${game.id}')" class="w-36 shrink-0 bg-[#141622] rounded-2xl overflow-hidden border border-white/5 cursor-pointer">
+        <div onclick="openGameDetails('${game.id}')" class="w-36 shrink-0 bg-[#141622] rounded-2xl overflow-hidden border border-white/5 cursor-pointer">
           <img src="${game.image}" class="w-full h-20 object-cover" />
           <div class="p-2">
             <p class="text-xs font-bold truncate">${game.title}</p>
@@ -651,9 +870,181 @@
     }
 
     // =========================================================================
-    // 4. NAVIGATION & TABS
+    // 4. GAME DETAILS (PRE-PLAY PAGE) & GAME LAUNCHER
+    // =========================================================================
+    function openGameDetails(gameId) {
+      const game = GAMES_DB.find(g => g.id === gameId);
+      if (!game) return;
+
+      activeGameId = game.id;
+
+      // Populate Details UI
+      document.getElementById("detailBackdropImg").src = game.image;
+      document.getElementById("detailThumbImg").src = game.image;
+      document.getElementById("detailGameTitle").innerText = game.title;
+      document.getElementById("detailGameRating").innerText = game.rating || "8.5/10";
+      document.getElementById("detailGameCategory").innerHTML = `<i class="fas fa-gamepad text-sky-400"></i> ${game.category}`;
+      document.getElementById("detailLikeCount").innerText = game.likesText || "5.4K";
+      document.getElementById("detailGameDesc").innerText = game.description || "Play directly in your browser with zero downloads.";
+
+      // Related Games
+      const related = GAMES_DB.filter(g => g.id !== game.id);
+      document.getElementById("detailRelatedGrid").innerHTML = related.map(createSquareCard).join("");
+
+      // Hide other views and main header on mobile for full-bleed backdrop look
+      ["home", "search", "mygames", "you"].forEach(name => {
+        document.getElementById(`view-${name}`).classList.add("hidden");
+      });
+      document.getElementById("mainHeader").classList.add("hidden", "md:flex");
+      document.getElementById("view-game-details").classList.remove("hidden");
+
+      updateGameActionButtons();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeGameDetails() {
+      document.getElementById("view-game-details").classList.add("hidden");
+      document.getElementById("mainHeader").classList.remove("hidden", "md:flex");
+      switchTab("home");
+    }
+
+    function launchActiveGame() {
+      const game = GAMES_DB.find(g => g.id === activeGameId);
+      if (!game) return;
+
+      document.getElementById("activeGameTitle").innerText = game.title;
+      document.getElementById("gameFrame").src = game.url;
+
+      // Save to Continue Playing / Recent
+      userState.recentIds = [game.id, ...userState.recentIds.filter(id => id !== game.id)].slice(0, 12);
+      saveState();
+      renderContinuePlaying();
+      updateGameActionButtons();
+
+      const modal = document.getElementById("playerModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeGamePlayer() {
+      document.getElementById("gameFrame").src = "";
+      const modal = document.getElementById("playerModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function toggleCurrentGameBookmark() {
+      if (!activeGameId) return;
+      if (userState.bookmarkedIds.includes(activeGameId)) {
+        userState.bookmarkedIds = userState.bookmarkedIds.filter(id => id !== activeGameId);
+        showToast("Removed from My games");
+      } else {
+        userState.bookmarkedIds.unshift(activeGameId);
+        showToast("Added to My games");
+      }
+      saveState();
+      updateGameActionButtons();
+    }
+
+    function toggleCurrentGameLike() {
+      if (!activeGameId) return;
+      userState.dislikedIds = userState.dislikedIds.filter(id => id !== activeGameId);
+      if (userState.likedIds.includes(activeGameId)) {
+        userState.likedIds = userState.likedIds.filter(id => id !== activeGameId);
+        showToast("Like removed");
+      } else {
+        userState.likedIds.unshift(activeGameId);
+        showToast("Game liked!");
+      }
+      saveState();
+      updateGameActionButtons();
+    }
+
+    function toggleCurrentGameDislike() {
+      if (!activeGameId) return;
+      userState.likedIds = userState.likedIds.filter(id => id !== activeGameId);
+      if (userState.dislikedIds.includes(activeGameId)) {
+        userState.dislikedIds = userState.dislikedIds.filter(id => id !== activeGameId);
+      } else {
+        userState.dislikedIds.unshift(activeGameId);
+        showToast("Feedback saved");
+      }
+      saveState();
+      updateGameActionButtons();
+    }
+
+    function updateGameActionButtons() {
+      if (!activeGameId) return;
+      const isBookmarked = userState.bookmarkedIds.includes(activeGameId);
+      const isLiked = userState.likedIds.includes(activeGameId);
+      const isDisliked = userState.dislikedIds.includes(activeGameId);
+
+      // Detail screen buttons
+      const dLike = document.getElementById("detailLikeBtn");
+      const dDislike = document.getElementById("detailDislikeBtn");
+      const dBookmark = document.getElementById("detailBookmarkBtn");
+
+      if (dLike) {
+        dLike.className = isLiked
+          ? "py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-[#9fe870] bg-[#262a40] transition"
+          : "py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-gray-200 hover:bg-[#262a40] transition";
+      }
+      if (dDislike) {
+        dDislike.className = isDisliked
+          ? "py-3 flex items-center justify-center text-rose-400 bg-[#262a40] transition"
+          : "py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition";
+      }
+      if (dBookmark) {
+        dBookmark.innerHTML = isBookmarked
+          ? `<i class="fas fa-bookmark text-base text-[#6842ff]"></i>`
+          : `<i class="far fa-bookmark text-base"></i>`;
+      }
+
+      // Fullscreen player buttons
+      const pBookmark = document.getElementById("playerBookmarkBtn");
+      const pLike = document.getElementById("playerLikeBtn");
+
+      if (pBookmark) {
+        pBookmark.className = isBookmarked
+          ? "w-9 h-9 rounded-full bg-[#6842ff] flex items-center justify-center text-white transition"
+          : "w-9 h-9 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-gray-300 transition";
+      }
+      if (pLike) {
+        pLike.className = isLiked
+          ? "w-9 h-9 rounded-full bg-[#9fe870] flex items-center justify-center text-[#0c0d14] transition"
+          : "w-9 h-9 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-gray-300 transition";
+      }
+    }
+
+    function shareCurrentGame() {
+      const game = GAMES_DB.find(g => g.id === activeGameId);
+      const shareUrl = window.location.href;
+      if (navigator.share && game) {
+        navigator.share({ title: game.title, url: shareUrl }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(shareUrl);
+        showToast("Game link copied!");
+      }
+    }
+
+    function toggleFullScreen() {
+      const iframe = document.getElementById("gameFrame");
+      if (iframe.requestFullscreen) iframe.requestFullscreen();
+      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+    }
+
+    function playRandomGame() {
+      const random = GAMES_DB[Math.floor(Math.random() * GAMES_DB.length)];
+      openGameDetails(random.id);
+    }
+
+    // =========================================================================
+    // 5. NAVIGATION & TABS
     // =========================================================================
     function switchTab(tabName) {
+      document.getElementById("view-game-details").classList.add("hidden");
+      document.getElementById("mainHeader").classList.remove("hidden", "md:flex");
+
       ["home", "search", "mygames", "you"].forEach(name => {
         document.getElementById(`view-${name}`).classList.add("hidden");
         const navBtn = document.getElementById(`nav-${name}`);
@@ -732,7 +1123,7 @@
     }
 
     // =========================================================================
-    // 5. MY GAMES (List, Liked, Recent)
+    // 6. MY GAMES (List, Liked, Recent)
     // =========================================================================
     function switchMyGamesFilter(filter) {
       currentMyGamesTab = filter;
@@ -767,105 +1158,76 @@
     }
 
     // =========================================================================
-    // 6. GAME PLAYER & ACTIONS
+    // 7. PROFILE & CUSTOM EDIT PROFILE MODAL
     // =========================================================================
-    function openGame(gameId) {
-      const game = GAMES_DB.find(g => g.id === gameId);
-      if (!game) return;
+    function updateProfileUI() {
+      document.getElementById("profileName").innerText = userState.username || "Indro007";
+      document.getElementById("profileCountry").innerText = userState.country || "India";
+      document.getElementById("statLikedCount").innerText = userState.likedIds.length;
 
-      activeGameId = game.id;
-      document.getElementById("activeGameTitle").innerText = game.title;
-      document.getElementById("gameFrame").src = game.url;
+      const avatarUrl = AVATAR_PRESETS[userState.avatarIndex % AVATAR_PRESETS.length];
+      const coverUrl = COVER_PRESETS[userState.coverIndex % COVER_PRESETS.length];
 
-      // Save to Recent / Continue Playing
-      userState.recentIds = [game.id, ...userState.recentIds.filter(id => id !== game.id)].slice(0, 12);
-      saveState();
-      renderContinuePlaying();
-      updatePlayerActionButtons();
+      document.getElementById("profileAvatarImg").src = avatarUrl;
+      document.getElementById("navAvatarMini").src = avatarUrl;
+      document.getElementById("profileCoverImg").src = coverUrl;
+    }
 
-      const modal = document.getElementById("playerModal");
+    function openEditProfileModal() {
+      tempAvatarIndex = userState.avatarIndex || 0;
+      tempCoverIndex = userState.coverIndex || 0;
+
+      document.getElementById("editUsernameInput").value = userState.username || "Indro007";
+      document.getElementById("editCountryInput").value = userState.country || "India";
+      document.getElementById("editBirthdayInput").value = userState.birthday || "1 January 1995";
+      document.getElementById("editGenderInput").value = userState.gender || "Male";
+
+      document.getElementById("editAvatarPreview").src = AVATAR_PRESETS[tempAvatarIndex % AVATAR_PRESETS.length];
+      document.getElementById("editCoverPreview").src = COVER_PRESETS[tempCoverIndex % COVER_PRESETS.length];
+
+      const modal = document.getElementById("editProfileModal");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
     }
 
-    function closeGame() {
-      document.getElementById("gameFrame").src = "";
-      const modal = document.getElementById("playerModal");
+    function closeEditProfileModal() {
+      const modal = document.getElementById("editProfileModal");
       modal.classList.add("hidden");
       modal.classList.remove("flex");
-      activeGameId = null;
     }
 
-    function toggleCurrentGameBookmark() {
-      if (!activeGameId) return;
-      if (userState.bookmarkedIds.includes(activeGameId)) {
-        userState.bookmarkedIds = userState.bookmarkedIds.filter(id => id !== activeGameId);
-        showToast("Removed from My games");
-      } else {
-        userState.bookmarkedIds.unshift(activeGameId);
-        showToast("Added to My games");
+    function cycleAvatarImage() {
+      tempAvatarIndex = (tempAvatarIndex + 1) % AVATAR_PRESETS.length;
+      document.getElementById("editAvatarPreview").src = AVATAR_PRESETS[tempAvatarIndex];
+    }
+
+    function cycleCoverImage() {
+      tempCoverIndex = (tempCoverIndex + 1) % COVER_PRESETS.length;
+      document.getElementById("editCoverPreview").src = COVER_PRESETS[tempCoverIndex];
+    }
+
+    function saveProfileChanges() {
+      const newUsername = document.getElementById("editUsernameInput").value.trim();
+      if (!newUsername) {
+        showToast("Username cannot be empty");
+        return;
       }
+
+      userState.username = newUsername;
+      userState.country = document.getElementById("editCountryInput").value;
+      userState.birthday = document.getElementById("editBirthdayInput").value.trim() || "1 January 1995";
+      userState.gender = document.getElementById("editGenderInput").value;
+      userState.avatarIndex = tempAvatarIndex;
+      userState.coverIndex = tempCoverIndex;
+
       saveState();
-      updatePlayerActionButtons();
-    }
-
-    function toggleCurrentGameLike() {
-      if (!activeGameId) return;
-      if (userState.likedIds.includes(activeGameId)) {
-        userState.likedIds = userState.likedIds.filter(id => id !== activeGameId);
-        showToast("Like removed");
-      } else {
-        userState.likedIds.unshift(activeGameId);
-        showToast("Game liked!");
-      }
-      saveState();
-      updatePlayerActionButtons();
-    }
-
-    function updatePlayerActionButtons() {
-      const isBookmarked = userState.bookmarkedIds.includes(activeGameId);
-      const isLiked = userState.likedIds.includes(activeGameId);
-
-      const bBtn = document.getElementById("playerBookmarkBtn");
-      const lBtn = document.getElementById("playerLikeBtn");
-
-      bBtn.className = isBookmarked
-        ? "w-9 h-9 rounded-full bg-[#6842ff] flex items-center justify-center text-white transition"
-        : "w-9 h-9 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-gray-300 transition";
-
-      lBtn.className = isLiked
-        ? "w-9 h-9 rounded-full bg-[#9fe870] flex items-center justify-center text-[#0c0d14] transition"
-        : "w-9 h-9 rounded-full bg-[#1c1f30] hover:bg-[#262a40] flex items-center justify-center text-gray-300 transition";
-    }
-
-    function toggleFullScreen() {
-      const iframe = document.getElementById("gameFrame");
-      if (iframe.requestFullscreen) iframe.requestFullscreen();
-      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
-    }
-
-    function playRandomGame() {
-      const random = GAMES_DB[Math.floor(Math.random() * GAMES_DB.length)];
-      openGame(random.id);
+      closeEditProfileModal();
+      showToast("Profile updated!");
     }
 
     // =========================================================================
-    // 7. PROFILE, FRIENDS & FIREBASE AUTH HOOK
+    // 8. FRIENDS MODAL, FIREBASE HOOK & TOAST
     // =========================================================================
-    function updateProfileUI() {
-      document.getElementById("profileName").innerText = userState.username;
-      document.getElementById("statLikedCount").innerText = userState.likedIds.length;
-    }
-
-    function editUsername() {
-      const newName = prompt("Enter your player username:", userState.username);
-      if (newName && newName.trim()) {
-        userState.username = newName.trim();
-        saveState();
-        showToast("Username updated");
-      }
-    }
-
     function openFriendsModal() {
       const currentUrl = encodeURIComponent(window.location.href);
       document.getElementById("qrCodeImg").src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${currentUrl}`;
@@ -890,7 +1252,6 @@
     }
 
     function triggerFirebaseLogin() {
-      // TODO: Replace this placeholder with Firebase Google Sign-In SDK logic
       showToast("Ready for Firebase Auth integration!");
     }
 
