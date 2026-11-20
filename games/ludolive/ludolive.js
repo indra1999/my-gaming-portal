@@ -190,8 +190,8 @@ let isPaused = false;
 let gpCubeRotX = -16, gpCubeRotY = 22;
 let boardEffects = [];
 
-// Countdown ring circumference (radius = 23 -> 2 * PI * 23 ≈ 144.51)
-const TIMER_RING_CIRC = 144.51;
+// Countdown ring circumference (radius = 21 -> 2 * PI * 21 = 131.95)
+const TIMER_RING_CIRC = 131.95;
 let currentTurnRemaining = 30;
 let currentTurnTotal = 30;
 
@@ -1330,9 +1330,9 @@ window.startMatchFromSetup = function () {
   document.getElementById("setupView").classList.add("hidden");
   document.getElementById("gameView").classList.remove("hidden");
 
+  startTurnTimer();
   renderPlayerPods();
   drawBoard();
-  startTurnTimer();
   maybeTriggerAITurn();
 };
 
@@ -1399,6 +1399,7 @@ window.handleDiceClick = function () {
 
 function executeDiceRoll() {
   game.diceRolled = true;
+  clearInterval(turnInterval);
   sfxDice();
 
   const statusEl = document.getElementById("activePodStatus");
@@ -1976,10 +1977,12 @@ function build3DDiceHTML(val, isActivePod) {
     faces += `<div class="gp-face gp-f${n}" style="background:linear-gradient(145deg, ${skin.f[0]}, ${skin.f[1]}); border-color:${skin.edge}">${czPipGrid(n, skin)}</div>`;
   }
   return `
-    <div ${isActivePod ? 'id="gpDiceHop"' : ''} class="gp-dice-hop">
-      <div class="gp-dice-tilt">
-        <div ${isActivePod ? 'id="gpDiceCube"' : ''} class="gp-cube" style="transform: rotateX(${rx}deg) rotateY(${ry}deg)">
-          ${faces}
+    <div class="gp-dice-stage">
+      <div ${isActivePod ? 'id="gpDiceHop"' : ''} class="gp-dice-hop">
+        <div class="gp-dice-tilt">
+          <div ${isActivePod ? 'id="gpDiceCube"' : ''} class="gp-cube" style="transform: rotateX(${rx}deg) rotateY(${ry}deg)">
+            ${faces}
+          </div>
         </div>
       </div>
     </div>
@@ -2025,14 +2028,15 @@ function renderPlayerPods() {
       return `<span style="background:${done ? col.hex : '#3a4058'}" class="w-1.5 h-1.5 rounded-full"></span>`;
     }).join("");
 
-    const timerBadge = userProfile.diceTimer
+    const showTimer = userProfile.diceTimer && !game.diceRolled;
+    const timerBadge = showTimer
       ? `<span id="turnTimerBadge" class="gp-timer-pill ${isUrgent ? 'urgent' : ''}">${Math.max(0, currentTurnRemaining)}</span>`
       : "";
 
-    const countdownRingSVG = userProfile.diceTimer
-      ? `<svg class="gp-timer-svg" viewBox="0 0 54 54">
-           <circle class="gp-timer-track" cx="27" cy="27" r="23"></circle>
-           <circle id="gpTimerProg" class="gp-timer-prog ${isUrgent ? 'urgent' : ''}" cx="27" cy="27" r="23"
+    const countdownRingSVG = showTimer
+      ? `<svg class="gp-timer-svg" viewBox="0 0 48 48">
+           <circle class="gp-timer-track" cx="24" cy="24" r="21"></circle>
+           <circle id="gpTimerProg" class="gp-timer-prog ${isUrgent ? 'urgent' : ''}" cx="24" cy="24" r="21"
              stroke-dasharray="${TIMER_RING_CIRC}" stroke-dashoffset="${dashOffset}"></circle>
          </svg>`
       : "";
