@@ -129,6 +129,9 @@ html.light .av-name-lbl { color: #374151 !important; }
   box-shadow: 0 0 24px var(--pc-glow), inset 0 0 14px rgba(255,255,255,0.03);
   z-index: 5;
 }
+.gp-pod-2p-top { width: 52%; margin-right: auto; }
+.gp-pod-2p-bot { width: 52%; margin-left: auto; }
+
 .gp-pod-arrow {
   position: absolute; left: 50%; transform: translateX(-50%);
   color: var(--pc); font-size: 11px; line-height: 1;
@@ -141,15 +144,42 @@ html.light .av-name-lbl { color: #374151 !important; }
   50% { transform: translateX(-50%) translateY(3px); }
 }
 
-/* 3D Cube inside Player Pod */
+/* 3D Cube & Circular Radar Ring inside Player Pod */
 .gp-dice-btn {
-  position: relative; width: 44px; height: 44px; flex-shrink: 0;
+  position: relative; width: 46px; height: 46px; flex-shrink: 0;
   background: none; border: 0; padding: 0; cursor: pointer;
   perspective: 360px; display: flex; align-items: center; justify-content: center;
   overflow: visible;
 }
+.gp-dice-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--pc);
+  box-shadow: 0 0 18px var(--pc-glow), inset 0 0 10px var(--pc-glow);
+  animation: gpRadarSpin 2.4s linear infinite;
+  pointer-events: none;
+}
+.gp-dice-ring::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+  transform: translateX(-50%);
+}
+@keyframes gpRadarSpin {
+  0%   { transform: rotate(0deg) scale(0.95); opacity: 0.85; }
+  50%  { transform: rotate(180deg) scale(1.05); opacity: 1; }
+  100% { transform: rotate(360deg) scale(0.95); opacity: 0.85; }
+}
+
 .gp-dice-hop {
-  width: 36px; height: 36px; transform-style: preserve-3d;
+  width: 34px; height: 34px; transform-style: preserve-3d;
 }
 .gp-dice-hop.rolling {
   animation: gpDiceTumble 0.56s cubic-bezier(.22, .85, .32, 1) forwards;
@@ -166,25 +196,25 @@ html.light .av-name-lbl { color: #374151 !important; }
   transform: rotateX(-16deg) rotateY(22deg);
 }
 .gp-cube {
-  position: relative; width: 36px; height: 36px; transform-style: preserve-3d;
+  position: relative; width: 34px; height: 34px; transform-style: preserve-3d;
   transition: transform 0.54s cubic-bezier(.18, .88, .28, 1.04);
 }
 .gp-face {
   position: absolute; inset: 0; border-radius: 8px;
   display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  place-items: center; padding: 5px;
+  place-items: center; padding: 4.5px;
   border: 1px solid rgba(255,255,255,0.16);
   box-shadow: inset 0 0 7px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.2);
   backface-visibility: hidden;
 }
-.gp-face i { display: block; width: 6.2px; height: 6.2px; border-radius: 50%; }
+.gp-face i { display: block; width: 5.8px; height: 5.8px; border-radius: 50%; }
 .gp-face i.pip { box-shadow: 0 1px 1.5px rgba(0,0,0,0.55); }
-.gp-f1 { transform: translateZ(18px); }
-.gp-f6 { transform: rotateY(180deg) translateZ(18px); }
-.gp-f2 { transform: rotateY(90deg) translateZ(18px); }
-.gp-f5 { transform: rotateY(-90deg) translateZ(18px); }
-.gp-f3 { transform: rotateX(90deg) translateZ(18px); }
-.gp-f4 { transform: rotateX(-90deg) translateZ(18px); }
+.gp-f1 { transform: translateZ(17px); }
+.gp-f6 { transform: rotateY(180deg) translateZ(17px); }
+.gp-f2 { transform: rotateY(90deg) translateZ(17px); }
+.gp-f5 { transform: rotateY(-90deg) translateZ(17px); }
+.gp-f3 { transform: rotateX(90deg) translateZ(17px); }
+.gp-f4 { transform: rotateX(-90deg) translateZ(17px); }
 
 .gp-timer-pill {
   position: absolute; top: -6px; right: -6px; z-index: 6;
@@ -545,4 +575,3 @@ html.light .av-name-lbl { color: #374151 !important; }
   transition: transform .15s ease, filter .15s ease;
 }
 .ai-start:active { transform: scale(.985); filter: brightness(.96); }
-
