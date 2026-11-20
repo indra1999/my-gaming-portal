@@ -189,9 +189,10 @@ let turnInterval = null;
 let isPaused = false;
 let gpCubeRotX = -16, gpCubeRotY = 22;
 let boardEffects = [];
+let pulseAnimId = null;
 
-// Countdown ring circumference (radius = 21 -> 2 * PI * 21 = 131.95)
-const TIMER_RING_CIRC = 131.95;
+// Countdown ring circumference (radius = 23 -> 2 * PI * 23 = 144.51)
+const TIMER_RING_CIRC = 144.51;
 let currentTurnRemaining = 30;
 let currentTurnTotal = 30;
 
@@ -1196,14 +1197,18 @@ function buildPolygonBoardGeometry(armsCount) {
     for (let r = 5; r >= 0; r--) outerLoop.push(armCellCenter(k, 2, r));
   }
 
+  // Entry arrow cell indices on outerLoop (col=1, row=5 of each arm k -> index k*13 + 6)
+  const entryArrowIndices = {};
   const armStartLoopIdx = [];
   const starLoopIndices = new Set();
   for (let k = 0; k < armsCount; k++) {
     const sIdx = k * 13 + 8;
     const starIdx = k * 13 + 3;
+    const arrowIdx = k * 13 + 6;
     armStartLoopIdx.push(sIdx);
     starLoopIndices.add(sIdx);
     starLoopIndices.add(starIdx);
+    entryArrowIndices[arrowIdx] = k;
   }
 
   const homeStretches = [];
@@ -1311,6 +1316,7 @@ function buildPolygonBoardGeometry(armsCount) {
     outerLoop,
     armStartLoopIdx,
     starLoopIndices,
+    entryArrowIndices,
     homeStretches,
     homeCenterGoals,
     yards,
@@ -1332,7 +1338,7 @@ window.startMatchFromSetup = function () {
 
   startTurnTimer();
   renderPlayerPods();
-  drawBoard();
+  startPulseLoop();
   maybeTriggerAITurn();
 };
 
@@ -1505,21 +1511,31 @@ function chooseBestAIMove(player, movable, roll) {
   moveToken(bestToken);
 }
 
-function animateBoardEffects() {
-  if (!boardEffects.length) return;
-  boardEffects.forEach(ef => {
-    ef.r += 2.4;
-    ef.alpha -= 0.032;
-  });
-  boardEffects = boardEffects.filter(ef => ef.alpha > 0);
-  drawBoard();
-  if (boardEffects.length) requestAnimationFrame(animateBoardEffects);
+function startPulseLoop() {
+  if (pulseAnimId) cancelAnimationFrame(pulseAnimId);
+  function tick() {
+    if (!game || document.getElementById("gameView").classList.contains("hidden")) {
+      pulseAnimId = null;
+      return;
+    }
+    if (boardEffects.length) {
+      boardEffects.forEach(ef => {
+        ef.r += 2.3;
+        ef.alpha -= 0.028;
+      });
+      boardEffects = boardEffects.filter(ef => ef.alpha > 0);
+    }
+    if (boardEffects.length || (game && game.movableTokens.length > 0)) {
+      drawBoard();
+    }
+    pulseAnimId = requestAnimationFrame(tick);
+  }
+  pulseAnimId = requestAnimationFrame(tick);
 }
 
 function triggerRippleAt(x, y, hexColor) {
-  boardEffects.push({ x, y, color: hexColor, r: 8, alpha: 1 });
-  boardEffects.push({ x, y, color: "#ffffff", r: 4, alpha: 0.85 });
-  requestAnimationFrame(animateBoardEffects);
+  boardEffects.push({ x, y, color: hexColor, r: 9, alpha: 1 });
+  boardEffects.push({ x, y, color: "#ffffff", r: 4, alpha: 0.9 });
 }
 
 function moveToken(tokenIdx) {
@@ -1731,6 +1747,26 @@ function drawStar(cx, cy, r, color) {
   ctx.restore();
 }
 
+function drawEntryArrow(cell, color) {
+  ctx.save();
+  ctx.translate(cell.x, cell.y);
+  // Point inward toward center (-x in local arm coordinates)
+  ctx.rotate(cell.theta + Math.PI);
+  const s = boardGeom.cellW * 0.24;
+  ctx.beginPath();
+  ctx.moveTo(s, 0);
+  ctx.lineTo(-s * 0.25, -s * 0.78);
+  ctx.lineTo(-s * 0.25, -s * 0.34);
+  ctx.lineTo(-s, -s * 0.34);
+  ctx.lineTo(-s, s * 0.34);
+  ctx.lineTo(-s * 0.25, s * 0.34);
+  ctx.lineTo(-s * 0.25, s * 0.78);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawRotatedCell(cell, fillColor, strokeColor) {
   ctx.save();
   ctx.translate(cell.x, cell.y);
@@ -1801,7 +1837,7 @@ function drawBoard() {
     ctx.restore();
   }
 
-  // 1. Draw Wedge / Square Yards with White Cream Inner Panel
+  // 1. Draw Wedge / Square Yards with White Cream Inner Panel & Colored Socket Rings
   boardGeom.yards.forEach((yard, k) => {
     const col = armColors[k];
     ctx.save();
@@ -1838,19 +1874,27 @@ function drawBoard() {
     ctx.strokeStyle = "rgba(0,0,0,0.18)";
     ctx.stroke();
 
+    // 4 Recessed Home Slots with Player-Colored Double Ring
     yard.slots.forEach(slot => {
+      const rSlot = boardGeom.cellW * 0.38;
       ctx.beginPath();
-      ctx.arc(slot.x, slot.y, boardGeom.cellW * 0.36, 0, Math.PI * 2);
-      ctx.fillStyle = "#e6dec8";
+      ctx.arc(slot.x, slot.y, rSlot, 0, Math.PI * 2);
+      ctx.fillStyle = "#f3ebd8";
       ctx.fill();
-      ctx.lineWidth = 1.4;
-      ctx.strokeStyle = "rgba(0,0,0,0.22)";
+      ctx.lineWidth = 2.4;
+      ctx.strokeStyle = col.hex;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(slot.x, slot.y, rSlot * 0.65, 0, Math.PI * 2);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = col.light;
       ctx.stroke();
     });
     ctx.restore();
   });
 
-  // 2. Outer Perimeter Track Cells
+  // 2. Outer Perimeter Track Cells + Entry Arrows + Safe Stars
   boardGeom.outerLoop.forEach((cell, idx) => {
     let fill = theme.cellBg;
     const startArm = boardGeom.armStartLoopIdx.indexOf(idx);
@@ -1859,6 +1903,9 @@ function drawBoard() {
 
     if (boardGeom.starLoopIndices.has(idx)) {
       drawStar(cell.x, cell.y, boardGeom.cellW * 0.28, startArm !== -1 ? "#ffffff" : "#c79e3b");
+    } else if (boardGeom.entryArrowIndices && boardGeom.entryArrowIndices[idx] !== undefined) {
+      const arrowArm = boardGeom.entryArrowIndices[idx];
+      drawEntryArrow(cell, armColors[arrowArm].hex);
     }
   });
 
@@ -1894,8 +1941,10 @@ function drawBoard() {
   ctx.stroke();
   drawStar(cx, cy, 7.5, "#c8922a");
 
-  // 5. Draw 3D Glossy Tokens
+  // 5. Draw 3D Glossy Tokens + Double Concentric Selection Rings
   const activePlayer = game.players[game.turnIdx];
+  const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 220);
+
   game.players.forEach(p => {
     const col = COLOR_PALETTE[p.colorIndex];
     p.tokens.forEach((step, tIdx) => {
@@ -1907,14 +1956,23 @@ function drawBoard() {
 
       const isMovable = p.id === activePlayer.id && game.movableTokens.includes(tIdx);
 
+      // Double Concentric Glowing Ring for Movable Tokens
       if (isMovable) {
+        ctx.save();
         ctx.beginPath();
-        ctx.arc(tx, ty, radius + 5, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#ffffff";
+        ctx.arc(tx, ty, radius + 7 + pulse * 3, 0, Math.PI * 2);
+        ctx.strokeStyle = col.hex;
+        ctx.globalAlpha = 0.55 + pulse * 0.35;
+        ctx.lineWidth = 2.2;
         ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(tx, ty, radius + 3.5, 0, Math.PI * 2);
+        ctx.strokeStyle = "#ffffff";
+        ctx.globalAlpha = 0.9;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
       }
 
       ctx.beginPath();
@@ -2034,9 +2092,9 @@ function renderPlayerPods() {
       : "";
 
     const countdownRingSVG = showTimer
-      ? `<svg class="gp-timer-svg" viewBox="0 0 48 48">
-           <circle class="gp-timer-track" cx="24" cy="24" r="21"></circle>
-           <circle id="gpTimerProg" class="gp-timer-prog ${isUrgent ? 'urgent' : ''}" cx="24" cy="24" r="21"
+      ? `<svg class="gp-timer-svg" viewBox="0 0 52 52">
+           <circle class="gp-timer-track" cx="26" cy="26" r="23"></circle>
+           <circle id="gpTimerProg" class="gp-timer-prog ${isUrgent ? 'urgent' : ''}" cx="26" cy="26" r="23"
              stroke-dasharray="${TIMER_RING_CIRC}" stroke-dashoffset="${dashOffset}"></circle>
          </svg>`
       : "";
@@ -2045,8 +2103,16 @@ function renderPlayerPods() {
       ? `<span class="gp-pod-arrow ${isTopRow ? 'top-row' : 'bot-row'}"><i class="fas fa-chevron-${isTopRow ? 'down' : 'up'}"></i></span>`
       : "";
 
-    const statusLine = isTurn
-      ? `<div id="activePodStatus" class="text-[9.5px] font-extrabold tracking-wider uppercase mt-0.5" style="color:${col.hex}">${game.diceRolled ? (game.movableTokens.length ? 'MOVE' : 'ROLLING...') : 'TAP TO ROLL'}</div>`
+    const rolledBadge = (isTurn && game.diceRolled && game.lastRollByPlayer[p.id])
+      ? `<span style="background:${col.hex}" class="w-4 h-4 rounded text-[9.5px] font-black text-white flex items-center justify-center shrink-0 shadow">${game.lastRollByPlayer[p.id]}</span>`
+      : "";
+
+    const subRow = isTurn
+      ? `<div class="flex items-center gap-1.5 mt-0.5">
+           <div class="flex items-center gap-1">${dots}</div>
+           ${rolledBadge}
+         </div>
+         <div id="activePodStatus" class="text-[8.5px] font-extrabold tracking-wider uppercase leading-tight mt-0.5" style="color:${col.hex}">${game.diceRolled ? (game.movableTokens.length ? 'TAP A TOKEN' : 'ROLLING...') : 'TAP TO ROLL'}</div>`
       : `<div class="flex items-center gap-1 mt-1">${dots}</div>`;
 
     const twoPlayerAlign = count === 2 ? (isTopRow ? "gp-pod-2p-top" : "gp-pod-2p-bot") : "";
@@ -2061,12 +2127,13 @@ function renderPlayerPods() {
               <span style="color:${col.hex}" class="text-[9.5px] font-black shrink-0">P${p.id + 1}</span>
               <span class="text-[11px] font-extrabold text-white truncate">${p.name}</span>
             </div>
-            ${statusLine}
+            ${subRow}
           </div>
         </div>
 
         ${isTurn ? `
           <button id="activeDiceBox" onclick="handleDiceClick()" class="gp-dice-btn focus:outline-none">
+            <span class="gp-dice-aura"></span>
             ${countdownRingSVG}
             ${build3DDiceHTML(game.diceVal, true)}
             ${timerBadge}
@@ -2090,6 +2157,7 @@ function renderPlayerPods() {
 // =========================================================================
 function endMatch() {
   clearInterval(turnInterval);
+  if (pulseAnimId) { cancelAnimationFrame(pulseAnimId); pulseAnimId = null; }
   game.players.forEach(p => {
     if (!p.rank) {
       game.winners.push(p.id);
@@ -2143,6 +2211,7 @@ window.rematchGame = function () {
 
 window.returnToLobby = function () {
   clearInterval(turnInterval);
+  if (pulseAnimId) { cancelAnimationFrame(pulseAnimId); pulseAnimId = null; }
   isPaused = false;
   document.getElementById("victoryModal").classList.add("hidden");
   document.getElementById("victoryModal").classList.remove("flex");
