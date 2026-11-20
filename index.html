@@ -48,7 +48,6 @@
 
   <!-- TOP HEADER -->
   <header id="mainHeader" class="sticky top-0 z-40 bg-[#0c0d14]/95 backdrop-blur-md border-b border-white/5 px-3.5 py-2.5 flex items-center justify-between">
-    <!-- Brand Logo -->
     <div onclick="switchTab('home')" class="flex items-center gap-2 cursor-pointer select-none">
       <div class="w-9 h-9 rounded-xl bg-[#6842ff] flex items-center justify-center shadow-lg shadow-purple-600/30">
         <i class="fas fa-gamepad text-white text-lg"></i>
@@ -59,14 +58,12 @@
       </div>
     </div>
 
-    <!-- Desktop Search Bar -->
     <div class="hidden md:flex flex-1 max-w-md mx-6 relative">
       <i class="fas fa-search absolute left-3.5 top-3 text-gray-400 text-sm"></i>
       <input type="text" id="desktopSearchInput" onkeyup="handleSearch(this.value)" placeholder="Search games and categories"
         class="w-full bg-[#1c1f30] text-sm text-white placeholder-gray-400 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#6842ff]" />
     </div>
 
-    <!-- Top Right Action Icons -->
     <div class="flex items-center gap-2">
       <a id="adminShortcutBtn" href="admin.html" class="hidden bg-[#6842ff] hover:bg-[#5732e8] text-white font-extrabold text-xs px-3 py-2 rounded-full transition shadow">
         <i class="fas fa-shield-halved mr-1"></i> Admin
@@ -89,7 +86,6 @@
 
   <!-- MAIN WRAPPER -->
   <div class="flex flex-1">
-    <!-- Desktop Left Sidebar -->
     <aside class="hidden md:flex flex-col w-56 bg-[#141622] border-r border-white/5 p-3 gap-1.5 shrink-0 sticky top-[57px] h-[calc(100vh-57px)]">
       <button onclick="switchTab('home')" class="nav-side flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-[#262a40] text-white font-semibold text-sm">
         <i class="fas fa-home w-5 text-[#6842ff]"></i> Home
@@ -119,10 +115,8 @@
       </button>
     </aside>
 
-    <!-- CONTENT VIEWS CONTAINER -->
     <main class="flex-1 w-full max-w-6xl mx-auto px-3.5 py-4">
-
-      <!-- ==================== 1. HOME TAB ==================== -->
+      <!-- 1. HOME TAB -->
       <section id="view-home" class="space-y-6">
         <div id="continuePlayingSection" class="hidden">
           <div class="flex items-center justify-between mb-2.5">
@@ -221,7 +215,7 @@
         </div>
       </section>
 
-      <!-- ==================== 2. SEARCH & EXPLORE TAB ==================== -->
+      <!-- 2. SEARCH & EXPLORE TAB -->
       <section id="view-search" class="hidden space-y-5">
         <div class="relative">
           <i class="fas fa-search absolute left-4 top-3.5 text-gray-400 text-sm"></i>
@@ -288,7 +282,7 @@
         </div>
       </section>
 
-      <!-- ==================== 3. MY GAMES TAB ==================== -->
+      <!-- 3. MY GAMES TAB -->
       <section id="view-mygames" class="hidden space-y-4">
         <h2 class="text-xl font-black">My games</h2>
         <div class="flex gap-2">
@@ -308,7 +302,7 @@
         </div>
       </section>
 
-      <!-- ==================== 4. YOU / PROFILE TAB ==================== -->
+      <!-- 4. YOU / PROFILE TAB -->
       <section id="view-you" class="hidden space-y-5">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-black">Profile</h2>
@@ -389,7 +383,7 @@
         </div>
       </section>
 
-      <!-- ==================== 5. FULL CRAZYGAMES-STYLE GAME DETAILS PAGE ==================== -->
+      <!-- 5. GAME DETAILS PAGE -->
       <section id="view-game-details" class="hidden -mx-3.5 -mt-4 pb-8">
         <div class="relative w-full">
           <div class="absolute top-3 inset-x-3 z-20 flex items-center justify-between">
@@ -766,14 +760,13 @@
     const ADMIN_EMAIL = "indromondol2@gmail.com";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyA9CPwUoVoI0Rm1Q3QCPT_EIdZL9ipySU",
-      authDomain: "ppppp-e230d.firebaseapp.com",
-      databaseURL: "https://ppppp-e230d.firebaseio.com",
-      projectId: "ppppp-e230d",
-      storageBucket: "ppppp-e230d.firebasestorage.app",
-      messagingSenderId: "649804315042",
-      appId: "1:649804315042:web:74db8b4bf3617be84c5afb",
-      measurementId: "G-3N93Y3WXL7"
+      apiKey: "AIzaSyBOyP0F0djLFD_rKllvKiLJP3ATk-WEIak",
+      authDomain: "indrogames-web.firebaseapp.com",
+      projectId: "indrogames-web",
+      storageBucket: "indrogames-web.firebasestorage.app",
+      messagingSenderId: "947379906211",
+      appId: "1:947379906211:web:9221d08748016337f63696",
+      measurementId: "G-JF8ND67YSZ"
     };
 
     const app = initializeApp(firebaseConfig);
