@@ -1,1 +1,261 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyGameZone - Play Free Online Games</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0c0d14;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    /* কাস্টম স্ক্রলবার */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0c0d14; }
+    ::-webkit-scrollbar-thumb { background: #26293d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #6842ff; }
+
+    .game-card:hover .play-overlay { opacity: 1; }
+    .game-card:hover img { transform: scale(1.06); }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- টপ নেভিগেশন বার -->
+  <header class="sticky top-0 z-40 bg-[#141622]/95 backdrop-blur border-b border-gray-800 px-4 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <button id="menuBtn" class="md:hidden text-gray-300 hover:text-white text-xl">
+        <i class="fas fa-bars"></i>
+      </button>
+      <a href="#" onclick="resetView()" class="flex items-center gap-2 text-xl font-extrabold tracking-wide text-white">
+        <span class="bg-[#6842ff] p-2 rounded-lg"><i class="fas fa-gamepad"></i></span>
+        <span>Game<span class="text-[#6842ff]">Hub</span></span>
+      </a>
+    </div>
+
+    <!-- সার্চ বার -->
+    <div class="flex-1 max-w-md relative">
+      <input type="text" id="searchInput" onkeyup="filterGames()" placeholder="গেম খুঁজুন (যেমন: Ludo, Chess)..." 
+        class="w-full bg-[#212436] text-sm text-white placeholder-gray-400 rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-[#6842ff]" />
+      <i class="fas fa-search absolute right-3.5 top-2.5 text-gray-400"></i>
+    </div>
+
+    <!-- ডানপাশের বাটন -->
+    <div class="hidden sm:flex items-center gap-3">
+      <span class="text-xs bg-[#212436] text-purple-400 px-3 py-1.5 rounded-full font-semibold">
+        <i class="fas fa-fire mr-1"></i> 100% Free
+      </span>
+    </div>
+  </header>
+
+  <div class="flex flex-1">
+    <!-- বামপাশের সাইডবার (CrazyGames স্টাইল) -->
+    <aside id="sidebar" class="hidden md:flex flex-col w-56 bg-[#141622] border-r border-gray-800 p-4 gap-2 shrink-0">
+      <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 px-2">ক্যাটাগরি</p>
+      <button onclick="filterCategory('all')" class="cat-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#6842ff] text-white font-medium text-sm transition">
+        <i class="fas fa-home w-5"></i> সব গেম (All)
+      </button>
+      <button onclick="filterCategory('board')" class="cat-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-[#212436] font-medium text-sm transition">
+        <i class="fas fa-chess-board w-5 text-emerald-400"></i> বোর্ড গেম (Board)
+      </button>
+      <button onclick="filterCategory('card')" class="cat-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-[#212436] font-medium text-sm transition">
+        <i class="fas fa-spade w-5 text-rose-400"></i> কার্ড গেম (Card)
+      </button>
+      <button onclick="filterCategory('puzzle')" class="cat-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-[#212436] font-medium text-sm transition">
+        <i class="fas fa-puzzle-piece w-5 text-amber-400"></i> পাজল (Puzzle)
+      </button>
+      <button onclick="filterCategory('multiplayer')" class="cat-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-[#212436] font-medium text-sm transition">
+        <i class="fas fa-users w-5 text-sky-400"></i> মাল্টিপ্লেয়ার
+      </button>
+    </aside>
+
+    <!-- মূল কন্টেন্ট এরিয়া -->
+    <main class="flex-1 p-4 md:p-6 overflow-y-auto">
+      
+      <!-- হিরো ব্যানার -->
+      <div class="bg-gradient-to-r from-[#6842ff] to-[#3b1d9e] rounded-2xl p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+        <div>
+          <span class="bg-black/30 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Featured</span>
+          <h1 class="text-2xl md:text-3xl font-bold mt-2">নিজের বানানো সেরা অনলাইন গেমগুলো খেলুন!</h1>
+          <p class="text-purple-100 text-sm mt-1">কোনো ডাউনলোড ছাড়াই সরাসরি ব্রাউজারে মোবাইল ও পিসিতে খেলুন।</p>
+        </div>
+        <button onclick="openGame('games/ludo.html', 'Ludo Master')" class="bg-white text-[#141622] hover:bg-gray-100 font-bold px-5 py-2.5 rounded-full text-sm shadow transition shrink-0">
+          <i class="fas fa-play mr-1"></i> এখনই খেলুন
+        </button>
+      </div>
+
+      <!-- গেম গ্রিড সেকশন -->
+      <div class="flex items-center justify-between mb-4">
+        <h2 id="sectionTitle" class="text-lg font-bold flex items-center gap-2">
+          <i class="fas fa-gamepad text-[#6842ff]"></i> জনপ্রিয় গেমসমূহ
+        </h2>
+        <span id="gameCount" class="text-xs text-gray-400"></span>
+      </div>
+
+      <!-- গেম কার্ড কন্টেইনার -->
+      <div id="gamesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <!-- জাভাস্ক্রিপ্ট দিয়ে অটোমেটিক কার্ড লোড হবে -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ইন-ব্রাউজার গেম প্লেয়ার (Modal) -->
+  <div id="playerModal" class="fixed inset-0 z-50 bg-[#0c0d14] hidden flex-col">
+    <!-- প্লেয়ার টপ বার -->
+    <div class="bg-[#141622] px-4 py-2.5 flex items-center justify-between border-b border-gray-800">
+      <div class="flex items-center gap-3">
+        <button onclick="closeGame()" class="bg-[#212436] hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">
+          <i class="fas fa-arrow-left mr-1"></i> ফিরে যান
+        </button>
+        <h3 id="activeGameTitle" class="font-bold text-base sm:text-lg truncate">Game Name</h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleFullScreen()" class="bg-[#212436] hover:bg-[#6842ff] text-white px-3 py-1.5 rounded-lg text-sm transition" title="Fullscreen">
+          <i class="fas fa-expand"></i> <span class="hidden sm:inline ml-1">ফুলস্ক্রিন</span>
+        </button>
+      </div>
+    </div>
+    <!-- গেম ফ্রেম -->
+    <div class="flex-1 w-full h-full bg-black relative">
+      <iframe id="gameFrame" src="" class="w-full h-full border-0" allow="fullscreen; autoplay"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // ১. আপনার গেমগুলোর তালিকা (এখানে নতুন গেম যুক্ত করবেন)
+    const gamesList = [
+      {
+        title: "Ludo Classic",
+        category: "board",
+        tag: "Multiplayer",
+        image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=500&q=80",
+        url: "games/ludo.html"
+      },
+      {
+        title: "Grand Chess",
+        category: "board",
+        tag: "Strategy",
+        image: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=500&q=80",
+        url: "games/chess.html"
+      },
+      {
+        title: "Call Break Pro",
+        category: "card",
+        tag: "Card Game",
+        image: "https://images.unsplash.com/photo-1541278107931-e006523892df?auto=format&fit=crop&w=500&q=80",
+        url: "games/callbreak.html"
+      },
+      {
+        title: "2048 Neon Puzzle",
+        category: "puzzle",
+        tag: "Brain",
+        image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=500&q=80",
+        url: "games/2048.html"
+      }
+    ];
+
+    let currentCategory = 'all';
+
+    // ২. গেম কার্ড রেন্ডার ফাংশন
+    function renderGames(games) {
+      const grid = document.getElementById('gamesGrid');
+      const count = document.getElementById('gameCount');
+      grid.innerHTML = '';
+      count.innerText = `${games.length}টি গেম`;
+
+      if (games.length === 0) {
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-400 py-10">কোনো গেম পাওয়া যায়নি।</p>`;
+        return;
+      }
+
+      games.forEach(game => {
+        const card = `
+          <div onclick="openGame('${game.url}', '${game.title}')" 
+               class="game-card bg-[#181a28] rounded-xl overflow-hidden cursor-pointer border border-gray-800/80 hover:border-[#6842ff] transition shadow-md flex flex-col">
+            <div class="relative aspect-video overflow-hidden bg-gray-900">
+              <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover transition duration-300" />
+              <div class="play-overlay opacity-0 transition duration-200 absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span class="bg-[#6842ff] text-white w-11 h-11 rounded-full flex items-center justify-center shadow-lg">
+                  <i class="fas fa-play ml-0.5"></i>
+                </span>
+              </div>
+              <span class="absolute top-2 left-2 bg-black/70 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-purple-300">
+                ${game.tag}
+              </span>
+            </div>
+            <div class="p-3">
+              <h3 class="font-bold text-sm text-white truncate">${game.title}</h3>
+              <p class="text-xs text-gray-400 capitalize mt-0.5">${game.category}</p>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += card;
+      });
+    }
+
+    // ৩. ক্যাটাগরি ও সার্চ ফিল্টার
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-[#6842ff]', 'text-white');
+        btn.classList.add('text-gray-300');
+      });
+      event.currentTarget.classList.add('bg-[#6842ff]', 'text-white');
+      event.currentTarget.classList.remove('text-gray-300');
+      filterGames();
+    }
+
+    function filterGames() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = gamesList.filter(g => {
+        const matchesCat = currentCategory === 'all' || g.category === currentCategory || g.tag.toLowerCase() === currentCategory;
+        const matchesSearch = g.title.toLowerCase().includes(query);
+        return matchesCat && matchesSearch;
+      });
+      renderGames(filtered);
+    }
+
+    function resetView() {
+      document.getElementById('searchInput').value = '';
+      currentCategory = 'all';
+      renderGames(gamesList);
+    }
+
+    // ৪. গেম চালু ও বন্ধ করার ফাংশন
+    function openGame(url, title) {
+      document.getElementById('activeGameTitle').innerText = title;
+      document.getElementById('gameFrame').src = url;
+      document.getElementById('playerModal').classList.remove('hidden');
+      document.getElementById('playerModal').classList.add('flex');
+    }
+
+    function closeGame() {
+      document.getElementById('gameFrame').src = '';
+      document.getElementById('playerModal').classList.add('hidden');
+      document.getElementById('playerModal').classList.remove('flex');
+    }
+
+    function toggleFullScreen() {
+      const iframe = document.getElementById('gameFrame');
+      if (iframe.requestFullscreen) iframe.requestFullscreen();
+      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+    }
+
+    // মোবাইল মেনু টগল
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('hidden');
+      sidebar.classList.toggle('fixed');
+      sidebar.classList.toggle('z-30');
+      sidebar.classList.toggle('h-full');
+    });
+
+    // পেজ লোড হলে সব গেম দেখাবে
+    renderGames(gamesList);
+  </script>
+</body>
+</html>
 
