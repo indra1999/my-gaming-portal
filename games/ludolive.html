@@ -6,6 +6,8 @@
   <title>LudoLive - Play Ludo Online</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-deep: #0b0d17;
@@ -56,6 +58,134 @@
     .active-pod-glow {
       animation: pulseRing 1.6s ease-in-out infinite;
     }
+
+    /* ================= CUSTOMIZE PAGE ================= */
+    #customizeView {
+      position: fixed; inset: 0; z-index: 50; display: none;
+      overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(120% 55% at 100% 8%, rgba(190,150,70,.34) 0%, rgba(190,150,70,0) 60%),
+        radial-gradient(90% 50% at 0% 0%, rgba(40,70,170,.35) 0%, rgba(40,70,170,0) 65%),
+        linear-gradient(180deg, #0f1430 0%, #0a0d1d 55%, #090b16 100%);
+    }
+    #customizeView.open { display: block; }
+    #customizeView .cz-dots { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #customizeView .cz-dots i {
+      position: absolute; border-radius: 50%; background: rgba(245,185,66,.55);
+      animation: czDrift linear infinite;
+    }
+    @keyframes czDrift {
+      0% { transform: translateY(0) translateX(0); opacity: 0; }
+      15% { opacity: .9; }
+      85% { opacity: .6; }
+      100% { transform: translateY(-120px) translateX(14px); opacity: 0; }
+    }
+    .cz-wrap { position: relative; max-width: 520px; margin: 0 auto; padding: 14px 16px 40px; }
+    .cz-head { display: flex; align-items: center; gap: 18px; padding: 10px 6px 16px; }
+    .cz-back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #a8afc8; font-size: 18px; background: none; border: 0; cursor: pointer; }
+    .cz-title { font-size: 23px; font-weight: 800; color: #f4f6ff; letter-spacing: -.2px; }
+
+    .cz-preview {
+      position: relative; border-radius: 24px; padding: 18px 16px 18px; text-align: center;
+      background: linear-gradient(180deg, rgba(10,12,26,.75), rgba(8,9,20,.9));
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .cz-preview::before {
+      content: ""; position: absolute; inset: 0; border-radius: 24px; pointer-events: none;
+      background: radial-gradient(70% 60% at 50% 38%, var(--cz-glow, rgba(245,185,66,.18)), transparent 70%);
+    }
+    .cz-expand {
+      position: absolute; top: 14px; right: 14px; width: 42px; height: 42px; border-radius: 14px;
+      background: rgba(8,10,22,.85); border: 1px solid rgba(255,255,255,.07); color: #eef0ff; font-size: 16px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3;
+    }
+    .cz-stage { position: relative; height: 150px; display: flex; align-items: center; justify-content: center; cursor: pointer; perspective: 600px; z-index: 2; }
+    .cz-ring {
+      position: absolute; width: 104px; height: 104px; border-radius: 26px; pointer-events: none;
+      border: 2px solid var(--cz-ring, #e8b84a);
+      box-shadow: 0 0 26px var(--cz-glow, rgba(245,185,66,.5)), inset 0 0 18px var(--cz-glow, rgba(245,185,66,.25));
+      opacity: .9;
+    }
+    .cz-float { animation: czFloat 3.2s ease-in-out infinite; transform-style: preserve-3d; }
+    @keyframes czFloat { 0%,100% { transform: translateY(-3px); } 50% { transform: translateY(4px); } }
+    .cz-tilt { transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(30deg); }
+    .cz-cube {
+      position: relative; width: 78px; height: 78px; transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(.2,.8,.2,1);
+    }
+    .cz-face {
+      position: absolute; inset: 0; border-radius: 15px; display: grid;
+      grid-template: repeat(3, 1fr) / repeat(3, 1fr); place-items: center; padding: 12px;
+      border: 1.5px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 0 14px rgba(0,0,0,.35), inset 0 2px 3px rgba(255,255,255,.12);
+      backface-visibility: hidden;
+    }
+    .cz-face i { display: block; width: 13px; height: 13px; border-radius: 50%; }
+    .cz-face i.pip { box-shadow: 0 1px 2px rgba(0,0,0,.6), inset 0 -1px 2px rgba(0,0,0,.35); }
+    .cz-f1 { transform: translateZ(39px); }
+    .cz-f6 { transform: rotateY(180deg) translateZ(39px); }
+    .cz-f2 { transform: rotateY(90deg) translateZ(39px); }
+    .cz-f5 { transform: rotateY(-90deg) translateZ(39px); }
+    .cz-f3 { transform: rotateX(90deg) translateZ(39px); }
+    .cz-f4 { transform: rotateX(-90deg) translateZ(39px); }
+    .cz-name { position: relative; z-index: 2; margin-top: 6px; font-size: 14px; font-weight: 700; color: #f1f3ff; }
+    .cz-sub { position: relative; z-index: 2; margin: 6px auto 0; max-width: 270px; font-size: 11.5px; line-height: 1.45; color: #7f86a3; }
+
+    .cz-card {
+      margin-top: 16px; border-radius: 24px; padding: 18px 16px 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.09); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 8px 30px rgba(0,0,0,.25);
+    }
+    .cz-card h3 { margin: 0; font-size: 16px; font-weight: 700; color: #f4f6ff; }
+    .cz-card p { margin: 3px 0 14px; font-size: 12px; line-height: 1.4; color: #8c93ae; }
+    .cz-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 12px; }
+    .cz-item { background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #8c93ae; font: inherit; }
+    .cz-item span { font-size: 12px; font-weight: 600; }
+    .cz-item.sel span { color: #e8b84a; }
+    .cz-dice-tile {
+      width: 58px; height: 58px; border-radius: 17px; display: grid; grid-template: repeat(3,1fr)/repeat(3,1fr);
+      place-items: center; padding: 11px; border: 2px solid transparent;
+      box-shadow: 0 6px 14px rgba(0,0,0,.35), inset 0 1px 2px rgba(255,255,255,.15);
+      transition: transform .15s ease;
+    }
+    .cz-item:active .cz-dice-tile, .cz-item:active .cz-theme-tile { transform: scale(.94); }
+    .cz-dice-tile i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+    .cz-item.sel .cz-dice-tile { outline: 2px solid #e8b84a; outline-offset: 2px; border-color: transparent; }
+    .cz-theme-tile {
+      width: 100%; height: 56px; border-radius: 17px; border: 1px solid rgba(255,255,255,.07);
+      box-shadow: 0 6px 14px rgba(0,0,0,.35), inset 0 1px 2px rgba(255,255,255,.06);
+      transition: transform .15s ease;
+    }
+    .cz-item.sel .cz-theme-tile { outline: 2px solid #e8b84a; outline-offset: 2px; }
+    .cz-foot { margin: 16px 8px 0; text-align: center; font-size: 12px; line-height: 1.5; color: #7f86a3; }
+
+    /* Full preview overlay */
+    #czPreview {
+      position: fixed; inset: 0; z-index: 60; display: none; flex-direction: column;
+      font-family: "Manrope", -apple-system, sans-serif; padding: 12px 12px 22px;
+    }
+    #czPreview.open { display: flex; }
+    .cz-pv-top { display: flex; align-items: center; justify-content: space-between; }
+    .cz-pill { padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; color: #e6e9fb; background: rgba(18,21,38,.9); border: 1px solid rgba(255,255,255,.1); }
+    .cz-x { width: 44px; height: 44px; border-radius: 14px; background: rgba(18,21,38,.9); border: 1px solid rgba(255,255,255,.1); color: #fff; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .cz-pv-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; max-width: 460px; width: 100%; margin: 0 auto; }
+    .cz-pods { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .cz-pod {
+      position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 10px 12px; border-radius: 18px; background: rgba(18,21,38,.92);
+      border: 1px solid rgba(255,255,255,.08); overflow: hidden; min-height: 62px;
+    }
+    .cz-pod::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 3px; background: var(--pc); opacity: .8; }
+    .cz-pod .av { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--pc); background: rgba(255,255,255,.06); }
+    .cz-pod .nm { font-size: 14px; font-weight: 700; color: #fff; }
+    .cz-pod .dots { display: flex; gap: 4px; margin-top: 6px; }
+    .cz-pod .dots i { width: 6px; height: 6px; border-radius: 50%; background: #3a4058; }
+    .cz-pod.me { border: 2px solid #e8b84a; box-shadow: 0 0 22px rgba(245,185,66,.35); }
+    .cz-chev { text-align: center; color: #e8b84a; font-size: 14px; margin: -6px 0 -8px; }
+    .cz-board { width: 100%; aspect-ratio: 1; display: block; filter: drop-shadow(0 10px 24px rgba(0,0,0,.5)); }
   </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -465,37 +595,56 @@
     </div>
   </div>
 
-  <!-- ==================== 5. CUSTOMIZE MODAL ==================== -->
-  <div id="customizeModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-[#131626] border border-white/10 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-black">Customize Board & Dice</h3>
-        <button onclick="closeCustomizeModal()" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-300">
-          <i class="fas fa-xmark"></i>
-        </button>
+  <!-- ==================== 5. CUSTOMIZE PAGE ==================== -->
+  <div id="customizeView">
+    <div class="cz-dots" id="czDots"></div>
+    <div class="cz-wrap">
+      <div class="cz-head">
+        <button class="cz-back" onclick="closeCustomizeModal()" aria-label="Back"><i class="fas fa-arrow-left"></i></button>
+        <div class="cz-title">Customize</div>
       </div>
 
-      <div class="space-y-2">
-        <p class="text-xs font-bold text-gray-400 uppercase">Board Theme</p>
-        <div class="grid grid-cols-2 gap-2 text-xs font-extrabold">
-          <button onclick="setBoardTheme('classic')" id="btheme-classic" class="p-3 rounded-xl bg-[#1c2036] border-2 border-[#f5b942] text-left">Royal Dark</button>
-          <button onclick="setBoardTheme('emerald')" id="btheme-emerald" class="p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left">Emerald Felt</button>
-          <button onclick="setBoardTheme('neon')" id="btheme-neon" class="p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left">Cyber Neon</button>
-          <button onclick="setBoardTheme('wood')" id="btheme-wood" class="p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left">Warm Wood</button>
+      <div class="cz-preview" id="czPreviewCard">
+        <button class="cz-expand" onclick="openFullPreview()" aria-label="Full preview"><i class="fas fa-expand"></i></button>
+        <div class="cz-stage" onclick="rollPreviewDice()">
+          <div class="cz-ring" id="czRing"></div>
+          <div class="cz-float">
+            <div class="cz-tilt">
+              <div class="cz-cube" id="czCube"></div>
+            </div>
+          </div>
         </div>
+        <div class="cz-name" id="czName">Shadow dice · Classic theme</div>
+        <div class="cz-sub">Tap the dice to roll — this dice and theme will be used while you play</div>
       </div>
 
-      <div class="space-y-2">
-        <p class="text-xs font-bold text-gray-400 uppercase">Dice Skin</p>
-        <div class="grid grid-cols-2 gap-2 text-xs font-extrabold">
-          <button onclick="setDiceSkin('ivory')" id="dskin-ivory" class="p-3 rounded-xl bg-[#1c2036] border-2 border-[#f5b942] text-left">Classic Ivory</button>
-          <button onclick="setDiceSkin('gold')" id="dskin-gold" class="p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left">Royal Gold</button>
-          <button onclick="setDiceSkin('cyber')" id="dskin-cyber" class="p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left">Neon Cyber</button>
-          <button onclick="setDiceSkin('ruby')" id="dskin-ruby" class="p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left">Ruby Crystal</button>
-        </div>
+      <div class="cz-card">
+        <h3>🎲 Dice</h3>
+        <p>Choose your dice — this never changes the background</p>
+        <div class="cz-grid" id="czDiceGrid"></div>
       </div>
 
-      <button onclick="closeCustomizeModal()" class="w-full py-3 rounded-xl bg-[#f5b942] text-black font-black text-sm">Done</button>
+      <div class="cz-card">
+        <h3>🎨 Theme</h3>
+        <p>Choose your game background — this never changes the dice</p>
+        <div class="cz-grid" id="czThemeGrid"></div>
+      </div>
+
+      <div class="cz-foot">Cosmetics are yours alone — other players keep their own look, and games play exactly the same.</div>
+    </div>
+  </div>
+
+  <!-- Full preview overlay -->
+  <div id="czPreview">
+    <div class="cz-pv-top">
+      <div class="cz-pill">Preview · not a real match</div>
+      <button class="cz-x" onclick="closeFullPreview()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="cz-pv-body">
+      <div class="cz-pods" id="czPvTop"></div>
+      <div id="czPvBoard"></div>
+      <div class="cz-chev"><i class="fas fa-chevron-up"></i></div>
+      <div class="cz-pods" id="czPvBottom"></div>
     </div>
   </div>
 
@@ -602,29 +751,40 @@
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Noah"
     ];
 
+    const lsGet = (k, d) => { try { return localStorage.getItem(k) || d; } catch (e) { return d; } };
+    const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+
+    // Themes = game background (never changes the dice)
     const BOARD_THEMES = {
-      classic: { cellBg: "#f8fafc", cellStroke: "#cbd5e1", centerBg: "#1e293b", outerRim: "#475569" },
-      emerald: { cellBg: "#ecfdf5", cellStroke: "#a7f3d0", centerBg: "#064e3b", outerRim: "#10b981" },
-      neon:    { cellBg: "#1e2238", cellStroke: "#334155", centerBg: "#0f172a", outerRim: "#6366f1" },
-      wood:    { cellBg: "#fef3c7", cellStroke: "#d97706", centerBg: "#451a03", outerRim: "#b45309" }
+      classic: { name: "Classic", bgA: "#161a36", bgB: "#0a0c18", cellBg: "#f8fafc", cellStroke: "#cbd5e1", centerBg: "#1e293b", outerRim: "#475569" },
+      neon:    { name: "Neon",    bgA: "#0d1233", bgB: "#04061a", cellBg: "#1e2238", cellStroke: "#334155", centerBg: "#0f172a", outerRim: "#6366f1" },
+      royal:   { name: "Royal",   bgA: "#33230c", bgB: "#120b03", cellBg: "#fef3c7", cellStroke: "#d97706", centerBg: "#451a03", outerRim: "#b45309" },
+      ice:     { name: "Ice",     bgA: "#0c2a40", bgB: "#06131e", cellBg: "#eff8ff", cellStroke: "#bcd9ee", centerBg: "#0c2a42", outerRim: "#38bdf8" },
+      shadow:  { name: "Shadow",  bgA: "#1d1d21", bgB: "#050506", cellBg: "#2a2a30", cellStroke: "#3f3f46", centerBg: "#0a0a0c", outerRim: "#f5b942" },
+      galaxy:  { name: "Galaxy",  bgA: "#2f1a70", bgB: "#0d0723", cellBg: "#ede9fe", cellStroke: "#c4b5fd", centerBg: "#1e1b4b", outerRim: "#8b5cf6" },
+      fire:    { name: "Fire",    bgA: "#471808", bgB: "#150602", cellBg: "#fff1e6", cellStroke: "#fdba74", centerBg: "#431407", outerRim: "#f97316" }
     };
 
+    // Dice skins (never change the background)
     const DICE_SKINS = {
-      ivory: { bg: "#f5e6c8", pip: "#1e1b18", border: "#d6c39c" },
-      gold:  { bg: "#f5b942", pip: "#1a1200", border: "#fef08a" },
-      cyber: { bg: "#1e1b4b", pip: "#38bdf8", border: "#818cf8" },
-      ruby:  { bg: "#be123c", pip: "#ffffff", border: "#fda4af" }
+      classic: { name: "Classic", f: ["#fffdf7", "#e6d9bd"], edge: "#cdbd97", pips: ["#d9a21b", "#7a4a06"], ring: "#e8c46a", glow: "rgba(232,196,106,.45)" },
+      neon:    { name: "Neon",    f: ["#121a2c", "#0a1020"], edge: "#1d3b4d", pips: ["#6ff7f2", "#0e8fb5"], ring: "#22d3ee", glow: "rgba(34,211,238,.45)" },
+      royal:   { name: "Royal",   f: ["#f7d874", "#c8922a"], edge: "#f3d27a", pips: ["#6b3f0a", "#2a1805"], ring: "#f5b942", glow: "rgba(245,185,66,.5)" },
+      ice:     { name: "Ice",     f: ["#f3faff", "#a9cfee"], edge: "#cfe6f7", pips: ["#2f7fc1", "#123e6b"], ring: "#93c5fd", glow: "rgba(147,197,253,.45)" },
+      shadow:  { name: "Shadow",  f: ["#1c1c24", "#0b0b10"], edge: "#2a2a33", pips: ["#e0a21e", "#7a5410"], ring: "#e8b84a", glow: "rgba(245,185,66,.5)" },
+      galaxy:  { name: "Galaxy",  f: ["#4f33a0", "#22124f"], edge: "#6d4fd0", pips: ["#eee4ff", "#8b5cf6"], ring: "#a78bfa", glow: "rgba(167,139,250,.5)" },
+      fire:    { name: "Fire",    f: ["#7d2c10", "#3a0f05"], edge: "#a8431d", pips: ["#ffd76a", "#f97316"], ring: "#fb923c", glow: "rgba(251,146,60,.5)" }
     };
 
-    // =========================================================================
+        // =========================================================================
     // STATE VARIABLES
     // =========================================================================
     let selectedMode = "local"; // 'ai' | 'local' | 'online'
     let aiDifficulty = "medium";
     let setupPlayerCount = 4;
     let setupConfigs = [];
-    let boardThemeKey = "classic";
-    let diceSkinKey = "ivory";
+    let boardThemeKey = BOARD_THEMES[lsGet("ludolive_theme", "classic")] ? lsGet("ludolive_theme", "classic") : "classic";
+    let diceSkinKey = DICE_SKINS[lsGet("ludolive_dice", "classic")] ? lsGet("ludolive_dice", "classic") : "classic";
     let soundEnabled = true;
 
     // Online Room State
@@ -947,40 +1107,225 @@
     // =========================================================================
     // CUSTOMIZE & SETTINGS
     // =========================================================================
+    // ---------- helpers ----------
+    const PIP_POS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+    function czPipGrid(n, skin) {
+      let h = "";
+      for (let i = 1; i <= 9; i++) {
+        h += PIP_POS[n].includes(i)
+          ? `<i class="pip" style="background:radial-gradient(circle at 35% 30%, ${skin.pips[0]}, ${skin.pips[1]} 85%)"></i>`
+          : "<i></i>";
+      }
+      return h;
+    }
+    function czIconPips(skin) {
+      // 5-pip icon with alternating two-tone pips (like the video)
+      const cols = [skin.pips[0], skin.pips[1], skin.pips[0], skin.pips[1], skin.pips[0]];
+      const order = [1, 3, 5, 7, 9];
+      let h = "", k = 0;
+      for (let i = 1; i <= 9; i++) {
+        if (order.includes(i)) { h += `<i style="background:${cols[k]}"></i>`; k++; }
+        else h += "<i></i>";
+      }
+      return h;
+    }
+
+    let czAccX = -20, czAccY = 0, czCurrentVal = 6;
+    const CZ_FACE_ANGLE = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+
+    function czBuildCube() {
+      const skin = DICE_SKINS[diceSkinKey];
+      const cube = document.getElementById("czCube");
+      let h = "";
+      for (let n = 1; n <= 6; n++) {
+        h += `<div class="cz-face cz-f${n}" style="background:linear-gradient(145deg, ${skin.f[0]}, ${skin.f[1]}); border-color:${skin.edge}">${czPipGrid(n, skin)}</div>`;
+      }
+      cube.innerHTML = h;
+      cube.style.transition = "none";
+      const [ax, ay] = CZ_FACE_ANGLE[czCurrentVal];
+      czAccX = ax; czAccY = ay;
+      cube.style.transform = `rotateX(${czAccX}deg) rotateY(${czAccY}deg)`;
+      void cube.offsetWidth;
+      cube.style.transition = "";
+    }
+
+    function czNext(cur, target) {
+      return target + 360 * Math.ceil((cur + 360 - target) / 360);
+    }
+
+    window.rollPreviewDice = function () {
+      let v;
+      do { v = 1 + Math.floor(Math.random() * 6); } while (v === czCurrentVal);
+      czCurrentVal = v;
+      const [tx, ty] = CZ_FACE_ANGLE[v];
+      czAccX = czNext(czAccX, tx);
+      czAccY = czNext(czAccY, ty);
+      document.getElementById("czCube").style.transform = `rotateX(${czAccX}deg) rotateY(${czAccY}deg)`;
+      sfxDice();
+    };
+
+    function czUpdateHeader() {
+      const skin = DICE_SKINS[diceSkinKey], th = BOARD_THEMES[boardThemeKey];
+      document.getElementById("czName").textContent = `${skin.name} dice · ${th.name} theme`;
+      const card = document.getElementById("czPreviewCard");
+      card.style.setProperty("--cz-ring", skin.ring);
+      card.style.setProperty("--cz-glow", skin.glow);
+      document.getElementById("czRing").style.borderColor = skin.ring;
+    }
+
+    function czRenderGrids() {
+      document.getElementById("czDiceGrid").innerHTML = Object.keys(DICE_SKINS).map(k => {
+        const s = DICE_SKINS[k];
+        return `<button class="cz-item ${k === diceSkinKey ? "sel" : ""}" onclick="setDiceSkin('${k}')">
+          <div class="cz-dice-tile" style="background:linear-gradient(145deg, ${s.f[0]}, ${s.f[1]})">${czIconPips(s)}</div>
+          <span>${s.name}</span></button>`;
+      }).join("");
+      document.getElementById("czThemeGrid").innerHTML = Object.keys(BOARD_THEMES).map(k => {
+        const t = BOARD_THEMES[k];
+        return `<button class="cz-item ${k === boardThemeKey ? "sel" : ""}" onclick="setBoardTheme('${k}')">
+          <div class="cz-theme-tile" style="background:linear-gradient(160deg, ${t.bgA}, ${t.bgB})"></div>
+          <span>${t.name}</span></button>`;
+      }).join("");
+    }
+
+    function applyThemeBg() {
+      const t = BOARD_THEMES[boardThemeKey];
+      const gv = document.getElementById("gameView");
+      if (gv) gv.style.background = `radial-gradient(circle at 50% 0%, ${t.bgA} 0%, ${t.bgB} 75%)`;
+      const pv = document.getElementById("czPreview");
+      if (pv) pv.style.background = `radial-gradient(circle at 50% 0%, ${t.bgA} 0%, ${t.bgB} 80%)`;
+    }
+
+    // ---------- open / close ----------
     window.openCustomizeModal = function () {
-      const m = document.getElementById("customizeModal");
-      m.classList.remove("hidden");
-      m.classList.add("flex");
+      document.getElementById("customizeView").classList.add("open");
+      document.getElementById("customizeView").scrollTop = 0;
+      czBuildCube(); czUpdateHeader(); czRenderGrids();
     };
     window.closeCustomizeModal = function () {
-      const m = document.getElementById("customizeModal");
-      m.classList.add("hidden");
-      m.classList.remove("flex");
+      document.getElementById("customizeView").classList.remove("open");
+      closeFullPreview();
     };
+
     window.setBoardTheme = function (key) {
+      if (!BOARD_THEMES[key]) return;
       boardThemeKey = key;
-      ["classic", "emerald", "neon", "wood"].forEach(k => {
-        document.getElementById(`btheme-${k}`).className = k === key
-          ? "p-3 rounded-xl bg-[#1c2036] border-2 border-[#f5b942] text-left"
-          : "p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left";
-      });
+      lsSet("ludolive_theme", key);
+      applyThemeBg(); czUpdateHeader(); czRenderGrids();
       if (game) drawBoard();
     };
     window.cycleBoardTheme = function () {
       const keys = Object.keys(BOARD_THEMES);
       const next = keys[(keys.indexOf(boardThemeKey) + 1) % keys.length];
       setBoardTheme(next);
-      showToast("Theme: " + next.toUpperCase());
+      showToast("Theme: " + BOARD_THEMES[next].name.toUpperCase());
     };
     window.setDiceSkin = function (key) {
+      if (!DICE_SKINS[key]) return;
       diceSkinKey = key;
-      ["ivory", "gold", "cyber", "ruby"].forEach(k => {
-        document.getElementById(`dskin-${k}`).className = k === key
-          ? "p-3 rounded-xl bg-[#1c2036] border-2 border-[#f5b942] text-left"
-          : "p-3 rounded-xl bg-[#1c2036] border border-white/10 text-left";
-      });
+      lsSet("ludolive_dice", key);
+      czBuildCube(); czUpdateHeader(); czRenderGrids();
       if (game) renderPlayerPods();
     };
+
+    // ---------- full preview (fake match) ----------
+    function czBuildBoardSVG() {
+      const c = 40;
+      const cream = "#fbf5e6", line = "#ddd2b5";
+      const col = {
+        red:    { a: "#e0525a", b: "#8f1f27", cell: "#ef6e74" },
+        green:  { a: "#34ad66", b: "#14693a", cell: "#34ad66" },
+        blue:   { a: "#4a78e6", b: "#1f3f9b", cell: "#4a78e6" },
+        yellow: { a: "#f4b83a", b: "#c07a10", cell: "#f4b83a" }
+      };
+      let s = `<svg class="cz-board" viewBox="-14 -14 628 628" xmlns="http://www.w3.org/2000/svg"><defs>
+        <linearGradient id="czGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7dc8a"/><stop offset=".5" stop-color="#c8922a"/><stop offset="1" stop-color="#f3d27a"/></linearGradient>`;
+      Object.keys(col).forEach(k => {
+        s += `<linearGradient id="czq-${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${col[k].a}"/><stop offset="1" stop-color="${col[k].b}"/></linearGradient>
+              <radialGradient id="czt-${k}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="${col[k].a}"/><stop offset="1" stop-color="${col[k].b}"/></radialGradient>`;
+      });
+      s += `</defs>
+        <rect x="-10" y="-10" width="620" height="620" rx="16" fill="#1a1408" stroke="url(#czGold)" stroke-width="5"/>
+        <rect x="-3" y="-3" width="606" height="606" rx="10" fill="none" stroke="url(#czGold)" stroke-width="1.5" opacity=".8"/>`;
+      [[-10,-10],[610,-10],[-10,610],[610,610]].forEach(p => { s += `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#e8b84a"/>`; });
+
+      const inQuad = (r, q) => (r < 6 || r > 8) && (q < 6 || q > 8);
+      for (let r = 0; r < 15; r++) for (let q = 0; q < 15; q++) {
+        if (inQuad(r, q)) continue;
+        if (r >= 6 && r <= 8 && q >= 6 && q <= 8) continue;
+        s += `<rect x="${q*c}" y="${r*c}" width="${c}" height="${c}" fill="${cream}" stroke="${line}" stroke-width="1"/>`;
+      }
+      const paint = (r, q, fill) => { s += `<rect x="${q*c}" y="${r*c}" width="${c}" height="${c}" fill="${fill}" stroke="${line}" stroke-width="1"/>`; };
+      for (let r = 1; r <= 5; r++) paint(r, 7, col.green.cell);
+      for (let q = 1; q <= 5; q++) paint(7, q, col.red.cell);
+      for (let q = 9; q <= 13; q++) paint(7, q, col.yellow.cell);
+      for (let r = 9; r <= 13; r++) paint(r, 7, col.blue.cell);
+      paint(1, 8, col.green.cell); paint(6, 1, col.red.cell); paint(8, 13, col.yellow.cell); paint(13, 6, col.blue.cell);
+
+      const star = (r, q, fill, size) => { s += `<text x="${q*c + c/2}" y="${r*c + c/2 + 1}" font-size="${size || 22}" text-anchor="middle" dominant-baseline="central" fill="${fill}">★</text>`; };
+      star(1, 8, "#e9fff1"); star(6, 1, "#fff0f0"); star(8, 13, "#fffbe8"); star(13, 6, "#eef3ff");
+      star(2, 6, "#d1a63c"); star(8, 2, "#d1a63c"); star(6, 12, "#d1a63c"); star(12, 8, "#d1a63c");
+
+      // quadrants
+      const quad = (r0, q0, k) => {
+        s += `<rect x="${q0*c}" y="${r0*c}" width="${6*c}" height="${6*c}" fill="url(#czq-${k})" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+              <rect x="${q0*c + 8}" y="${r0*c + 8}" width="${6*c - 16}" height="${6*c - 16}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+              <rect x="${(q0+1)*c}" y="${(r0+1)*c}" width="${4*c}" height="${4*c}" rx="12" fill="#f6efdd" stroke="rgba(0,0,0,.18)" stroke-width="2"/>`;
+        [[1.9, 1.9], [3.1, 1.9], [1.9, 3.1], [3.1, 3.1]].forEach(p => {
+          const cx = (q0 + p[0] + .0) * c + 0, cy = (r0 + p[1] + .0) * c + 0;
+          s += `<circle cx="${cx}" cy="${cy}" r="15" fill="url(#czt-${k})" stroke="rgba(0,0,0,.3)" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="7" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>`;
+        });
+      };
+      quad(0, 0, "red"); quad(0, 9, "green"); quad(9, 0, "blue"); quad(9, 9, "yellow");
+
+      // center
+      const P = (x, y) => `${x*c},${y*c}`;
+      s += `<polygon points="${P(6,6)} ${P(9,6)} ${P(7.5,7.5)}" fill="${col.green.a}"/>
+            <polygon points="${P(6,6)} ${P(6,9)} ${P(7.5,7.5)}" fill="${col.red.a}"/>
+            <polygon points="${P(9,6)} ${P(9,9)} ${P(7.5,7.5)}" fill="#e39a22"/>
+            <polygon points="${P(6,9)} ${P(9,9)} ${P(7.5,7.5)}" fill="${col.blue.a}"/>
+            <circle cx="${7.5*c}" cy="${7.5*c}" r="13" fill="#fbf5e6" stroke="url(#czGold)" stroke-width="3"/>
+            <text x="${7.5*c}" y="${7.5*c + 1}" font-size="16" text-anchor="middle" dominant-baseline="central" fill="#c8922a">★</text>`;
+
+      // sample tokens on the track
+      const tok = (r, q, k) => { s += `<circle cx="${q*c + c/2}" cy="${r*c + c/2}" r="14" fill="url(#czt-${k})" stroke="rgba(0,0,0,.35)" stroke-width="2"/>`; };
+      tok(2, 8, "red"); tok(4, 6, "red"); tok(4, 8, "green"); tok(8, 1, "blue"); tok(8, 10, "yellow"); tok(13, 7, "yellow");
+      s += `</svg>`;
+      return s;
+    }
+
+    function czPod(name, hex, seed, isMe) {
+      const dice = isMe ? `<div style="width:46px;height:46px;flex-shrink:0">${renderDiceSVG(6).replace('class="w-11 h-11 drop-shadow-lg"', 'style="width:100%;height:100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))"')}</div>` : "";
+      return `<div class="cz-pod ${isMe ? "me" : ""}" style="--pc:${hex}">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0">
+          <img class="av" src="https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}" alt="" />
+          <div><div class="nm">${name}</div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+        </div>${dice}</div>`;
+    }
+
+    window.openFullPreview = function () {
+      applyThemeBg();
+      document.getElementById("czPvBoard").innerHTML = czBuildBoardSVG();
+      document.getElementById("czPvTop").innerHTML = czPod("Aarav", "#ef4444", "Aarav") + czPod("Meera", "#10b981", "Meera");
+      document.getElementById("czPvBottom").innerHTML = czPod("Kabir", "#3b82f6", "Kabir") + czPod("You", "#f59e0b", "Felix", true);
+      document.getElementById("czPreview").classList.add("open");
+    };
+    window.closeFullPreview = function () {
+      document.getElementById("czPreview").classList.remove("open");
+    };
+
+    // floating particles + initial state
+    (function czInit() {
+      const box = document.getElementById("czDots");
+      let h = "";
+      for (let i = 0; i < 16; i++) {
+        const sz = 2 + Math.random() * 2.5;
+        h += `<i style="left:${Math.random()*100}%;top:${10 + Math.random()*88}%;width:${sz}px;height:${sz}px;animation-duration:${6 + Math.random()*8}s;animation-delay:${-Math.random()*10}s"></i>`;
+      }
+      box.innerHTML = h;
+      applyThemeBg();
+    })();
+
     window.toggleSound = function () {
       soundEnabled = !soundEnabled;
       const icon = soundEnabled ? '<i class="fas fa-volume-high text-xs"></i>' : '<i class="fas fa-volume-xmark text-xs text-rose-400"></i>';
@@ -1679,8 +2024,10 @@
     // =========================================================================
     // RENDER PLAYER PODS & 3D DICE (Matches Screenshot 00:36 - 00:50)
     // =========================================================================
+    let diceGradSeq = 0;
     function renderDiceSVG(val) {
       const skin = DICE_SKINS[diceSkinKey];
+      const gid = "dg" + (++diceGradSeq);
       const pipCoords = {
         1: [[50, 50]],
         2: [[28, 28], [72, 72]],
@@ -1690,12 +2037,16 @@
         6: [[28, 24], [72, 24], [28, 50], [72, 50], [28, 76], [72, 76]]
       };
       const pips = (pipCoords[val] || pipCoords[5])
-        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9.5" fill="${skin.pip}" />`)
+        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9.5" fill="url(#${gid}p)" />`)
         .join("");
 
       return `
         <svg viewBox="0 0 100 100" class="w-11 h-11 drop-shadow-lg">
-          <rect x="4" y="4" width="92" height="92" rx="22" fill="${skin.bg}" stroke="${skin.border}" stroke-width="4" />
+          <defs>
+            <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${skin.f[0]}"/><stop offset="1" stop-color="${skin.f[1]}"/></linearGradient>
+            <radialGradient id="${gid}p" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="${skin.pips[0]}"/><stop offset="1" stop-color="${skin.pips[1]}"/></radialGradient>
+          </defs>
+          <rect x="4" y="4" width="92" height="92" rx="22" fill="url(#${gid})" stroke="${skin.ring}" stroke-width="4" />
           ${pips}
         </svg>
       `;
