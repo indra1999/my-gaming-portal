@@ -188,6 +188,7 @@ let boardGeom = null;
 let turnInterval = null;
 let isPaused = false;
 let gpCubeRotX = -16, gpCubeRotY = 22;
+let boardEffects = [];
 
 // =========================================================================
 // APPEARANCE THEME & PROFILE SYNC
@@ -260,7 +261,7 @@ function sfxHome() {
 }
 
 // =========================================================================
-// LEAVE GAME MODAL & FULLSCREEN
+// LEAVE GAME, PAUSE & IN-GAME CUSTOMIZE MODALS
 // =========================================================================
 window.openLeaveGameModal = function () {
   document.getElementById("leaveGameModal").classList.add("open");
@@ -278,6 +279,49 @@ window.toggleGameFullscreen = function () {
   } else {
     document.exitFullscreen?.().catch(() => {});
   }
+};
+
+window.togglePauseGame = function () {
+  isPaused = !isPaused;
+  const pm = document.getElementById("pausedModal");
+  if (pm) {
+    pm.classList.toggle("hidden", !isPaused);
+    pm.classList.toggle("flex", isPaused);
+  }
+  document.getElementById("pauseBtn").innerHTML = isPaused
+    ? '<i class="fas fa-play text-amber-400 text-xs"></i>'
+    : '<i class="fas fa-pause text-xs"></i>';
+};
+
+window.closePausedAndLeave = function () {
+  isPaused = false;
+  document.getElementById("pausedModal").classList.add("hidden");
+  document.getElementById("pausedModal").classList.remove("flex");
+  returnToLobby();
+};
+
+window.openInGameCustomize = function () {
+  document.getElementById("igDiceGrid").innerHTML = Object.keys(DICE_SKINS).map(k => {
+    const s = DICE_SKINS[k];
+    return `<button class="cz-item ${k === diceSkinKey ? "sel" : ""}" onclick="setDiceSkin('${k}');openInGameCustomize()">
+      <div class="cz-dice-tile" style="background:linear-gradient(145deg, ${s.f[0]}, ${s.f[1]})">${czIconPips(s)}</div>
+      <span>${s.name}</span></button>`;
+  }).join("");
+  document.getElementById("igThemeGrid").innerHTML = Object.keys(BOARD_THEMES).map(k => {
+    const t = BOARD_THEMES[k];
+    return `<button class="cz-item ${k === boardThemeKey ? "sel" : ""}" onclick="setBoardTheme('${k}');openInGameCustomize()">
+      <div class="cz-theme-tile" style="background:linear-gradient(160deg, ${t.bgA}, ${t.bgB})"></div>
+      <span>${t.name}</span></button>`;
+  }).join("");
+  const sh = document.getElementById("inGameCustomizeSheet");
+  sh.classList.remove("hidden");
+  sh.classList.add("flex");
+};
+
+window.closeInGameCustomize = function () {
+  const sh = document.getElementById("inGameCustomizeSheet");
+  sh.classList.add("hidden");
+  sh.classList.remove("flex");
 };
 
 // =========================================================================
@@ -1102,7 +1146,7 @@ window.toggleSound = function () {
 };
 
 // =========================================================================
-// N-ARM POLYGON BOARD GEOMETRY (4 = Square, 5 = Pentagon, 6 = Hexagon)
+// N-ARM POLYGON BOARD GEOMETRY (4 = Straight Square, 5 = Pentagon, 6 = Hexagon)
 // =========================================================================
 function buildPolygonBoardGeometry(armsCount) {
   const size = 600;
@@ -1115,7 +1159,8 @@ function buildPolygonBoardGeometry(armsCount) {
   const cellH = cellW * (armsCount === 4 ? 0.95 : 0.90);
   const apothem = R_in * Math.cos(Math.PI / armsCount);
 
-  const startAngle = armsCount === 4 ? (3 * Math.PI) / 4 : (2 * Math.PI) / 3;
+  // Math.PI / 2 makes 4-arm board straight square (Bottom, Left, Top, Right)
+  const startAngle = armsCount === 4 ? Math.PI / 2 : (2 * Math.PI) / 3;
   const armAngles = [];
   for (let k = 0; k < armsCount; k++) {
     armAngles.push(startAngle + (k * 2 * Math.PI) / armsCount);
@@ -1215,8 +1260,8 @@ function buildPolygonBoardGeometry(armsCount) {
     }
 
     const slotOff = cellW * (armsCount === 4 ? 0.68 : 0.54);
-    const cosM = Math.cos(midAngle);
-    const sinM = Math.sin(midAngle);
+    const cosM = armsCount === 4 ? 1 : Math.cos(midAngle);
+    const sinM = armsCount === 4 ? 0 : Math.sin(midAngle);
     const rawOffsets = [
       [-slotOff, -slotOff],
       [ slotOff, -slotOff],
@@ -1276,6 +1321,7 @@ window.startMatchFromSetup = function () {
   const arms = setupConfigs.length <= 4 ? 4 : setupConfigs.length;
   game = createMatchObject(setupConfigs, arms);
   boardGeom = buildPolygonBoardGeometry(arms);
+  boardEffects = [];
 
   document.getElementById("setupView").classList.add("hidden");
   document.getElementById("gameView").classList.remove("hidden");
@@ -1350,6 +1396,9 @@ window.handleDiceClick = function () {
 function executeDiceRoll() {
   game.diceRolled = true;
   sfxDice();
+
+  const statusEl = document.getElementById("activePodStatus");
+  if (statusEl) statusEl.textContent = "ROLLING...";
 
   const roll = Math.floor(Math.random() * 6) + 1;
   const hopEl = document.getElementById("gpDiceHop");
@@ -1451,6 +1500,23 @@ function chooseBestAIMove(player, movable, roll) {
   moveToken(bestToken);
 }
 
+function animateBoardEffects() {
+  if (!boardEffects.length) return;
+  boardEffects.forEach(ef => {
+    ef.r += 2.4;
+    ef.alpha -= 0.032;
+  });
+  boardEffects = boardEffects.filter(ef => ef.alpha > 0);
+  drawBoard();
+  if (boardEffects.length) requestAnimationFrame(animateBoardEffects);
+}
+
+function triggerRippleAt(x, y, hexColor) {
+  boardEffects.push({ x, y, color: hexColor, r: 8, alpha: 1 });
+  boardEffects.push({ x, y, color: "#ffffff", r: 4, alpha: 0.85 });
+  requestAnimationFrame(animateBoardEffects);
+}
+
 function moveToken(tokenIdx) {
   const player = game.players[game.turnIdx];
   if (!game.movableTokens.includes(tokenIdx)) return;
@@ -1459,6 +1525,7 @@ function moveToken(tokenIdx) {
   const currStep = player.tokens[tokenIdx];
   const targetStep = currStep === -1 ? 0 : currStep + game.diceVal;
   const finishStep = getStepsToFinish();
+  const pCol = COLOR_PALETTE[player.colorIndex].hex;
 
   let bonusTurn = game.diceVal === 6;
   const hopMs = userProfile.animSpeed === "fast" ? 65 : (userProfile.animSpeed === "relaxed" ? 165 : 115);
@@ -1467,6 +1534,12 @@ function moveToken(tokenIdx) {
   const hopTimer = setInterval(() => {
     player.tokens[tokenIdx] = stepCursor;
     sfxStep();
+
+    if (currStep === -1 && stepCursor === 0) {
+      const sp = getTokenWorldPos(player, tokenIdx);
+      triggerRippleAt(sp.x, sp.y, pCol);
+    }
+
     drawBoard();
 
     if (stepCursor >= targetStep) {
@@ -1476,6 +1549,8 @@ function moveToken(tokenIdx) {
         player.finishedCount++;
         bonusTurn = true;
         sfxHome();
+        const hp = getTokenWorldPos(player, tokenIdx);
+        triggerRippleAt(hp.x, hp.y, pCol);
         showToast(`${player.name} scored a token home!`);
 
         if (player.finishedCount === 4 && !game.winners.includes(player.id)) {
@@ -1491,6 +1566,8 @@ function moveToken(tokenIdx) {
               if (oStep >= 0 && oStep < game.loopLen - 1) {
                 const oppGlobal = (boardGeom.armStartLoopIdx[opp.armIdx] + oStep) % game.loopLen;
                 if (oppGlobal === myGlobal) {
+                  const cp = getTokenWorldPos(opp, oIdx);
+                  triggerRippleAt(cp.x, cp.y, COLOR_PALETTE[opp.colorIndex].hex);
                   opp.tokens[oIdx] = -1;
                   bonusTurn = true;
                   sfxCapture();
@@ -1847,6 +1924,18 @@ function drawBoard() {
     });
   });
 
+  // 6. Circular Spawn / Home / Capture Ripple Animations
+  boardEffects.forEach(ef => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(ef.x, ef.y, ef.r, 0, Math.PI * 2);
+    ctx.strokeStyle = ef.color;
+    ctx.globalAlpha = Math.max(0, ef.alpha);
+    ctx.lineWidth = 3.5;
+    ctx.stroke();
+    ctx.restore();
+  });
+
   ctx.restore();
 }
 
@@ -1918,8 +2007,14 @@ function renderPlayerPods() {
       ? `<span class="gp-pod-arrow ${isTopRow ? 'top-row' : 'bot-row'}"><i class="fas fa-chevron-${isTopRow ? 'down' : 'up'}"></i></span>`
       : "";
 
+    const statusLine = isTurn
+      ? `<div id="activePodStatus" class="text-[9.5px] font-extrabold tracking-wider uppercase mt-0.5" style="color:${col.hex}">${game.diceRolled ? (game.movableTokens.length ? 'MOVE' : 'ROLLING...') : 'TAP TO ROLL'}</div>`
+      : `<div class="flex items-center gap-1 mt-1">${dots}</div>`;
+
+    const twoPlayerAlign = count === 2 ? (isTopRow ? "gp-pod-2p-top" : "gp-pod-2p-bot") : "";
+
     return `
-      <div style="--pc:${col.hex}; --pc-glow:${col.glow}" class="gp-pod ${isTurn ? 'active' : ''}">
+      <div style="--pc:${col.hex}; --pc-glow:${col.glow}" class="gp-pod ${isTurn ? 'active' : ''} ${twoPlayerAlign}">
         ${arrowHTML}
         <div class="flex items-center gap-2 min-w-0">
           <div style="border-color:${col.hex}" class="w-9 h-9 rounded-full border-2 overflow-hidden bg-white/5 shrink-0">${getAvatarSVG(p.avatarId)}</div>
@@ -1928,12 +2023,13 @@ function renderPlayerPods() {
               <span style="color:${col.hex}" class="text-[9.5px] font-black shrink-0">P${p.id + 1}</span>
               <span class="text-[11px] font-extrabold text-white truncate">${p.name}</span>
             </div>
-            <div class="flex items-center gap-1 mt-1">${dots}</div>
+            ${statusLine}
           </div>
         </div>
 
         ${isTurn ? `
           <button id="activeDiceBox" onclick="handleDiceClick()" class="gp-dice-btn focus:outline-none">
+            <span class="gp-dice-ring"></span>
             ${build3DDiceHTML(game.diceVal, true)}
             ${timerBadge}
           </button>
@@ -1944,15 +2040,15 @@ function renderPlayerPods() {
     `;
   };
 
-  topRow.className = `grid grid-cols-${topPlayers.length} gap-2 w-full`;
-  bottomRow.className = `grid grid-cols-${bottomPlayers.length} gap-2 w-full`;
+  topRow.className = count === 2 ? "flex w-full" : `grid grid-cols-${topPlayers.length} gap-2 w-full`;
+  bottomRow.className = count === 2 ? "flex w-full" : `grid grid-cols-${bottomPlayers.length} gap-2 w-full`;
 
   topRow.innerHTML = topPlayers.map(p => buildPodHTML(p, true)).join("");
   bottomRow.innerHTML = bottomPlayers.map(p => buildPodHTML(p, false)).join("");
 }
 
 // =========================================================================
-// END MATCH, PAUSE & EXIT
+// END MATCH & RETURN TO LOBBY
 // =========================================================================
 function endMatch() {
   clearInterval(turnInterval);
@@ -2016,12 +2112,6 @@ window.returnToLobby = function () {
   document.getElementById("lobbyView").classList.remove("hidden");
 };
 
-window.togglePauseGame = function () {
-  isPaused = !isPaused;
-  document.getElementById("pauseBtn").innerHTML = isPaused ? '<i class="fas fa-play text-amber-400 text-xs"></i>' : '<i class="fas fa-pause text-xs"></i>';
-  showToast(isPaused ? "Game Paused" : "Resumed");
-};
-
 window.showToast = function (msg) {
   const t = document.getElementById("toast");
   t.innerText = msg;
@@ -2033,4 +2123,3 @@ window.showToast = function (msg) {
 window.addEventListener("resize", () => {
   if (game && boardGeom) drawBoard();
 });
-
