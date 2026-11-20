@@ -14,7 +14,6 @@
       --bg-card: #151828;
       --bg-card-2: #1c2036;
       --gold: #f5b942;
-      --gold-grad: linear-gradient(180deg, #f3d27e 0%, #e5b24d 100%);
     }
     * {
       box-sizing: border-box;
@@ -34,7 +33,7 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
-    /* ================= LIGHT MODE OVERRIDES (00:04 - 00:08) ================= */
+    /* ================= LIGHT MODE OVERRIDES ================= */
     html.light body {
       background:
         radial-gradient(110% 50% at 95% 5%, rgba(245,185,66,.22) 0%, rgba(245,185,66,0) 60%),
@@ -42,8 +41,7 @@
         linear-gradient(180deg, #f4f5f9 0%, #eceef5 60%, #e5e8f2 100%);
       color: #111424;
     }
-    html.light #lobbyView header { border-color: rgba(17,20,36,0.08); }
-    html.light #lobbyView nav { border-color: rgba(17,20,36,0.08); }
+    html.light #lobbyView header, html.light #lobbyView nav { border-color: rgba(17,20,36,0.08); }
     html.light .hdr-btn { background: rgba(17,20,36,0.06) !important; color: #374151 !important; }
     html.light .hdr-btn:hover { background: rgba(17,20,36,0.12) !important; }
     html.light #ltab-play.bg-white\/15,
@@ -59,8 +57,6 @@
     html.light .mode-card-sub { color: #4b5563 !important; }
     html.light .info-panel { background: #ffffff !important; border-color: rgba(17,20,36,0.08) !important; color: #374151 !important; }
     html.light .info-panel strong, html.light .info-panel h4, html.light .info-heading { color: #111424 !important; }
-
-    /* Light Mode for Sub-pages (Stats, Customize, Settings, AI Setup) */
     html.light .subpage-shell {
       background:
         radial-gradient(110% 50% at 95% 5%, rgba(245,185,66,.22) 0%, rgba(245,185,66,0) 60%),
@@ -91,21 +87,6 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    @keyframes diceShake {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      20% { transform: rotate(-18deg) scale(1.12); }
-      40% { transform: rotate(16deg) scale(1.15); }
-      60% { transform: rotate(-12deg) scale(1.1); }
-      80% { transform: rotate(10deg) scale(1.06); }
-    }
-    .dice-rolling { animation: diceShake 0.42s ease-in-out infinite; }
-    @keyframes pulseRing {
-      0% { transform: scale(0.95); opacity: 0.9; }
-      50% { transform: scale(1.06); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.9; }
-    }
-    .active-pod-glow { animation: pulseRing 1.6s ease-in-out infinite; }
-
     /* Floating Golden Particles */
     .ambient-dots { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
     .ambient-dots i {
@@ -118,6 +99,167 @@
       85% { opacity: .6; }
       100% { transform: translateY(-120px) translateX(14px); opacity: 0; }
     }
+
+    /* ================= 3D GAMEPLAY DICE & PODS (Matches Video 00:00 - 01:05) ================= */
+    .gp-top-btn {
+      width: 44px; height: 44px; border-radius: 15px;
+      background: rgba(22, 25, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform .15s ease, background .15s ease;
+    }
+    .gp-top-btn:active { transform: scale(.93); }
+    .gp-top-pill {
+      display: flex; align-items: center; gap: 4px; padding: 4px 6px;
+      border-radius: 17px; background: rgba(22, 25, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .gp-top-pill button {
+      width: 36px; height: 36px; border-radius: 12px; border: 0; background: none;
+      color: #cbd5e1; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .15s ease, color .15s ease;
+    }
+    .gp-top-pill button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .gp-pod {
+      position: relative;
+      background: linear-gradient(180deg, rgba(22, 25, 42, 0.94), rgba(14, 16, 29, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 8px 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      min-height: 60px;
+      transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+    }
+    .gp-pod::before {
+      content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px;
+      border-radius: 0 3px 3px 0; background: var(--pc); opacity: 0.85;
+    }
+    .gp-pod.active {
+      border: 2px solid var(--pc);
+      box-shadow: 0 0 24px var(--pc-glow), inset 0 0 14px rgba(255,255,255,0.03);
+      z-index: 5;
+    }
+    .gp-pod-arrow {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      color: var(--pc); font-size: 11px; line-height: 1;
+      animation: gpArrowBob 1.1s ease-in-out infinite;
+    }
+    .gp-pod-arrow.top-row { bottom: -14px; }
+    .gp-pod-arrow.bot-row { top: -14px; }
+    @keyframes gpArrowBob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(3px); }
+    }
+
+    /* 3D Cube inside Player Pod */
+    .gp-dice-btn {
+      position: relative; width: 44px; height: 44px; flex-shrink: 0;
+      background: none; border: 0; padding: 0; cursor: pointer;
+      perspective: 360px; display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    .gp-dice-hop {
+      width: 36px; height: 36px; transform-style: preserve-3d;
+    }
+    .gp-dice-hop.rolling {
+      animation: gpDiceTumble 0.56s cubic-bezier(.22, .85, .32, 1) forwards;
+    }
+    @keyframes gpDiceTumble {
+      0%   { transform: translateY(0) scale(1); }
+      28%  { transform: translateY(-20px) scale(1.24); }
+      58%  { transform: translateY(-10px) scale(1.14); }
+      82%  { transform: translateY(2px) scale(0.96); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .gp-dice-tilt {
+      width: 100%; height: 100%; transform-style: preserve-3d;
+      transform: rotateX(-16deg) rotateY(22deg);
+    }
+    .gp-cube {
+      position: relative; width: 36px; height: 36px; transform-style: preserve-3d;
+      transition: transform 0.54s cubic-bezier(.18, .88, .28, 1.04);
+    }
+    .gp-face {
+      position: absolute; inset: 0; border-radius: 8px;
+      display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+      place-items: center; padding: 5px;
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: inset 0 0 7px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.2);
+      backface-visibility: hidden;
+    }
+    .gp-face i { display: block; width: 6.2px; height: 6.2px; border-radius: 50%; }
+    .gp-face i.pip { box-shadow: 0 1px 1.5px rgba(0,0,0,0.55); }
+    .gp-f1 { transform: translateZ(18px); }
+    .gp-f6 { transform: rotateY(180deg) translateZ(18px); }
+    .gp-f2 { transform: rotateY(90deg) translateZ(18px); }
+    .gp-f5 { transform: rotateY(-90deg) translateZ(18px); }
+    .gp-f3 { transform: rotateX(90deg) translateZ(18px); }
+    .gp-f4 { transform: rotateX(-90deg) translateZ(18px); }
+
+    .gp-timer-pill {
+      position: absolute; top: -6px; right: -6px; z-index: 6;
+      min-width: 21px; height: 18px; padding: 0 4px; border-radius: 999px;
+      background: #141726; border: 1.5px solid rgba(255,255,255,0.2);
+      color: #f5b942; font-size: 10px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+    .gp-timer-pill.urgent {
+      background: #dc2626; border-color: #fca5a5; color: #ffffff;
+    }
+
+    /* ================= LEAVE GAME MODAL (Xerox of Video 00:07 - 00:12) ================= */
+    #leaveGameModal {
+      position: fixed; inset: 0; z-index: 70; display: none;
+      align-items: center; justify-content: center; padding: 20px;
+      background: rgba(5, 7, 15, 0.72);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    #leaveGameModal.open { display: flex; }
+    .lg-card {
+      width: 100%; max-width: 340px; border-radius: 28px;
+      padding: 28px 22px 22px; text-align: center;
+      background: linear-gradient(180deg, rgba(28, 32, 52, 0.96) 0%, rgba(19, 22, 37, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      animation: lgPop .22s cubic-bezier(.2,.9,.3,1.15);
+    }
+    @keyframes lgPop {
+      from { opacity: 0; transform: scale(0.92) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .lg-icon-box {
+      width: 58px; height: 58px; border-radius: 18px; margin: 0 auto 18px;
+      background: linear-gradient(180deg, #f05454 0%, #d93838 100%);
+      box-shadow: 0 10px 26px rgba(239, 68, 68, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      display: flex; align-items: center; justify-content: center;
+      color: #ffffff; font-size: 22px;
+    }
+    .lg-title {
+      font-size: 22px; font-weight: 800; color: #f8fafc; margin: 0 0 10px; letter-spacing: -0.2px;
+    }
+    .lg-desc {
+      font-size: 13.5px; line-height: 1.52; color: #94a3b8; margin: 0 0 22px; padding: 0 4px;
+    }
+    .lg-btn-leave {
+      width: 100%; height: 50px; border-radius: 16px; border: 0; cursor: pointer;
+      background: linear-gradient(180deg, #f25c54 0%, #dc3b34 100%);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      color: #ffffff; font-family: inherit; font-size: 15.5px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      margin-bottom: 10px; transition: transform .15s ease, filter .15s ease;
+    }
+    .lg-btn-leave:active { transform: scale(0.98); filter: brightness(0.95); }
+    .lg-btn-cancel {
+      width: 100%; height: 48px; border-radius: 16px; cursor: pointer;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e2e8f0; font-family: inherit; font-size: 15px; font-weight: 700;
+      transition: background .15s ease, transform .15s ease;
+    }
+    .lg-btn-cancel:hover { background: rgba(255, 255, 255, 0.1); }
+    .lg-btn-cancel:active { transform: scale(0.98); }
 
     /* ================= SHARED SUBPAGE SHELL ================= */
     .subpage-shell {
@@ -139,22 +281,11 @@
     }
     .sp-title { font-size: 23px; font-weight: 800; color: #f4f6ff; letter-spacing: -.2px; }
 
-    /* ================= STATISTICS PAGE (00:09 - 00:12) ================= */
-    .st-user-pill {
-      display: flex; align-items: center; gap: 9px;
-      font-size: 13.5px; font-weight: 700; color: #d8ddf2;
-    }
-    .st-user-pill .st-av {
-      width: 30px; height: 30px; border-radius: 50%; overflow: hidden;
-      border: 2px solid #f5b942; background: #1e233a; flex-shrink: 0;
-    }
-    .st-empty {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 110px 20px 60px;
-    }
-    .st-bars-icon {
-      display: flex; align-items: flex-end; gap: 6px; height: 42px; margin-bottom: 22px; opacity: 0.45;
-    }
+    /* ================= STATISTICS PAGE ================= */
+    .st-user-pill { display: flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: 700; color: #d8ddf2; }
+    .st-user-pill .st-av { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; border: 2px solid #f5b942; background: #1e233a; flex-shrink: 0; }
+    .st-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 110px 20px 60px; }
+    .st-bars-icon { display: flex; align-items: flex-end; gap: 6px; height: 42px; margin-bottom: 22px; opacity: 0.45; }
     .st-bars-icon span { width: 8px; border-radius: 3px; background: #8c93ae; }
     .st-bars-icon span:nth-child(1) { height: 22px; }
     .st-bars-icon span:nth-child(2) { height: 38px; }
@@ -170,7 +301,7 @@
     }
     .gold-cta-btn:active { transform: scale(.96); }
 
-    /* ================= CUSTOMIZE PAGE (00:15 - 00:19) ================= */
+    /* ================= CUSTOMIZE PAGE ================= */
     .cz-preview {
       position: relative; border-radius: 24px; padding: 18px 16px 18px; text-align: center;
       background: linear-gradient(180deg, rgba(10,12,26,.75), rgba(8,9,20,.9));
@@ -272,11 +403,8 @@
     .cz-chev { text-align: center; color: #e8b84a; font-size: 14px; margin: -6px 0 -8px; }
     .cz-board { width: 100%; aspect-ratio: 1; display: block; filter: drop-shadow(0 10px 24px rgba(0,0,0,.5)); }
 
-    /* ================= SETTINGS PAGE (00:22 - 00:51) ================= */
-    .set-sec-lbl {
-      font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
-      color: #9ba1b9; margin: 22px 4px 10px;
-    }
+    /* ================= SETTINGS PAGE ================= */
+    .set-sec-lbl { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #9ba1b9; margin: 22px 4px 10px; }
     .set-card {
       border-radius: 24px; padding: 18px 16px;
       background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
@@ -296,62 +424,35 @@
       display: flex; align-items: center; gap: 13px; padding: 10px 12px; border-radius: 16px;
       background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); margin-bottom: 14px;
     }
-    .av-preview-circle {
-      width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
-      border: 2px solid #e8b84a; background: #1c2036; flex-shrink: 0;
-    }
+    .av-preview-circle { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 2px solid #e8b84a; background: #1c2036; flex-shrink: 0; }
     .av-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
     .av-tab {
       flex: 1; height: 36px; border-radius: 12px; border: 0; cursor: pointer;
       font-family: inherit; font-size: 13px; font-weight: 700;
       background: rgba(255,255,255,.06); color: #9ba1b9; transition: all .2s ease;
     }
-    .av-tab.on {
-      background: linear-gradient(180deg, #f3d27e 0%, #e5b24d 100%);
-      color: #1b1405; box-shadow: 0 4px 12px rgba(245,185,66,.25);
-    }
+    .av-tab.on { background: linear-gradient(180deg, #f3d27e 0%, #e5b24d 100%); color: #1b1405; box-shadow: 0 4px 12px rgba(245,185,66,.25); }
     .av-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 10px; }
-    .av-cell {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      background: none; border: 0; padding: 4px 0; cursor: pointer; font-family: inherit;
-    }
-    .av-ring-wrap {
-      position: relative; width: 72px; height: 72px; border-radius: 50%; padding: 3px;
-      background: rgba(255,255,255,.08); transition: transform .15s ease;
-    }
+    .av-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 4px 0; cursor: pointer; font-family: inherit; }
+    .av-ring-wrap { position: relative; width: 72px; height: 72px; border-radius: 50%; padding: 3px; background: rgba(255,255,255,.08); transition: transform .15s ease; }
     .av-cell:active .av-ring-wrap { transform: scale(.93); }
-    .av-cell.sel .av-ring-wrap {
-      background: #e8b84a;
-      box-shadow: 0 0 18px rgba(245,185,66,.4);
-    }
-    .av-circle-inner {
-      width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
-      background: #1a1e33; display: flex; align-items: center; justify-content: center;
-    }
+    .av-cell.sel .av-ring-wrap { background: #e8b84a; box-shadow: 0 0 18px rgba(245,185,66,.4); }
+    .av-circle-inner { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #1a1e33; display: flex; align-items: center; justify-content: center; }
     .av-check-badge {
       position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; border-radius: 50%;
       background: #e8b84a; color: #1b1405; font-size: 10px; font-weight: 900;
-      display: flex; align-items: center; justify-content: center;
-      border: 2px solid #0e1128;
+      display: flex; align-items: center; justify-content: center; border: 2px solid #0e1128;
     }
     .av-name-lbl { font-size: 12px; font-weight: 600; color: #cbd2ea; }
     .av-cell.sel .av-name-lbl { color: #e8b84a; font-weight: 700; }
 
-    /* Segmented Pill Controls inside Settings */
-    .set-seg {
-      display: flex; padding: 4px; border-radius: 16px;
-      background: rgba(12,14,26,.65); border: 1px solid rgba(255,255,255,.09);
-    }
+    .set-seg { display: flex; padding: 4px; border-radius: 16px; background: rgba(12,14,26,.65); border: 1px solid rgba(255,255,255,.09); }
     .set-seg button {
       flex: 1; height: 40px; border: 0; border-radius: 12px; background: none; cursor: pointer;
       font-family: inherit; font-size: 14px; font-weight: 700; color: #9ba1b9; transition: all .2s ease;
     }
-    .set-seg button.on {
-      background: linear-gradient(180deg, #f3d27e 0%, #e5b24d 100%);
-      color: #1b1405; box-shadow: 0 3px 10px rgba(245,185,66,.28);
-    }
+    .set-seg button.on { background: linear-gradient(180deg, #f3d27e 0%, #e5b24d 100%); color: #1b1405; box-shadow: 0 3px 10px rgba(245,185,66,.28); }
 
-    /* Toggle Switch (00:29 - 00:35) */
     .set-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
     .set-switch {
       position: relative; width: 50px; height: 28px; border-radius: 999px; border: 0; cursor: pointer;
@@ -365,21 +466,13 @@
     }
     .set-switch.on::after { transform: translateX(22px); }
 
-    /* Audio Mixer Sliders (00:29, 00:33) */
     .mix-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
     .mix-lbl { width: 78px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #cbd2ea; flex-shrink: 0; }
     .mix-lbl i { width: 15px; text-align: center; color: #8c93ae; }
-    .mix-slider {
-      -webkit-appearance: none; appearance: none; flex: 1; height: 5px; border-radius: 999px;
-      background: rgba(255,255,255,.15); outline: none; cursor: pointer;
-    }
-    .mix-slider::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
-      background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,.5); cursor: pointer;
-    }
+    .mix-slider { -webkit-appearance: none; appearance: none; flex: 1; height: 5px; border-radius: 999px; background: rgba(255,255,255,.15); outline: none; cursor: pointer; }
+    .mix-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,.5); cursor: pointer; }
     .mix-val { width: 28px; text-align: right; font-size: 12.5px; font-weight: 700; color: #9ba1b9; }
 
-    /* Reset All Data Button (00:30) */
     .reset-danger-btn {
       width: 100%; height: 52px; border-radius: 18px; border: 0; cursor: pointer;
       background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
@@ -473,7 +566,6 @@
   <!-- ==================== 1. LOBBY / LANDING VIEW ==================== -->
   <div id="lobbyView" class="relative z-10 flex-1 flex flex-col max-w-xl w-full mx-auto px-4 pb-12">
 
-    <!-- Top Header (Matches 00:00 & 00:04) -->
     <header class="py-3.5 flex items-center justify-between border-b border-white/10">
       <div onclick="switchLobbyTab('play')" class="flex items-center gap-2.5 cursor-pointer">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-rose-500 to-indigo-600 p-0.5 shadow-lg">
@@ -503,7 +595,6 @@
       </div>
     </header>
 
-    <!-- Sub Navigation Tabs -->
     <nav class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-3 border-b border-white/5 text-xs sm:text-sm font-bold">
       <button onclick="switchLobbyTab('play')" id="ltab-play" class="ltab-active px-3.5 py-1.5 rounded-lg bg-white/15 text-white shrink-0">Play</button>
       <button onclick="switchLobbyTab('rules')" id="ltab-rules" class="ltab-inactive px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white shrink-0">Rules</button>
@@ -514,7 +605,6 @@
 
     <!-- TAB 1: PLAY -->
     <div id="lobby-play" class="space-y-5 pt-6">
-      <!-- Hero Headline -->
       <div class="text-center space-y-3">
         <h1 class="text-4xl sm:text-5xl font-black tracking-tight leading-[1.1]">
           Play Ludo online,<br />
@@ -524,7 +614,6 @@
           Free multiplayer Ludo for 2–6 players, right in your browser. Challenge a clever AI, pass one device around the table, or invite friends into a realtime room. No login, no download.
         </p>
 
-        <!-- Feature Badges -->
         <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
           <span class="feat-pill px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-gray-200">
             <i class="fas fa-check text-emerald-400 mr-1"></i> 100% free
@@ -915,7 +1004,7 @@
     </div>
   </div>
 
-  <!-- ==================== 5. STATISTICS PAGE (00:09 - 00:12) ==================== -->
+  <!-- ==================== 5. STATISTICS PAGE ==================== -->
   <div id="statsView" class="subpage-shell">
     <div class="sp-wrap">
       <div class="sp-head">
@@ -928,12 +1017,11 @@
           <div class="st-av" id="statsPlayerAvatar"></div>
         </div>
       </div>
-
       <div id="statsContentArea"></div>
     </div>
   </div>
 
-  <!-- ==================== 6. CUSTOMIZE PAGE (00:15 - 00:19) ==================== -->
+  <!-- ==================== 6. CUSTOMIZE PAGE ==================== -->
   <div id="customizeView" class="subpage-shell">
     <div class="sp-wrap">
       <div class="sp-head">
@@ -987,7 +1075,7 @@
     </div>
   </div>
 
-  <!-- ==================== 7. SETTINGS PAGE (00:22 - 00:51) ==================== -->
+  <!-- ==================== 7. SETTINGS PAGE ==================== -->
   <div id="settingsView" class="subpage-shell">
     <div class="sp-wrap">
       <div class="sp-head">
@@ -997,7 +1085,6 @@
         </div>
       </div>
 
-      <!-- PROFILE -->
       <div class="set-sec-lbl">PROFILE</div>
       <div class="set-card glass-box">
         <label class="set-field-lbl" for="setDisplayName">Display name</label>
@@ -1032,7 +1119,6 @@
         </div>
       </div>
 
-      <!-- APPEARANCE -->
       <div class="set-sec-lbl">APPEARANCE</div>
       <div class="set-card glass-box space-y-4">
         <div>
@@ -1052,7 +1138,6 @@
         </div>
       </div>
 
-      <!-- CUSTOMIZE -->
       <div class="set-sec-lbl">CUSTOMIZE</div>
       <div class="set-card glass-box space-y-5">
         <div>
@@ -1067,7 +1152,6 @@
         </div>
       </div>
 
-      <!-- AUDIO -->
       <div class="set-sec-lbl">AUDIO</div>
       <div class="set-card glass-box space-y-4">
         <div class="set-toggle-row">
@@ -1106,7 +1190,6 @@
         </div>
       </div>
 
-      <!-- GAMEPLAY -->
       <div class="set-sec-lbl">GAMEPLAY</div>
       <div class="set-card glass-box space-y-4">
         <div>
@@ -1129,7 +1212,6 @@
         </div>
       </div>
 
-      <!-- PRIVACY -->
       <div class="set-sec-lbl">PRIVACY</div>
       <div class="set-card glass-box">
         <div class="set-toggle-row">
@@ -1141,7 +1223,6 @@
         </div>
       </div>
 
-      <!-- DATA -->
       <div class="set-sec-lbl">DATA</div>
       <div class="set-card glass-box">
         <button type="button" class="reset-danger-btn" onclick="resetAllUserData()">
@@ -1154,49 +1235,72 @@
     </div>
   </div>
 
-  <!-- ==================== 8. ACTIVE GAMEPLAY VIEW ==================== -->
-  <div id="gameView" class="hidden fixed inset-0 z-40 bg-[#0b0d17] flex flex-col justify-between p-2.5 sm:p-4 text-white">
+  <!-- ==================== 8. ACTIVE GAMEPLAY VIEW (Xerox of Video 00:00 - 01:05) ==================== -->
+  <div id="gameView" class="hidden fixed inset-0 z-40 flex flex-col justify-between p-3 sm:p-4 text-white">
 
-    <!-- Top Gameplay Controls Bar -->
-    <div class="flex items-center justify-between max-w-2xl w-full mx-auto">
-      <button onclick="exitMatchConfirm()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/15 flex items-center justify-center text-white">
+    <!-- Top Controls Bar (Exit button left, 4-icon glass pill right) -->
+    <div class="flex items-center justify-between max-w-xl w-full mx-auto pt-1">
+      <button onclick="openLeaveGameModal()" class="gp-top-btn" aria-label="Leave game">
         <i class="fas fa-arrow-right-from-bracket rotate-180 text-sm"></i>
       </button>
 
-      <div id="turnBannerText" class="text-xs font-extrabold px-3.5 py-1.5 rounded-full bg-white/10 text-amber-300 tracking-wide">
-        Player 1's Turn
-      </div>
-
-      <div class="flex items-center gap-1.5 bg-white/10 p-1 rounded-2xl">
-        <button onclick="togglePauseGame()" id="pauseBtn" class="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-xs">
-          <i class="fas fa-pause"></i>
+      <div class="gp-top-pill">
+        <button onclick="togglePauseGame()" id="pauseBtn" title="Pause">
+          <i class="fas fa-pause text-xs"></i>
         </button>
-        <button onclick="cycleBoardTheme()" class="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-xs">
-          <i class="fas fa-sun"></i>
+        <button onclick="toggleGameFullscreen()" title="Fullscreen">
+          <i class="fas fa-expand text-xs"></i>
         </button>
-        <button onclick="toggleSound()" id="gameSoundBtn" class="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-xs">
-          <i class="fas fa-volume-high"></i>
+        <button onclick="cycleBoardTheme()" title="Switch Theme">
+          <i class="fas fa-sun text-xs"></i>
+        </button>
+        <button onclick="toggleSound()" id="gameSoundBtn" title="Sound">
+          <i class="fas fa-volume-high text-xs"></i>
         </button>
       </div>
     </div>
 
     <!-- Center Board + Top & Bottom Player Pods -->
-    <div class="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto gap-2 my-1">
+    <div class="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto gap-3 my-1">
+      <!-- Top Row Player Pods -->
       <div id="topPodsRow" class="grid grid-cols-3 gap-2 w-full"></div>
 
-      <div class="relative w-full aspect-square max-w-[440px] flex items-center justify-center">
-        <canvas id="ludoCanvas" class="w-full h-full rounded-2xl cursor-pointer"></canvas>
+      <!-- Responsive Polygon Ludo Canvas with Golden Frame -->
+      <div class="relative w-full aspect-square max-w-[440px] flex items-center justify-center my-0.5">
+        <canvas id="ludoCanvas" class="w-full h-full cursor-pointer"></canvas>
       </div>
 
+      <!-- Bottom Row Player Pods -->
       <div id="bottomPodsRow" class="grid grid-cols-3 gap-2 w-full"></div>
     </div>
 
-    <div class="text-center text-[11px] text-gray-400 font-semibold">
+    <!-- Bottom Subtle Helper Hint -->
+    <div class="text-center text-[11px] text-gray-400/80 font-semibold pb-0.5">
       <span id="gameStatusHint">Tap the dice to roll</span>
     </div>
   </div>
 
-  <!-- ==================== 9. VICTORY PODIUM MODAL ==================== -->
+  <!-- ==================== 9. LEAVE THE GAME? MODAL (Xerox of Video 00:07 - 00:12) ==================== -->
+  <div id="leaveGameModal">
+    <div class="lg-card">
+      <div class="lg-icon-box">
+        <i class="fas fa-arrow-right-from-bracket rotate-180"></i>
+      </div>
+      <h2 class="lg-title">Leave the game?</h2>
+      <p class="lg-desc">
+        This match is still running. Head back and keep playing, or leave the table — your progress in this match is lost.
+      </p>
+      <button type="button" class="lg-btn-leave" onclick="confirmLeaveGame()">
+        <i class="fas fa-arrow-right-from-bracket rotate-180 text-sm"></i>
+        <span>Leave Game</span>
+      </button>
+      <button type="button" class="lg-btn-cancel" onclick="closeLeaveGameModal()">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 10. VICTORY PODIUM MODAL ==================== -->
   <div id="victoryModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="bg-[#151828] border border-amber-400/30 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl text-white">
       <div class="w-16 h-16 rounded-full bg-amber-400/20 border-2 border-amber-400 mx-auto flex items-center justify-center text-3xl text-amber-300">
@@ -1233,10 +1337,9 @@
     const db = getFirestore(app);
 
     // =========================================================================
-    // 26 CUSTOM CHARACTER AVATARS (Exact match to video 00:22 - 00:51)
+    // 26 CUSTOM CHARACTER AVATARS
     // =========================================================================
     const CHARACTERS = [
-      // Male (10)
       { id: "arjun",    name: "Arjun",    cat: "male",       tag: "Laid-back gamer",     bg: "#2d3561", skin: "#d99b66", hair: "#1e1b24", shirt: "#6366f1", glasses: true,  beard: true },
       { id: "kabir",    name: "Kabir",    cat: "male",       tag: "Calculated strategist",bg: "#3d2c5e", skin: "#c98552", hair: "#18151c", shirt: "#8b5cf6", glasses: true,  beard: true },
       { id: "rohan",    name: "Rohan",    cat: "male",       tag: "Fast-paced attacker",  bg: "#522546", skin: "#e5a97a", hair: "#2b1d16", shirt: "#ec4899" },
@@ -1247,7 +1350,6 @@
       { id: "gurpreet", name: "Gurpreet", cat: "male",       tag: "Bold risk-taker",      bg: "#1e3f66", skin: "#d69663", hair: "#141414", shirt: "#2563eb", turban: "#2563eb", beard: true },
       { id: "zayn",     name: "Zayn",     cat: "male",       tag: "Chill competitor",     bg: "#233142", skin: "#d2925e", hair: "#1c1c21", shirt: "#38bdf8", headphones: true },
       { id: "neil",     name: "Neil",     cat: "male",       tag: "Endgame specialist",   bg: "#3b2854", skin: "#e8b48a", hair: "#2a1d17", shirt: "#a855f7", glasses: true },
-      // Female (10)
       { id: "ananya",   name: "Ananya",   cat: "female",     tag: "Sharp defender",       bg: "#4a2545", skin: "#e2a679", hair: "#1d161b", shirt: "#f43f5e", longHair: true },
       { id: "meera",    name: "Meera",    cat: "female",     tag: "Safe-zone queen",      bg: "#2b2d5c", skin: "#d89868", hair: "#18141c", shirt: "#8b5cf6", longHair: true },
       { id: "sophie",   name: "Sophie",   cat: "female",     tag: "Aggressive chaser",    bg: "#542e32", skin: "#f4c7a3", hair: "#5c3317", shirt: "#fb7185", longHair: true },
@@ -1258,7 +1360,6 @@
       { id: "priya",    name: "Priya",    cat: "female",     tag: "Quick thinker",        bg: "#1e463a", skin: "#d59464", hair: "#18151a", shirt: "#10b981", glasses: true, longHair: true },
       { id: "sana",     name: "Sana",     cat: "female",     tag: "Board controller",     bg: "#522546", skin: "#e7b085", hair: "#22181c", shirt: "#ec4899", longHair: true },
       { id: "kiara",    name: "Kiara",    cat: "female",     tag: "All-round champ",      bg: "#263859", skin: "#e0a375", hair: "#1c171d", shirt: "#3b82f6", longHair: true },
-      // Characters (6)
       { id: "boo",      name: "Boo",      cat: "characters", tag: "Bamboo muncher",       bg: "#1e3a52", species: "panda" },
       { id: "rusty",    name: "Rusty",    cat: "characters", tag: "Sly board fox",        bg: "#4a2c18", species: "fox" },
       { id: "rory",     name: "Rory",     cat: "characters", tag: "King of the dice",     bg: "#523614", species: "lion" },
@@ -1324,7 +1425,6 @@
           <path d="M45 66 Q50 70 55 66" stroke="#064e3b" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
       }
 
-      // Human stylized 3D-look avatar
       return `<svg viewBox="0 0 100 100" class="w-full h-full">
         <rect width="100" height="100" fill="${c.bg}"/>
         ${c.longHair ? `<path d="M24 44 C24 22 76 22 76 44 L80 86 L20 86 Z" fill="${c.hair}"/>` : ""}
@@ -1346,21 +1446,21 @@
     // PALETTE, THEMES, DICE SKINS & PERSISTENT PROFILE STATE
     // =========================================================================
     const COLOR_PALETTE = [
-      { id: "ruby", name: "Ruby", hex: "#ef4444", light: "#fca5a5", dark: "#991b1b" },
-      { id: "amber", name: "Amber", hex: "#f59e0b", light: "#fcd34d", dark: "#92400e" },
-      { id: "emerald", name: "Emerald", hex: "#10b981", light: "#6ee7b7", dark: "#065f46" },
-      { id: "aqua", name: "Aqua", hex: "#06b6d4", light: "#67e8f9", dark: "#155e75" },
-      { id: "sapphire", name: "Sapphire", hex: "#3b82f6", light: "#93c5fd", dark: "#1e40af" },
-      { id: "amethyst", name: "Amethyst", hex: "#a855f7", light: "#d8b4fe", dark: "#6b21a8" }
+      { id: "ruby",     name: "Ruby",     hex: "#e54854", light: "#ff8c94", dark: "#991b27", glow: "rgba(229, 72, 84, 0.36)" },
+      { id: "amber",    name: "Amber",    hex: "#f0a52b", light: "#ffd278", dark: "#9c6008", glow: "rgba(240, 165, 43, 0.36)" },
+      { id: "emerald",  name: "Emerald",  hex: "#19b26b", light: "#6ee7b7", dark: "#065f38", glow: "rgba(25, 178, 107, 0.36)" },
+      { id: "aqua",     name: "Aqua",     hex: "#14b8c4", light: "#67e8f9", dark: "#0e6470", glow: "rgba(20, 184, 196, 0.36)" },
+      { id: "sapphire", name: "Sapphire", hex: "#4374e8", light: "#93c5fd", dark: "#1e3a8a", glow: "rgba(67, 116, 232, 0.36)" },
+      { id: "amethyst", name: "Amethyst", hex: "#9d50e8", light: "#d8b4fe", dark: "#581c87", glow: "rgba(157, 80, 232, 0.36)" }
     ];
 
     const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v !== null ? v : d; } catch (e) { return d; } };
     const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
 
     const BOARD_THEMES = {
-      classic: { name: "Classic", bgA: "#161a36", bgB: "#0a0c18", cellBg: "#f8fafc", cellStroke: "#cbd5e1", centerBg: "#1e293b", outerRim: "#475569" },
+      classic: { name: "Classic", bgA: "#161a36", bgB: "#0a0c18", cellBg: "#fbf7ec", cellStroke: "#d8cdb4", centerBg: "#1e293b", outerRim: "#d4a644" },
       neon:    { name: "Neon",    bgA: "#0d1233", bgB: "#04061a", cellBg: "#1e2238", cellStroke: "#334155", centerBg: "#0f172a", outerRim: "#6366f1" },
-      royal:   { name: "Royal",   bgA: "#33230c", bgB: "#120b03", cellBg: "#fef3c7", cellStroke: "#d97706", centerBg: "#451a03", outerRim: "#b45309" },
+      royal:   { name: "Royal",   bgA: "#33230c", bgB: "#120b03", cellBg: "#fef3c7", cellStroke: "#d97706", centerBg: "#451a03", outerRim: "#f5b942" },
       ice:     { name: "Ice",     bgA: "#0c2a40", bgB: "#06131e", cellBg: "#eff8ff", cellStroke: "#bcd9ee", centerBg: "#0c2a42", outerRim: "#38bdf8" },
       shadow:  { name: "Shadow",  bgA: "#1d1d21", bgB: "#050506", cellBg: "#2a2a30", cellStroke: "#3f3f46", centerBg: "#0a0a0c", outerRim: "#f5b942" },
       galaxy:  { name: "Galaxy",  bgA: "#2f1a70", bgB: "#0d0723", cellBg: "#ede9fe", cellStroke: "#c4b5fd", centerBg: "#1e1b4b", outerRim: "#8b5cf6" },
@@ -1377,7 +1477,6 @@
       fire:    { name: "Fire",    f: ["#7d2c10", "#3a0f05"], edge: "#a8431d", pips: ["#ffd76a", "#f97316"], ring: "#fb923c", glow: "rgba(251,146,60,.5)" }
     };
 
-    // User Profile & Preferences (defaults match video: Lucky Tiger, Arjun, Royal dice, Classic theme)
     let userProfile = {
       name: lsGet("ludolive_name", "Lucky Tiger"),
       avatarId: lsGet("ludolive_avatar", "arjun"),
@@ -1401,29 +1500,26 @@
     let diceSkinKey = DICE_SKINS[lsGet("ludolive_dice", "royal")] ? lsGet("ludolive_dice", "royal") : "royal";
     let soundEnabled = userProfile.sfxOn;
 
-    // Online Room State
     let onlineRoomCode = null;
     let onlineMySlot = -1;
     let onlineUnsubscribe = null;
     let isOnlineHost = false;
 
-    // Active Match State
     let game = null;
     let boardGeom = null;
     let turnInterval = null;
     let isPaused = false;
+    let gpCubeRotX = -16, gpCubeRotY = 22;
 
     // =========================================================================
-    // APPEARANCE THEME (DARK / LIGHT) & PROFILE SYNC
+    // APPEARANCE THEME & PROFILE SYNC
     // =========================================================================
     function applyAppThemeClass() {
       const isLight = userProfile.appTheme === "light";
       document.documentElement.classList.toggle("light", isLight);
       document.documentElement.classList.toggle("dark", !isLight);
       const btn = document.getElementById("themeToggleBtn");
-      if (btn) {
-        btn.innerHTML = isLight ? '<i class="fas fa-moon text-sm"></i>' : '<i class="fas fa-sun text-sm"></i>';
-      }
+      if (btn) btn.innerHTML = isLight ? '<i class="fas fa-moon text-sm"></i>' : '<i class="fas fa-sun text-sm"></i>';
     }
 
     window.toggleAppearanceTheme = function () {
@@ -1444,7 +1540,6 @@
       if (onlineInp && onlineInp.value === "Lucky Tiger") onlineInp.value = userProfile.name;
     }
 
-    // Hydrate static avatar placeholders in lobby
     document.querySelectorAll("[data-av]").forEach(el => {
       el.innerHTML = getAvatarSVG(el.getAttribute("data-av"));
     });
@@ -1475,7 +1570,7 @@
     }
 
     function sfxDice() {
-      [320, 440, 380, 520].forEach((f, i) => setTimeout(() => playTone(f, "triangle", 0.06, 0.1), i * 55));
+      [340, 460, 400, 560, 620].forEach((f, i) => setTimeout(() => playTone(f, "triangle", 0.055, 0.11), i * 65));
     }
     function sfxStep() { playTone(520, "sine", 0.06, 0.1); }
     function sfxCapture() {
@@ -1487,7 +1582,28 @@
     }
 
     // =========================================================================
-    // STATISTICS PAGE (00:09 - 00:12)
+    // LEAVE GAME MODAL & FULLSCREEN (Matches Video 00:07 - 00:12)
+    // =========================================================================
+    window.openLeaveGameModal = function () {
+      document.getElementById("leaveGameModal").classList.add("open");
+    };
+    window.closeLeaveGameModal = function () {
+      document.getElementById("leaveGameModal").classList.remove("open");
+    };
+    window.confirmLeaveGame = function () {
+      closeLeaveGameModal();
+      returnToLobby();
+    };
+    window.toggleGameFullscreen = function () {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      } else {
+        document.exitFullscreen?.().catch(() => {});
+      }
+    };
+
+    // =========================================================================
+    // STATISTICS PAGE
     // =========================================================================
     window.openStatsPage = function () {
       document.getElementById("statsPlayerName").textContent = userProfile.name;
@@ -1550,7 +1666,7 @@
     };
 
     // =========================================================================
-    // SETTINGS PAGE (00:22 - 00:51)
+    // SETTINGS PAGE
     // =========================================================================
     let activeAvatarFilter = "all";
 
@@ -1575,13 +1691,11 @@
       renderSettingsAvatarGrid();
       renderSettingsFavOrbs();
 
-      // Segmented controls
       document.querySelectorAll("#setThemeSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === userProfile.appTheme));
       document.querySelectorAll("#setAnimSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === userProfile.animSpeed));
       document.querySelectorAll("#setAiDiffSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === aiDifficulty));
       document.querySelectorAll("#setTimerSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === userProfile.diceTimer));
 
-      // Customize grids inside Settings
       document.getElementById("setDiceGrid").innerHTML = Object.keys(DICE_SKINS).map(k => {
         const s = DICE_SKINS[k];
         return `<button type="button" class="cz-item ${k === diceSkinKey ? "sel" : ""}" onclick="setDiceSkin('${k}')">
@@ -1595,7 +1709,6 @@
           <span>${t.name}</span></button>`;
       }).join("");
 
-      // Toggles & Mixer
       document.getElementById("setSfxSwitch").classList.toggle("on", userProfile.sfxOn);
       document.getElementById("setMusicSwitch").classList.toggle("on", userProfile.musicOn);
       document.getElementById("setAnalyticsSwitch").classList.toggle("on", userProfile.analyticsOn);
@@ -1624,10 +1737,7 @@
     };
 
     function renderSettingsAvatarGrid() {
-      const list = activeAvatarFilter === "all"
-        ? CHARACTERS
-        : CHARACTERS.filter(c => c.cat === activeAvatarFilter);
-
+      const list = activeAvatarFilter === "all" ? CHARACTERS : CHARACTERS.filter(c => c.cat === activeAvatarFilter);
       document.getElementById("setAvGrid").innerHTML = list.map(c => {
         const sel = c.id === userProfile.avatarId;
         return `
@@ -1771,7 +1881,6 @@
       });
     };
 
-    // ---------------- PLAY WITH AI SETUP SCREEN ----------------
     const AI_HINTS = {
       1: "2 players · the classic square board",
       2: "3 players · the classic square board",
@@ -1848,7 +1957,7 @@
       setupConfigs = [];
       for (let i = 0; i < count; i++) {
         setupConfigs.push({
-          name: i === 0 ? userProfile.name : `AI ${botPool[(i - 1) % botPool.length].name}`,
+          name: i === 0 ? userProfile.name : `Player ${i + 1}`,
           colorIndex: i === 0 ? aiSetup.color : others[i - 1],
           avatarId: i === 0 ? userProfile.avatarId : botPool[(i - 1) % botPool.length].id,
           isAI: i > 0
@@ -1883,7 +1992,7 @@
       for (let i = 0; i < count; i++) {
         const isBot = selectedMode === "ai" && i > 0;
         setupConfigs.push({
-          name: i === 0 ? userProfile.name : (isBot ? `AI Bot ${i}` : `Player ${i + 1}`),
+          name: i === 0 ? userProfile.name : `Player ${i + 1}`,
           colorIndex: i === 0 ? userProfile.favColor : others[i - 1],
           avatarId: i === 0 ? userProfile.avatarId : otherChars[(i - 1) % otherChars.length].id,
           isAI: isBot
@@ -1951,15 +2060,13 @@
 
     window.changeSetupColor = function (playerIdx, newColorIdx) {
       const otherIdx = setupConfigs.findIndex((p, i) => i !== playerIdx && p.colorIndex === newColorIdx);
-      if (otherIdx !== -1) {
-        setupConfigs[otherIdx].colorIndex = setupConfigs[playerIdx].colorIndex;
-      }
+      if (otherIdx !== -1) setupConfigs[otherIdx].colorIndex = setupConfigs[playerIdx].colorIndex;
       setupConfigs[playerIdx].colorIndex = newColorIdx;
       renderSetupCards();
     };
 
     // =========================================================================
-    // ONLINE MULTIPLAYER (FIREBASE FIRESTORE ROOMS)
+    // ONLINE MULTIPLAYER
     // =========================================================================
     window.openOnlineLobbyModal = function () {
       document.getElementById("onlinePlayerName").value = userProfile.name;
@@ -1987,12 +2094,8 @@
       isOnlineHost = true;
 
       const roomData = {
-        code,
-        maxPlayers,
-        status: "waiting",
-        players: [
-          { name: myName, colorIndex: userProfile.favColor, avatarId: userProfile.avatarId, isAI: false }
-        ],
+        code, maxPlayers, status: "waiting",
+        players: [{ name: myName, colorIndex: userProfile.favColor, avatarId: userProfile.avatarId, isAI: false }],
         state: null
       };
 
@@ -2007,10 +2110,7 @@
     window.joinOnlineRoom = async function () {
       const myName = document.getElementById("onlinePlayerName").value.trim() || userProfile.name;
       const code = document.getElementById("joinRoomCodeInput").value.trim().toUpperCase();
-      if (code.length < 4) {
-        showToast("Enter a valid room code");
-        return;
-      }
+      if (code.length < 4) { showToast("Enter a valid room code"); return; }
 
       try {
         const ref = doc(db, "ludo_rooms", code);
@@ -2182,7 +2282,7 @@
     function applyThemeBg() {
       const t = BOARD_THEMES[boardThemeKey];
       const gv = document.getElementById("gameView");
-      if (gv) gv.style.background = `radial-gradient(circle at 50% 0%, ${t.bgA} 0%, ${t.bgB} 75%)`;
+      if (gv) gv.style.background = `radial-gradient(circle at 50% 10%, ${t.bgA} 0%, ${t.bgB} 80%)`;
       const pv = document.getElementById("czPreview");
       if (pv) pv.style.background = `radial-gradient(circle at 50% 0%, ${t.bgA} 0%, ${t.bgB} 80%)`;
     }
@@ -2220,7 +2320,6 @@
       if (game) renderPlayerPods();
     };
 
-    // Full preview board SVG
     function czBuildBoardSVG() {
       const c = 40;
       const cream = "#fbf5e6", line = "#ddd2b5";
@@ -2284,7 +2383,7 @@
     }
 
     function czPod(name, hex, charId, isMe) {
-      const dice = isMe ? `<div style="width:46px;height:46px;flex-shrink:0">${renderDiceSVG(6).replace('class="w-11 h-11 drop-shadow-lg"', 'style="width:100%;height:100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))"')}</div>` : "";
+      const dice = isMe ? `<div style="width:42px;height:42px;flex-shrink:0">${build3DDiceHTML(6)}</div>` : "";
       return `<div class="cz-pod ${isMe ? "me" : ""}" style="--pc:${hex}">
         <div style="display:flex;align-items:center;gap:10px;min-width:0">
           <div class="av">${getAvatarSVG(charId)}</div>
@@ -2303,7 +2402,6 @@
       document.getElementById("czPreview").classList.remove("open");
     };
 
-    // Floating particles initialization
     (function initParticles() {
       const box = document.getElementById("globalDots");
       let h = "";
@@ -2333,13 +2431,14 @@
       const cx = size / 2;
       const cy = size / 2;
 
-      const R_in = armsCount === 4 ? 86 : (armsCount === 5 ? 98 : 106);
+      const R_in = armsCount === 4 ? 82 : (armsCount === 5 ? 90 : 96);
       const sideLen = 2 * R_in * Math.sin(Math.PI / armsCount);
       const cellW = (sideLen * 0.94) / 3;
-      const cellH = cellW * (armsCount === 4 ? 0.96 : 0.92);
+      const cellH = cellW * (armsCount === 4 ? 0.95 : 0.90);
       const apothem = R_in * Math.cos(Math.PI / armsCount);
 
-      const startAngle = armsCount === 4 ? (3 * Math.PI) / 4 - Math.PI / 4 : Math.PI / 2;
+      // Arm 0 points bottom-left so P1 sits at bottom-left like the video
+      const startAngle = armsCount === 4 ? (3 * Math.PI) / 4 : (2 * Math.PI) / 3;
       const armAngles = [];
       for (let k = 0; k < armsCount; k++) {
         armAngles.push(startAngle + (k * 2 * Math.PI) / armsCount);
@@ -2397,6 +2496,7 @@
         });
       }
 
+      // Yards sit cleanly between arm k and arm (k+1)%armsCount
       const yards = [];
       for (let k = 0; k < armsCount; k++) {
         const nextK = (k + 1) % armsCount;
@@ -2405,12 +2505,12 @@
         const midAngle = t1 + Math.PI / armsCount;
 
         const pInner = {
-          x: cx + Math.cos(midAngle) * (R_in + 6),
-          y: cy + Math.sin(midAngle) * (R_in + 6)
+          x: cx + Math.cos(midAngle) * (R_in + 4),
+          y: cy + Math.sin(midAngle) * (R_in + 4)
         };
 
         const outerDist = apothem + 6 * cellH;
-        const halfArmW = 1.5 * cellW + 5;
+        const halfArmW = 1.5 * cellW + 3;
         const pLeft = {
           x: cx + Math.cos(t1) * outerDist - Math.sin(t1) * halfArmW,
           y: cy + Math.sin(t1) * outerDist + Math.cos(t1) * halfArmW
@@ -2438,15 +2538,48 @@
           };
         }
 
-        const slotOff = cellW * 0.68;
-        const slots = [
-          { x: yardCenter.x - slotOff, y: yardCenter.y - slotOff },
-          { x: yardCenter.x + slotOff, y: yardCenter.y - slotOff },
-          { x: yardCenter.x - slotOff, y: yardCenter.y + slotOff },
-          { x: yardCenter.x + slotOff, y: yardCenter.y + slotOff }
+        // Rotate 4 circular slots to align symmetrically with the wedge
+        const slotOff = cellW * (armsCount === 4 ? 0.68 : 0.54);
+        const cosM = Math.cos(midAngle);
+        const sinM = Math.sin(midAngle);
+        const rawOffsets = [
+          [-slotOff, -slotOff],
+          [ slotOff, -slotOff],
+          [-slotOff,  slotOff],
+          [ slotOff,  slotOff]
         ];
+        const slots = rawOffsets.map(([dx, dy]) => ({
+          x: yardCenter.x + dx * cosM - dy * sinM,
+          y: yardCenter.y + dx * sinM + dy * cosM
+        }));
 
-        yards.push({ poly, center: yardCenter, slots });
+        yards.push({ poly, center: yardCenter, slots, midAngle });
+      }
+
+      // Outer Golden Frame Polygon vertices around tips of arms & corners
+      const outerDist = apothem + 6 * cellH + 10;
+      const halfArmW = 1.5 * cellW + 8;
+      const frameVerts = [];
+      for (let k = 0; k < armsCount; k++) {
+        const t = armAngles[k];
+        const ux = Math.cos(t), uy = Math.sin(t);
+        const vx = -uy, vy = ux;
+        // Left tip corner, right tip corner
+        frameVerts.push({
+          x: cx + ux * outerDist - vx * halfArmW,
+          y: cy + uy * outerDist - vy * halfArmW
+        });
+        frameVerts.push({
+          x: cx + ux * outerDist + vx * halfArmW,
+          y: cy + uy * outerDist + vy * halfArmW
+        });
+        if (armsCount === 4) {
+          const midA = t + Math.PI / 4;
+          frameVerts.push({
+            x: cx + Math.cos(midA) * (outerDist * Math.SQRT2),
+            y: cy + Math.sin(midA) * (outerDist * Math.SQRT2)
+          });
+        }
       }
 
       return {
@@ -2458,7 +2591,8 @@
         starLoopIndices,
         homeStretches,
         homeCenterGoals,
-        yards
+        yards,
+        frameVerts
       };
     }
 
@@ -2527,7 +2661,7 @@
     }
 
     // =========================================================================
-    // DICE ROLL & MOVE VALIDATION
+    // 3D DICE ROLL ANIMATION & MOVE VALIDATION (Matches Video 00:00 - 01:05)
     // =========================================================================
     window.handleDiceClick = function () {
       if (!game || isPaused || game.diceRolled) return;
@@ -2544,14 +2678,25 @@
       game.diceRolled = true;
       sfxDice();
 
-      const diceEl = document.getElementById("activeDiceBox");
-      if (diceEl) diceEl.classList.add("dice-rolling");
+      const roll = Math.floor(Math.random() * 6) + 1;
+      const hopEl = document.getElementById("gpDiceHop");
+      const cubeEl = document.getElementById("gpDiceCube");
 
-      const rollDelay = userProfile.animSpeed === "fast" ? 240 : (userProfile.animSpeed === "relaxed" ? 600 : 420);
+      if (hopEl && cubeEl) {
+        hopEl.classList.remove("rolling");
+        void hopEl.offsetWidth;
+        hopEl.classList.add("rolling");
+
+        const [tx, ty] = CZ_FACE_ANGLE[roll];
+        gpCubeRotX = czNext(gpCubeRotX, tx) + 360;
+        gpCubeRotY = czNext(gpCubeRotY, ty) + 360;
+        cubeEl.style.transform = `rotateX(${gpCubeRotX}deg) rotateY(${gpCubeRotY}deg)`;
+      }
+
+      const rollDelay = userProfile.animSpeed === "fast" ? 360 : (userProfile.animSpeed === "relaxed" ? 720 : 560);
 
       setTimeout(() => {
-        if (diceEl) diceEl.classList.remove("dice-rolling");
-        const roll = Math.floor(Math.random() * 6) + 1;
+        if (hopEl) hopEl.classList.remove("rolling");
         game.diceVal = roll;
         game.lastRollByPlayer[game.turnIdx] = roll;
 
@@ -2583,14 +2728,14 @@
 
         if (movable.length === 0) {
           document.getElementById("gameStatusHint").innerText = "No valid moves";
-          setTimeout(() => advanceTurn(), 900);
+          setTimeout(() => advanceTurn(), 800);
         } else if (movable.length === 1) {
           document.getElementById("gameStatusHint").innerText = "Moving token...";
-          setTimeout(() => moveToken(movable[0]), 350);
+          setTimeout(() => moveToken(movable[0]), 320);
         } else {
           document.getElementById("gameStatusHint").innerText = "Tap a highlighted token to move";
           if (activePlayer.isAI) {
-            setTimeout(() => chooseBestAIMove(activePlayer, movable, roll), 500);
+            setTimeout(() => chooseBestAIMove(activePlayer, movable, roll), 460);
           }
         }
         syncOnlineState();
@@ -2733,7 +2878,7 @@
           if (game && game.players[game.turnIdx].isAI && !game.diceRolled) {
             executeDiceRoll();
           }
-        }, 650);
+        }, 620);
       } else if (p) {
         document.getElementById("gameStatusHint").innerText = "Tap the dice to roll";
       }
@@ -2747,7 +2892,10 @@
         if (isPaused || !game) return;
         timeLeft--;
         const badge = document.getElementById("turnTimerBadge");
-        if (badge) badge.innerText = timeLeft;
+        if (badge) {
+          badge.innerText = timeLeft;
+          badge.classList.toggle("urgent", timeLeft <= 9);
+        }
         if (timeLeft <= 0) {
           clearInterval(turnInterval);
           if (!game.diceRolled) executeDiceRoll();
@@ -2766,7 +2914,7 @@
     }
 
     // =========================================================================
-    // CANVAS RENDERING
+    // CANVAS BOARD RENDERING (Golden Frame + White Inset Yards + 3D Tokens)
     // =========================================================================
     const canvas = document.getElementById("ludoCanvas");
     const ctx = canvas.getContext("2d");
@@ -2802,7 +2950,7 @@
         const a1 = (i * 2 * Math.PI) / 5 - Math.PI / 2;
         const a2 = a1 + Math.PI / 5;
         ctx.lineTo(cx + Math.cos(a1) * r, cy + Math.sin(a1) * r);
-        ctx.lineTo(cx + Math.cos(a2) * (r * 0.45), cy + Math.sin(a2) * (r * 0.45));
+        ctx.lineTo(cx + Math.cos(a2) * (r * 0.44), cy + Math.sin(a2) * (r * 0.44));
       }
       ctx.closePath();
       ctx.fillStyle = color;
@@ -2817,10 +2965,10 @@
       const w = boardGeom.cellH;
       const h = boardGeom.cellW;
       ctx.beginPath();
-      ctx.roundRect(-w / 2, -h / 2, w, h, 3);
+      ctx.roundRect(-w / 2, -h / 2, w, h, 2.5);
       ctx.fillStyle = fillColor;
       ctx.fill();
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = 1.1;
       ctx.strokeStyle = strokeColor;
       ctx.stroke();
       ctx.restore();
@@ -2839,7 +2987,7 @@
       ctx.clearRect(0, 0, logicalSize, logicalSize);
 
       const theme = BOARD_THEMES[boardThemeKey];
-      const { cx, cy, R_in, arms, armAngles } = boardGeom;
+      const { cx, cy, R_in, arms, armAngles, frameVerts } = boardGeom;
 
       const armColors = {};
       for (let k = 0; k < arms; k++) {
@@ -2847,6 +2995,41 @@
         armColors[k] = p ? COLOR_PALETTE[p.colorIndex] : COLOR_PALETTE[k % COLOR_PALETTE.length];
       }
 
+      // 0. Outer Golden Bevel Frame (Xerox of Video)
+      if (frameVerts && frameVerts.length) {
+        ctx.save();
+        ctx.beginPath();
+        frameVerts.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = "#1c1508";
+        ctx.shadowColor = "rgba(0,0,0,0.6)";
+        ctx.shadowBlur = 18;
+        ctx.fill();
+
+        const goldGrad = ctx.createLinearGradient(0, 0, logicalSize, logicalSize);
+        goldGrad.addColorStop(0, "#f7dc8a");
+        goldGrad.addColorStop(0.5, "#c8922a");
+        goldGrad.addColorStop(1, "#f3d27a");
+        ctx.lineWidth = 6;
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = goldGrad;
+        ctx.stroke();
+
+        // Corner gold rivets
+        ctx.shadowBlur = 0;
+        frameVerts.forEach(pt => {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = "#f7dc8a";
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
+      // 1. Draw Wedge / Square Yards with White Cream Inner Panel
       boardGeom.yards.forEach((yard, k) => {
         const col = armColors[k];
         ctx.save();
@@ -2856,24 +3039,48 @@
           else ctx.lineTo(pt.x, pt.y);
         });
         ctx.closePath();
-        ctx.fillStyle = col.hex;
+
+        const yGrad = ctx.createLinearGradient(
+          yard.poly[0].x, yard.poly[0].y,
+          yard.center.x, yard.center.y
+        );
+        yGrad.addColorStop(0, col.dark);
+        yGrad.addColorStop(1, col.hex);
+        ctx.fillStyle = yGrad;
         ctx.fill();
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = "#ffffffaa";
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
         ctx.stroke();
 
+        // Inner Cream Inset Polygon (shrunk 26% toward yard center)
+        ctx.beginPath();
+        yard.poly.forEach((pt, idx) => {
+          const ix = yard.center.x + (pt.x - yard.center.x) * 0.72;
+          const iy = yard.center.y + (pt.y - yard.center.y) * 0.72;
+          if (idx === 0) ctx.moveTo(ix, iy);
+          else ctx.lineTo(ix, iy);
+        });
+        ctx.closePath();
+        ctx.fillStyle = "#f7f1e1";
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = "rgba(0,0,0,0.18)";
+        ctx.stroke();
+
+        // 4 Recessed Home Slots
         yard.slots.forEach(slot => {
           ctx.beginPath();
-          ctx.arc(slot.x, slot.y, boardGeom.cellW * 0.42, 0, Math.PI * 2);
-          ctx.fillStyle = "#ffffff";
+          ctx.arc(slot.x, slot.y, boardGeom.cellW * 0.36, 0, Math.PI * 2);
+          ctx.fillStyle = "#e6dec8";
           ctx.fill();
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = col.dark;
+          ctx.lineWidth = 1.4;
+          ctx.strokeStyle = "rgba(0,0,0,0.22)";
           ctx.stroke();
         });
         ctx.restore();
       });
 
+      // 2. Outer Perimeter Track Cells
       boardGeom.outerLoop.forEach((cell, idx) => {
         let fill = theme.cellBg;
         const startArm = boardGeom.armStartLoopIdx.indexOf(idx);
@@ -2881,15 +3088,17 @@
         drawRotatedCell(cell, fill, theme.cellStroke);
 
         if (boardGeom.starLoopIndices.has(idx)) {
-          drawStar(cell.x, cell.y, boardGeom.cellW * 0.3, startArm !== -1 ? "#ffffff" : "#94a3b8");
+          drawStar(cell.x, cell.y, boardGeom.cellW * 0.28, startArm !== -1 ? "#ffffff" : "#c79e3b");
         }
       });
 
+      // 3. Colored Home Stretches
       boardGeom.homeStretches.forEach((stretch, k) => {
         const col = armColors[k];
-        stretch.forEach(cell => drawRotatedCell(cell, col.hex, "#ffffff88"));
+        stretch.forEach(cell => drawRotatedCell(cell, col.hex, "rgba(255,255,255,0.45)"));
       });
 
+      // 4. Center N-gon Divided into Colored Goal Triangles + Golden Star Hub
       for (let k = 0; k < arms; k++) {
         const col = armColors[k];
         const a1 = armAngles[k] - Math.PI / arms;
@@ -2901,20 +3110,31 @@
         ctx.closePath();
         ctx.fillStyle = col.hex;
         ctx.fill();
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = "#ffffffaa";
+        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = "rgba(255,255,255,0.5)";
         ctx.stroke();
       }
 
+      // Center Golden Medallion
+      ctx.beginPath();
+      ctx.arc(cx, cy, 13, 0, Math.PI * 2);
+      ctx.fillStyle = "#fbf5e6";
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = "#d4a644";
+      ctx.stroke();
+      drawStar(cx, cy, 7.5, "#c8922a");
+
+      // 5. Draw 3D Glossy Tokens
       const activePlayer = game.players[game.turnIdx];
       game.players.forEach(p => {
         const col = COLOR_PALETTE[p.colorIndex];
         p.tokens.forEach((step, tIdx) => {
           const pos = getTokenWorldPos(p, tIdx);
-          const sameSpotOffset = (tIdx - 1.5) * (step === -1 ? 0 : 2.5);
+          const sameSpotOffset = (tIdx - 1.5) * (step === -1 ? 0 : 2.2);
           const tx = pos.x + sameSpotOffset;
           const ty = pos.y + sameSpotOffset;
-          const radius = boardGeom.cellW * 0.36;
+          const radius = boardGeom.cellW * 0.35;
 
           const isMovable = p.id === activePlayer.id && game.movableTokens.includes(tIdx);
 
@@ -2928,23 +3148,36 @@
             ctx.stroke();
           }
 
+          // Drop Shadow
           ctx.beginPath();
-          ctx.arc(tx, ty + 2, radius, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(0,0,0,0.4)";
+          ctx.arc(tx, ty + 2.2, radius, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(0,0,0,0.42)";
           ctx.fill();
+
+          // 3D Sphere Gradient
+          const tGrad = ctx.createRadialGradient(
+            tx - radius * 0.35, ty - radius * 0.35, radius * 0.1,
+            tx, ty, radius
+          );
+          tGrad.addColorStop(0, "#ffffff");
+          tGrad.addColorStop(0.28, col.light);
+          tGrad.addColorStop(0.65, col.hex);
+          tGrad.addColorStop(1, col.dark);
 
           ctx.beginPath();
           ctx.arc(tx, ty, radius, 0, Math.PI * 2);
-          ctx.fillStyle = col.hex;
+          ctx.fillStyle = tGrad;
           ctx.fill();
-          ctx.lineWidth = 2.2;
-          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.6;
+          ctx.strokeStyle = "rgba(255,255,255,0.85)";
           ctx.stroke();
 
+          // Inner Ring Detail
           ctx.beginPath();
-          ctx.arc(tx - radius * 0.25, ty - radius * 0.25, radius * 0.32, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(255,255,255,0.55)";
-          ctx.fill();
+          ctx.arc(tx, ty, radius * 0.52, 0, Math.PI * 2);
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = "rgba(255,255,255,0.4)";
+          ctx.stroke();
         });
       });
 
@@ -2952,33 +3185,27 @@
     }
 
     // =========================================================================
-    // RENDER PLAYER PODS & DICE
+    // RENDER PLAYER PODS & 3D CUBE DICE
     // =========================================================================
-    let diceGradSeq = 0;
-    function renderDiceSVG(val) {
+    function build3DDiceHTML(val, isActivePod) {
       const skin = DICE_SKINS[diceSkinKey];
-      const gid = "dg" + (++diceGradSeq);
-      const pipCoords = {
-        1: [[50, 50]],
-        2: [[28, 28], [72, 72]],
-        3: [[26, 26], [50, 50], [74, 74]],
-        4: [[28, 28], [72, 28], [28, 72], [72, 72]],
-        5: [[26, 26], [74, 26], [50, 50], [26, 74], [74, 74]],
-        6: [[28, 24], [72, 24], [28, 50], [72, 50], [28, 76], [72, 76]]
-      };
-      const pips = (pipCoords[val] || pipCoords[5])
-        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9.5" fill="url(#${gid}p)" />`)
-        .join("");
-
+      const [rx, ry] = CZ_FACE_ANGLE[val] || [0, 0];
+      if (isActivePod) {
+        gpCubeRotX = rx;
+        gpCubeRotY = ry;
+      }
+      let faces = "";
+      for (let n = 1; n <= 6; n++) {
+        faces += `<div class="gp-face gp-f${n}" style="background:linear-gradient(145deg, ${skin.f[0]}, ${skin.f[1]}); border-color:${skin.edge}">${czPipGrid(n, skin)}</div>`;
+      }
       return `
-        <svg viewBox="0 0 100 100" class="w-11 h-11 drop-shadow-lg">
-          <defs>
-            <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${skin.f[0]}"/><stop offset="1" stop-color="${skin.f[1]}"/></linearGradient>
-            <radialGradient id="${gid}p" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="${skin.pips[0]}"/><stop offset="1" stop-color="${skin.pips[1]}"/></radialGradient>
-          </defs>
-          <rect x="4" y="4" width="92" height="92" rx="22" fill="url(#${gid})" stroke="${skin.ring}" stroke-width="4" />
-          ${pips}
-        </svg>
+        <div ${isActivePod ? 'id="gpDiceHop"' : ''} class="gp-dice-hop">
+          <div class="gp-dice-tilt">
+            <div ${isActivePod ? 'id="gpDiceCube"' : ''} class="gp-cube" style="transform: rotateX(${rx}deg) rotateY(${ry}deg)">
+              ${faces}
+            </div>
+          </div>
+        </div>
       `;
     }
 
@@ -2986,9 +3213,7 @@
       if (!game) return;
       const topRow = document.getElementById("topPodsRow");
       const bottomRow = document.getElementById("bottomPodsRow");
-
       const activePlayer = game.players[game.turnIdx];
-      document.getElementById("turnBannerText").innerText = `${activePlayer.name}'s Turn`;
 
       const count = game.players.length;
       const bottomPlayers = [];
@@ -3007,30 +3232,35 @@
         bottomPlayers.push(game.players[0], game.players[4]);
         topPlayers.push(game.players[1], game.players[2], game.players[3]);
       } else {
+        // 6 players: Bottom = P1, P6, P5 | Top = P2, P3, P4 (Exact match to video!)
         bottomPlayers.push(game.players[0], game.players[5], game.players[4]);
         topPlayers.push(game.players[1], game.players[2], game.players[3]);
       }
 
-      const buildPodHTML = (p) => {
+      const buildPodHTML = (p, isTopRow) => {
         const col = COLOR_PALETTE[p.colorIndex];
         const isTurn = p.id === activePlayer.id;
         const dots = [0, 1, 2, 3].map(i => {
           const done = i < p.finishedCount;
-          return `<span style="background:${done ? col.hex : '#334155'}" class="w-1.5 h-1.5 rounded-full"></span>`;
+          return `<span style="background:${done ? col.hex : '#3a4058'}" class="w-1.5 h-1.5 rounded-full"></span>`;
         }).join("");
 
         const timerBadge = userProfile.diceTimer
-          ? `<span id="turnTimerBadge" class="absolute -top-1.5 -right-1.5 bg-[#0b0d17] border border-white/20 text-[9px] font-black px-1.5 rounded-full text-amber-300">${userProfile.diceTimer}</span>`
+          ? `<span id="turnTimerBadge" class="gp-timer-pill">${userProfile.diceTimer}</span>`
+          : "";
+
+        const arrowHTML = isTurn
+          ? `<span class="gp-pod-arrow ${isTopRow ? 'top-row' : 'bot-row'}"><i class="fas fa-chevron-${isTopRow ? 'down' : 'up'}"></i></span>`
           : "";
 
         return `
-          <div style="border-color:${isTurn ? col.hex : 'rgba(255,255,255,0.08)'}"
-            class="bg-[#151828]/95 border ${isTurn ? 'border-2 active-pod-glow shadow-lg' : ''} rounded-2xl p-2 flex items-center justify-between gap-1.5 min-w-0">
+          <div style="--pc:${col.hex}; --pc-glow:${col.glow}" class="gp-pod ${isTurn ? 'active' : ''}">
+            ${arrowHTML}
             <div class="flex items-center gap-2 min-w-0">
               <div style="border-color:${col.hex}" class="w-9 h-9 rounded-full border-2 overflow-hidden bg-white/5 shrink-0">${getAvatarSVG(p.avatarId)}</div>
               <div class="min-w-0">
                 <div class="flex items-center gap-1">
-                  <span style="color:${col.hex}" class="text-[9px] font-black">P${p.id + 1}</span>
+                  <span style="color:${col.hex}" class="text-[9.5px] font-black shrink-0">P${p.id + 1}</span>
                   <span class="text-[11px] font-extrabold text-white truncate">${p.name}</span>
                 </div>
                 <div class="flex items-center gap-1 mt-1">${dots}</div>
@@ -3038,12 +3268,12 @@
             </div>
 
             ${isTurn ? `
-              <button id="activeDiceBox" onclick="handleDiceClick()" class="relative shrink-0 cursor-pointer focus:outline-none">
-                ${renderDiceSVG(game.diceVal)}
+              <button id="activeDiceBox" onclick="handleDiceClick()" class="gp-dice-btn focus:outline-none">
+                ${build3DDiceHTML(game.diceVal, true)}
                 ${timerBadge}
               </button>
             ` : `
-              ${game.lastRollByPlayer[p.id] ? `<span style="background:${col.hex}" class="w-5 h-5 rounded-md text-[10px] font-black text-black flex items-center justify-center shrink-0">${game.lastRollByPlayer[p.id]}</span>` : ''}
+              ${game.lastRollByPlayer[p.id] ? `<span style="background:${col.hex}" class="w-5 h-5 rounded-md text-[10px] font-black text-white flex items-center justify-center shrink-0 shadow">${game.lastRollByPlayer[p.id]}</span>` : ''}
             `}
           </div>
         `;
@@ -3052,8 +3282,8 @@
       topRow.className = `grid grid-cols-${topPlayers.length} gap-2 w-full`;
       bottomRow.className = `grid grid-cols-${bottomPlayers.length} gap-2 w-full`;
 
-      topRow.innerHTML = topPlayers.map(buildPodHTML).join("");
-      bottomRow.innerHTML = bottomPlayers.map(buildPodHTML).join("");
+      topRow.innerHTML = topPlayers.map(p => buildPodHTML(p, true)).join("");
+      bottomRow.innerHTML = bottomPlayers.map(p => buildPodHTML(p, false)).join("");
     }
 
     // =========================================================================
@@ -3068,7 +3298,6 @@
         }
       });
 
-      // Record match statistics for Player 1
       const p1 = game.players[0];
       if (p1) {
         const played = parseInt(lsGet("ludolive_played", "0"), 10) + 1;
@@ -3115,6 +3344,7 @@
 
     window.returnToLobby = function () {
       clearInterval(turnInterval);
+      isPaused = false;
       document.getElementById("victoryModal").classList.add("hidden");
       document.getElementById("victoryModal").classList.remove("flex");
       document.getElementById("gameView").classList.add("hidden");
@@ -3123,14 +3353,8 @@
 
     window.togglePauseGame = function () {
       isPaused = !isPaused;
-      document.getElementById("pauseBtn").innerHTML = isPaused ? '<i class="fas fa-play text-amber-400"></i>' : '<i class="fas fa-pause"></i>';
+      document.getElementById("pauseBtn").innerHTML = isPaused ? '<i class="fas fa-play text-amber-400 text-xs"></i>' : '<i class="fas fa-pause text-xs"></i>';
       showToast(isPaused ? "Game Paused" : "Resumed");
-    };
-
-    window.exitMatchConfirm = function () {
-      if (confirm("Leave current Ludo match?")) {
-        returnToLobby();
-      }
     };
 
     window.showToast = function (msg) {
