@@ -110,10 +110,10 @@ html.light .av-name-lbl { color: #374151 !important; }
 }
 .gp-top-pill button:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
-/* Fixed height (64px) prevents board jitter when turns switch */
+/* Fixed height (66px) prevents board jitter when turns switch */
 .gp-pod {
   position: relative;
-  height: 64px;
+  height: 66px;
   background: linear-gradient(180deg, rgba(22, 25, 42, 0.94), rgba(14, 16, 29, 0.96));
   border: 2px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
@@ -130,8 +130,8 @@ html.light .av-name-lbl { color: #374151 !important; }
   box-shadow: 0 0 24px var(--pc-glow), inset 0 0 14px rgba(255,255,255,0.03);
   z-index: 5;
 }
-.gp-pod-2p-top { width: 54%; margin-right: auto; }
-.gp-pod-2p-bot { width: 54%; margin-left: auto; }
+.gp-pod-2p-top { width: 56%; margin-right: auto; }
+.gp-pod-2p-bot { width: 56%; margin-left: auto; }
 
 .gp-pod-arrow {
   position: absolute; left: 50%; transform: translateX(-50%);
@@ -146,33 +146,46 @@ html.light .av-name-lbl { color: #374151 !important; }
   50% { transform: translateX(-50%) translateY(3px); }
 }
 
-/* 3D Cube & Circular Countdown Timer Ring inside Player Pod */
+/* 3D Cube, Golden Aura & Circular Countdown Timer Ring inside Player Pod */
 .gp-dice-btn {
-  position: relative; width: 48px; height: 48px; flex-shrink: 0;
+  position: relative; width: 52px; height: 52px; flex-shrink: 0;
   background: none; border: 0; padding: 0; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   overflow: visible;
 }
+.gp-dice-aura {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 185, 66, 0.34) 0%, rgba(245, 185, 66, 0.10) 55%, transparent 74%);
+  pointer-events: none;
+  z-index: 1;
+  animation: gpAuraPulse 2s ease-in-out infinite;
+}
+@keyframes gpAuraPulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.85; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
 .gp-timer-svg {
   position: absolute;
   inset: 0;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   transform: rotate(-90deg);
   pointer-events: none;
   z-index: 4;
 }
 .gp-timer-track {
-  fill: rgba(10, 12, 24, 0.55);
-  stroke: rgba(255, 255, 255, 0.16);
-  stroke-width: 3.5;
+  fill: none;
+  stroke: rgba(245, 185, 66, 0.16);
+  stroke-width: 3;
 }
 .gp-timer-prog {
   fill: none;
-  stroke: var(--pc);
-  stroke-width: 3.5;
+  stroke: #f5b942;
+  stroke-width: 3;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 6px var(--pc));
+  filter: drop-shadow(0 0 5px rgba(245, 185, 66, 0.8));
   transition: stroke-dashoffset 0.3s linear, stroke 0.25s ease;
 }
 .gp-timer-prog.urgent {
@@ -182,23 +195,23 @@ html.light .av-name-lbl { color: #374151 !important; }
 
 .gp-dice-stage {
   position: relative;
-  z-index: 2;
-  width: 28px;
-  height: 28px;
-  perspective: 320px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  perspective: 360px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .gp-dice-hop {
-  width: 28px; height: 28px; transform-style: preserve-3d;
+  width: 34px; height: 34px; transform-style: preserve-3d;
 }
 .gp-dice-hop.rolling {
   animation: gpDiceTumble 0.56s cubic-bezier(.22, .85, .32, 1) forwards;
 }
 @keyframes gpDiceTumble {
   0%   { transform: translateY(0) scale(1); }
-  28%  { transform: translateY(-20px) scale(1.26); }
+  28%  { transform: translateY(-22px) scale(1.26); }
   58%  { transform: translateY(-10px) scale(1.15); }
   82%  { transform: translateY(2px) scale(0.96); }
   100% { transform: translateY(0) scale(1); }
@@ -208,28 +221,28 @@ html.light .av-name-lbl { color: #374151 !important; }
   transform: rotateX(-16deg) rotateY(22deg);
 }
 .gp-cube {
-  position: relative; width: 28px; height: 28px; transform-style: preserve-3d;
+  position: relative; width: 34px; height: 34px; transform-style: preserve-3d;
   transition: transform 0.54s cubic-bezier(.18, .88, .28, 1.04);
 }
 .gp-face {
-  position: absolute; inset: 0; border-radius: 6.5px;
+  position: absolute; inset: 0; border-radius: 7.5px;
   display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  place-items: center; padding: 3.5px;
-  border: 1px solid rgba(255,255,255,0.16);
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.2);
+  place-items: center; padding: 4.5px;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: inset 0 0 7px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.22);
   backface-visibility: hidden;
 }
-.gp-face i { display: block; width: 4.8px; height: 4.8px; border-radius: 50%; }
+.gp-face i { display: block; width: 5.8px; height: 5.8px; border-radius: 50%; }
 .gp-face i.pip { box-shadow: 0 1px 1.5px rgba(0,0,0,0.55); }
-.gp-f1 { transform: translateZ(14px); }
-.gp-f6 { transform: rotateY(180deg) translateZ(14px); }
-.gp-f2 { transform: rotateY(90deg) translateZ(14px); }
-.gp-f5 { transform: rotateY(-90deg) translateZ(14px); }
-.gp-f3 { transform: rotateX(90deg) translateZ(14px); }
-.gp-f4 { transform: rotateX(-90deg) translateZ(14px); }
+.gp-f1 { transform: translateZ(17px); }
+.gp-f6 { transform: rotateY(180deg) translateZ(17px); }
+.gp-f2 { transform: rotateY(90deg) translateZ(17px); }
+.gp-f5 { transform: rotateY(-90deg) translateZ(17px); }
+.gp-f3 { transform: rotateX(90deg) translateZ(17px); }
+.gp-f4 { transform: rotateX(-90deg) translateZ(17px); }
 
 .gp-timer-pill {
-  position: absolute; top: -5px; right: -6px; z-index: 8;
+  position: absolute; top: -4px; right: -5px; z-index: 8;
   min-width: 20px; height: 17px; padding: 0 4px; border-radius: 999px;
   background: #141726; border: 1.5px solid rgba(255,255,255,0.25);
   color: #f5b942; font-size: 9.5px; font-weight: 800;
