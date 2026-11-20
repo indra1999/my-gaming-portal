@@ -1,1 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IndroGames - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-[#0c0d14] text-white min-h-screen font-sans">
+
+  <!-- LOGIN GATE -->
+  <div id="loginGate" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-[#141622] border border-white/10 rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+      <div class="w-14 h-14 rounded-2xl bg-[#6842ff] mx-auto flex items-center justify-center text-2xl">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+      <h1 class="text-xl font-black">Admin Control Panel</h1>
+      <p id="gateStatusText" class="text-xs text-gray-400">Sign in with your authorized admin Google account to manage games.</p>
+      <button onclick="adminSignIn()" class="w-full bg-[#9fe870] hover:bg-[#8ed95e] text-[#0c0d14] font-extrabold text-sm py-3 rounded-full transition">
+        <i class="fab fa-google mr-2"></i> Sign in with Google
+      </button>
+      <a href="index.html" class="block text-xs text-gray-400 hover:text-white pt-2">Back to Portal</a>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="adminDashboard" class="hidden max-w-5xl mx-auto p-4 space-y-6">
+    <header class="bg-[#141622] border border-white/10 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#6842ff] flex items-center justify-center">
+          <i class="fas fa-gamepad"></i>
+        </div>
+        <div>
+          <h1 class="font-black text-base">IndroGames Admin</h1>
+          <p id="adminEmailLabel" class="text-xs text-gray-400"></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="index.html" target="_blank" class="bg-[#1c1f30] hover:bg-[#262a40] text-xs font-bold px-3.5 py-2 rounded-full">
+          <i class="fas fa-external-link-alt mr-1"></i> View Site
+        </a>
+        <button onclick="adminSignOut()" class="bg-red-600/80 hover:bg-red-600 text-xs font-bold px-3.5 py-2 rounded-full">
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <section class="bg-[#141622] border border-white/10 rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 id="formHeading" class="text-lg font-black">Add New Game</h2>
+        <button id="cancelEditBtn" onclick="resetGameForm()" class="hidden text-xs text-rose-400 font-bold">Cancel Edit</button>
+      </div>
+
+      <form id="gameForm" onsubmit="saveGameToFirestore(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <input type="hidden" id="editGameId" />
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Game Title *</label>
+          <input type="text" id="gTitle" required placeholder="e.g. Ultimate Tic-Tac-Toe" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6842ff]" />
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Category *</label>
+          <select id="gCategory" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none">
+            <option value="Board">Board</option>
+            <option value="Card">Card</option>
+            <option value="Puzzle">Puzzle</option>
+            <option value="Strategy">Strategy</option>
+            <option value="Multiplayer">Multiplayer</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Game File URL *</label>
+          <input type="text" id="gUrl" required placeholder="games/ultimate-tictactoe.html" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6842ff]" />
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Thumbnail Image URL *</label>
+          <input type="url" id="gImage" required placeholder="https://..." class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6842ff]" />
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Tags (comma separated)</label>
+          <input type="text" id="gTags" value="Board, Mobile, 2D, Multiplayer" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Rating</label>
+            <input type="text" id="gRating" value="8.8" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Likes Display</label>
+            <input type="text" id="gLikesText" value="12.5K" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs text-gray-400 mb-1">Intro Description</label>
+          <textarea id="gIntro" rows="2" placeholder="Short game introduction..." class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2 text-sm focus:outline-none"></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs text-gray-400 mb-1">How to Play</label>
+          <textarea id="gHowToPlay" rows="2" placeholder="Explain how to play..." class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2 text-sm focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Game Rules (one rule per line)</label>
+          <textarea id="gRules" rows="3" placeholder="Rule 1&#10;Rule 2" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2 text-sm focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Features (one feature per line)</label>
+          <textarea id="gFeatures" rows="3" placeholder="Feature 1&#10;Feature 2" class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2 text-sm focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Controls</label>
+          <input type="text" id="gControls" value="Tap on mobile or click with the left mouse button on desktop." class="w-full bg-[#1c1f30] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none" />
+        </div>
+
+        <div class="flex items-center gap-3 pt-5">
+          <input type="checkbox" id="gFeatured" class="w-4 h-4 accent-[#6842ff]" />
+          <label for="gFeatured" class="text-sm font-bold">Set as Featured Hero Banner</label>
+        </div>
+
+        <div class="md:col-span-2 pt-2">
+          <button type="submit" class="w-full bg-[#6842ff] hover:bg-[#5732e8] text-white font-extrabold text-sm py-3 rounded-full shadow-lg transition">
+            <i class="fas fa-cloud-arrow-up mr-1.5"></i> Save & Publish Game
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="bg-[#141622] border border-white/10 rounded-2xl p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-lg font-black">Published Games (<span id="totalGamesCount">0</span>)</h2>
+        <button onclick="seedInitialGames()" class="bg-[#1c1f30] hover:bg-[#262a40] text-xs font-bold px-3.5 py-2 rounded-full text-purple-300">
+          <i class="fas fa-database mr-1"></i> Import Starter 5 Games
+        </button>
+      </div>
+
+      <div id="adminGamesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#262a40] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl hidden"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const ADMIN_EMAIL = "indromondol2@gmail.com";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOyPRF0djlFD_rXI1vKilJP3ATk-WEIak",
+      authDomain: "indrogames-web.firebaseapp.com",
+      projectId: "indrogames-web",
+      storageBucket: "indrogames-web.firebasestorage.app",
+      messagingSenderId: "947379986211",
+      appId: "1:947379986211:web:9233d08748015337f63696",
+      measurementId: "G-JF8ND67X5Z"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    let liveGames = [];
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email === ADMIN_EMAIL) {
+        document.getElementById("loginGate").classList.add("hidden");
+        document.getElementById("adminDashboard").classList.remove("hidden");
+        document.getElementById("adminEmailLabel").innerText = user.email;
+        listenToGames();
+      } else if (user) {
+        document.getElementById("gateStatusText").innerText = `Access denied for ${user.email}. Only ${ADMIN_EMAIL} is allowed.`;
+        signOut(auth);
+      } else {
+        document.getElementById("loginGate").classList.remove("hidden");
+        document.getElementById("adminDashboard").classList.add("hidden");
+      }
+    });
+
+    window.adminSignIn = async function () {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        showToast(err.message);
+      }
+    };
+
+    window.adminSignOut = async function () {
+      await signOut(auth);
+    };
+
+    function listenToGames() {
+      onSnapshot(collection(db, "games"), (snap) => {
+        liveGames = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        document.getElementById("totalGamesCount").innerText = liveGames.length;
+        renderAdminGames();
+      });
+    }
+
+    function renderAdminGames() {
+      const container = document.getElementById("adminGamesList");
+      if (liveGames.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-400 col-span-full py-6 text-center">No games in database yet. Add one above or click Import Starter 5 Games.</p>`;
+        return;
+      }
+
+      container.innerHTML = liveGames.map(g => `
+        <div class="bg-[#1c1f30] rounded-xl p-3 flex items-center gap-3 border border-white/5">
+          <img src="${g.image}" class="w-16 h-16 rounded-xl object-cover shrink-0" />
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h3 class="font-extrabold text-sm truncate">${g.title}</h3>
+              ${g.featured ? `<span class="bg-[#6842ff] text-[10px] px-1.5 py-0.5 rounded font-bold">Featured</span>` : ""}
+            </div>
+            <p class="text-xs text-gray-400">${g.category} • ${g.url}</p>
+            <div class="flex gap-2 mt-2">
+              <button onclick="editGame('${g.id}')" class="bg-[#262a40] hover:bg-[#6842ff] text-xs font-bold px-2.5 py-1 rounded-lg transition">Edit</button>
+              <button onclick="deleteGame('${g.id}')" class="bg-red-500/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-bold px-2.5 py-1 rounded-lg transition">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.saveGameToFirestore = async function (e) {
+      e.preventDefault();
+      const title = document.getElementById("gTitle").value.trim();
+      const existingId = document.getElementById("editGameId").value;
+      const slug = existingId || title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Math.floor(Math.random() * 1000);
+
+      const gameObj = {
+        title,
+        category: document.getElementById("gCategory").value,
+        url: document.getElementById("gUrl").value.trim(),
+        image: document.getElementById("gImage").value.trim(),
+        tags: document.getElementById("gTags").value.split(",").map(t => t.trim()).filter(Boolean),
+        rating: document.getElementById("gRating").value.trim() || "8.8",
+        likesText: document.getElementById("gLikesText").value.trim() || "10K",
+        votesText: `${document.getElementById("gLikesText").value.trim() || "10K"} likes`,
+        orientation: "Portrait & Landscape",
+        featured: document.getElementById("gFeatured").checked,
+        intro: document.getElementById("gIntro").value.trim(),
+        howToPlay: document.getElementById("gHowToPlay").value.trim(),
+        rules: document.getElementById("gRules").value.split("\n").map(r => r.trim()).filter(Boolean),
+        features: document.getElementById("gFeatures").value.split("\n").map(f => f.trim()).filter(Boolean),
+        controls: document.getElementById("gControls").value.trim()
+      };
+
+      try {
+        await setDoc(doc(db, "games", slug), gameObj);
+        showToast("Game published successfully!");
+        resetGameForm();
+      } catch (err) {
+        showToast("Error: " + err.message);
+      }
+    };
+
+    window.editGame = function (id) {
+      const g = liveGames.find(item => item.id === id);
+      if (!g) return;
+
+      document.getElementById("editGameId").value = g.id;
+      document.getElementById("gTitle").value = g.title || "";
+      document.getElementById("gCategory").value = g.category || "Board";
+      document.getElementById("gUrl").value = g.url || "";
+      document.getElementById("gImage").value = g.image || "";
+      document.getElementById("gTags").value = (g.tags || []).join(", ");
+      document.getElementById("gRating").value = g.rating || "8.8";
+      document.getElementById("gLikesText").value = g.likesText || "10K";
+      document.getElementById("gIntro").value = g.intro || "";
+      document.getElementById("gHowToPlay").value = g.howToPlay || "";
+      document.getElementById("gRules").value = (g.rules || []).join("\n");
+      document.getElementById("gFeatures").value = (g.features || []).join("\n");
+      document.getElementById("gControls").value = g.controls || "";
+      document.getElementById("gFeatured").checked = !!g.featured;
+
+      document.getElementById("formHeading").innerText = `Edit: ${g.title}`;
+      document.getElementById("cancelEditBtn").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    window.resetGameForm = function () {
+      document.getElementById("gameForm").reset();
+      document.getElementById("editGameId").value = "";
+      document.getElementById("formHeading").innerText = "Add New Game";
+      document.getElementById("cancelEditBtn").classList.add("hidden");
+    };
+
+    window.deleteGame = async function (id) {
+      if (!confirm("Delete this game permanently?")) return;
+      await deleteDoc(doc(db, "games", id));
+      showToast("Game deleted");
+    };
+
+    window.seedInitialGames = async function () {
+      const starter = [
+        {
+          id: "ludo-classic",
+          title: "Ludo Classic",
+          category: "Board",
+          rating: "8.8",
+          likesText: "194K",
+          votesText: "194K likes and 4.8K dislikes",
+          orientation: "Portrait",
+          tags: ["Board", "Mobile", "Classic", "2D", "Multiplayer", "Casual"],
+          featured: true,
+          intro: "Ludo Classic is a timeless multiplayer board game where the objective is to race all four of your colored tokens from the starting yard to the designated home triangle.",
+          howToPlay: "Start a match against the computer or challenge up to 4 players locally or online.",
+          rules: ["Roll a 6 to move a token out of your base.", "Star squares are safe zones.", "Move all four tokens home to win."],
+          features: ["2-player and 4-player modes", "Smart computer AI", "Smooth dark-mode board"],
+          controls: "Tap or click to roll the dice and move tokens.",
+          image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=600&q=80",
+          url: "games/ludo.html"
+        },
+        {
+          id: "grand-chess",
+          title: "Grand Chess",
+          category: "Board",
+          rating: "9.1",
+          likesText: "98.2K",
+          votesText: "98.2K likes and 2.1K dislikes",
+          orientation: "Portrait & Landscape",
+          tags: ["Board", "Strategy", "Classic", "2D", "Multiplayer"],
+          featured: false,
+          intro: "Grand Chess brings the ultimate game of strategy directly to your browser.",
+          howToPlay: "Command your army of 16 pieces across the 64-square board and checkmate your opponent.",
+          rules: ["White moves first.", "Castling and pawn promotion are supported."],
+          features: ["Legal move highlighting", "AI and 2-player modes"],
+          controls: "Tap or click a piece to select and move.",
+          image: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=600&q=80",
+          url: "games/chess.html"
+        },
+        {
+          id: "call-break",
+          title: "Call Break Pro",
+          category: "Card",
+          rating: "8.4",
+          likesText: "8.2K",
+          votesText: "8.2K likes and 210 dislikes",
+          orientation: "Portrait",
+          tags: ["Card", "Strategy", "Classic", "2D", "Casual"],
+          featured: false,
+          intro: "Call Break Pro is a competitive trick-taking card game where Spades act as trump.",
+          howToPlay: "Bid your expected tricks and play higher cards to secure your score across 5 rounds.",
+          rules: ["Follow the led suit if available.", "Spades are permanent trump cards."],
+          features: ["Smart AI opponents", "Live score sheet"],
+          controls: "Tap a valid card in your hand to play.",
+          image: "https://images.unsplash.com/photo-1541278107931-e006523892df?auto=format&fit=crop&w=600&q=80",
+          url: "games/callbreak.html"
+        },
+        {
+          id: "ultimate-tictactoe",
+          title: "Ultimate Tic-Tac-Toe",
+          category: "Board",
+          rating: "8.6",
+          likesText: "41.8K",
+          votesText: "41.8K likes and 950 dislikes",
+          orientation: "Portrait",
+          tags: ["Board", "Puzzle", "Strategy", "2D", "Multiplayer"],
+          featured: false,
+          intro: "Ultimate Tic-Tac-Toe elevates the classic 3x3 grid into nine interconnected mini-boards.",
+          howToPlay: "Win three mini-boards in a row to win the grand board.",
+          rules: ["Your move sends your opponent to the matching mini-board."],
+          features: ["Active zone highlights", "Local 2-player & AI"],
+          controls: "Tap or click inside any highlighted grid cell.",
+          image: "https://images.unsplash.com/photo-1668901382969-8c73e450a1f5?auto=format&fit=crop&w=600&q=80",
+          url: "games/ultimate-tictactoe.html"
+        },
+        {
+          id: "2048-puzzle",
+          title: "2048 Neon",
+          category: "Puzzle",
+          rating: "8.5",
+          likesText: "52.0K",
+          votesText: "52.0K likes and 1.2K dislikes",
+          orientation: "Portrait & Landscape",
+          tags: ["Puzzle", "Strategy", "2D", "Casual"],
+          featured: false,
+          intro: "2048 Neon is an addictive number-merging puzzle game set on a 4x4 grid.",
+          howToPlay: "Slide numbered tiles to combine matching values up to 2048.",
+          rules: ["Matching tiles merge into double value."],
+          features: ["Touch swipe and keyboard support"],
+          controls: "Swipe on mobile or use Arrow keys on PC.",
+          image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=600&q=80",
+          url: "games/2048.html"
+        }
+      ];
+
+      for (const g of starter) {
+        const { id, ...data } = g;
+        await setDoc(doc(db, "games", id), data);
+      }
+      showToast("All 5 starter games imported!");
+    };
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.innerText = msg;
+      el.classList.remove("hidden");
+      setTimeout(() => el.classList.add("hidden"), 2500);
+    }
+  </script>
+</body>
+</html>
 
