@@ -397,11 +397,11 @@
         </div>
       </section>
 
-      <!-- ==================== 5. GAME DETAILS (PRE-PLAY SCREEN) ==================== -->
-      <section id="view-game-details" class="hidden -mx-3.5 -mt-4 pb-6">
-        <!-- Top Overlay Bar -->
+      <!-- ==================== 5. FULL CRAZYGAMES-STYLE GAME DETAILS PAGE ==================== -->
+      <section id="view-game-details" class="hidden -mx-3.5 -mt-4 pb-8">
+        <!-- Top Hero Section -->
         <div class="relative w-full">
-          <!-- Top Action Row -->
+          <!-- Floating Top Nav Bar -->
           <div class="absolute top-3 inset-x-3 z-20 flex items-center justify-between">
             <button onclick="closeGameDetails()" class="w-10 h-10 rounded-full bg-[#1c1f30]/90 backdrop-blur flex items-center justify-center text-white shadow-lg">
               <i class="fas fa-chevron-left text-sm"></i>
@@ -419,45 +419,44 @@
             </div>
           </div>
 
-          <!-- Blurred Hero Backdrop + Centered Thumbnail -->
+          <!-- Blurred Backdrop + Centered Card -->
           <div class="relative h-64 sm:h-72 w-full overflow-hidden flex items-center justify-center">
             <img id="detailBackdropImg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-md scale-110 opacity-45" />
-            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-[#0c0d14]"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-[#0c0d14]"></div>
 
-            <!-- Centered Game Card Thumbnail -->
             <div class="relative z-10 mt-10 w-56 sm:w-64 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-[#1c1f30]">
               <img id="detailThumbImg" src="" alt="" class="w-full h-full object-cover" />
             </div>
           </div>
         </div>
 
-        <!-- Center Title, Rating, Play Button & Action Pill Bar -->
+        <!-- Title, Rating, Play Button & Action Pill Bar -->
         <div class="px-4 text-center space-y-3.5 -mt-2 relative z-10 max-w-lg mx-auto">
           <div>
             <h1 id="detailGameTitle" class="text-2xl sm:text-3xl font-black tracking-tight text-white">Game Title</h1>
             <div class="flex items-center justify-center gap-3 text-xs sm:text-sm text-gray-300 font-semibold mt-1">
               <span class="flex items-center gap-1">
                 <i class="fas fa-sparkles text-purple-400"></i>
-                <span id="detailGameRating">8.4/10</span>
+                <span id="detailGameRating">8.8/10</span>
               </span>
               <span class="text-gray-600">•</span>
               <span id="detailGameCategory" class="flex items-center gap-1.5">
-                <i class="fas fa-gamepad text-sky-400"></i> Board
+                <i class="fas fa-chess-board text-sky-400"></i> Board
               </span>
             </div>
           </div>
 
-          <!-- Full-Width Purple Play Now Button -->
+          <!-- Purple Play Now Button -->
           <button onclick="launchActiveGame()" class="w-full bg-[#6842ff] hover:bg-[#5732e8] active:scale-[0.99] text-white font-extrabold text-base py-3.5 rounded-full shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2.5 transition">
             <i class="fas fa-gamepad text-lg"></i>
             <span>Play now</span>
           </button>
 
-          <!-- Segmented Action Pill Bar (Like, Dislike, Bookmark, Share, Report) -->
+          <!-- Segmented Action Bar -->
           <div class="bg-[#1c1f30] rounded-2xl grid grid-cols-5 divide-x divide-white/10 overflow-hidden border border-white/5">
             <button id="detailLikeBtn" onclick="toggleCurrentGameLike()" class="py-3 flex items-center justify-center gap-1.5 text-xs font-extrabold text-gray-200 hover:bg-[#262a40] transition">
               <i class="far fa-thumbs-up text-base"></i>
-              <span id="detailLikeCount">8.2K</span>
+              <span id="detailLikeCount">12.4K</span>
             </button>
             <button id="detailDislikeBtn" onclick="toggleCurrentGameDislike()" class="py-3 flex items-center justify-center text-gray-200 hover:bg-[#262a40] transition">
               <i class="far fa-thumbs-down text-base"></i>
@@ -473,27 +472,124 @@
             </button>
           </div>
 
-          <!-- Scroll Indicator -->
-          <div class="pt-1">
-            <button onclick="document.getElementById('detailRelatedSection').scrollIntoView({behavior: 'smooth'})" class="text-gray-400 hover:text-white transition">
+          <!-- Downward Scroll Chevron -->
+          <div class="pt-0.5">
+            <button onclick="document.getElementById('detailBelowFold').scrollIntoView({behavior: 'smooth'})" class="text-gray-400 hover:text-white transition">
               <i class="fas fa-chevron-down text-lg"></i>
             </button>
           </div>
         </div>
 
-        <!-- Game Description & Related Games -->
-        <div id="detailRelatedSection" class="px-3.5 mt-4 space-y-5 max-w-6xl mx-auto">
-          <div class="bg-[#141622] rounded-2xl p-4 border border-white/5">
-            <h3 class="text-sm font-extrabold text-white mb-1">About this game</h3>
-            <p id="detailGameDesc" class="text-xs text-gray-400 leading-relaxed">
-              Enjoy smooth browser gameplay on both mobile and desktop devices. Challenge yourself or play with friends anytime!
-            </p>
+        <!-- BELOW THE FOLD CONTENT (Matches Video 00:07 - 00:22) -->
+        <div id="detailBelowFold" class="px-3.5 mt-3 space-y-4 max-w-3xl mx-auto">
+
+          <!-- Related Games Grid + Show More Button -->
+          <div class="space-y-3">
+            <div id="detailRelatedGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5"></div>
+            <button onclick="openCategoryView('All')" class="w-full bg-[#1c1f30] hover:bg-[#262a40] text-white font-bold text-xs py-3 rounded-full flex items-center justify-center gap-2 transition">
+              <i class="fas fa-plus"></i> Show more games
+            </button>
           </div>
 
-          <div>
-            <h3 class="text-base font-extrabold mb-2.5">More games like this</h3>
-            <div id="detailRelatedGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5"></div>
+          <!-- Structured Metadata & Tag Pills Card -->
+          <div class="bg-[#141622] rounded-2xl p-4 border border-white/5 space-y-4">
+            <!-- Breadcrumb -->
+            <div class="flex items-center flex-wrap gap-1.5 text-xs font-bold text-gray-400">
+              <span onclick="switchTab('home')" class="hover:text-white cursor-pointer">Games</span>
+              <i class="fas fa-chevron-right text-[9px] text-gray-600"></i>
+              <span id="metaBreadcrumbCat" class="hover:text-white cursor-pointer">Board</span>
+              <i class="fas fa-chevron-right text-[9px] text-gray-600"></i>
+              <span class="text-purple-400">Multiplayer</span>
+            </div>
+
+            <h2 id="metaGameHeading" class="text-xl font-black text-white">Ludo Classic</h2>
+
+            <!-- Key-Value Spec Table -->
+            <div class="grid grid-cols-[115px_1fr] gap-y-2.5 text-xs">
+              <span class="text-gray-400 font-medium">Developer:</span>
+              <span class="text-purple-400 font-bold">IndroGames Studio</span>
+
+              <span class="text-gray-400 font-medium">Rating:</span>
+              <span class="text-white font-bold"><span id="metaRatingVal">8.8</span> <span class="text-gray-400 font-normal">(based on recent votes)</span></span>
+
+              <span class="text-gray-400 font-medium">Votes:</span>
+              <span id="metaVotesVal" class="text-gray-200 font-medium">12.4K likes and 310 dislikes</span>
+
+              <span class="text-gray-400 font-medium">Released:</span>
+              <span class="text-gray-200 font-medium">November 2026</span>
+
+              <span class="text-gray-400 font-medium">Last Updated:</span>
+              <span class="text-gray-200 font-medium">November 2026</span>
+
+              <span class="text-gray-400 font-medium">Game engine:</span>
+              <span class="text-gray-200 font-medium">HTML5</span>
+
+              <span class="text-gray-400 font-medium">Platforms:</span>
+              <span class="text-gray-200 font-medium leading-relaxed">Browser (desktop, mobile, tablet)</span>
+
+              <span class="text-gray-400 font-medium">Orientation:</span>
+              <span id="metaOrientationVal" class="text-gray-200 font-medium">Portrait & Landscape</span>
+            </div>
+
+            <!-- Clickable Tag Chips with Counts -->
+            <div id="metaTagChips" class="flex flex-wrap gap-2 pt-1"></div>
           </div>
+
+          <!-- Rich Game Description, How to Play, Rules, Features & FAQ Card -->
+          <div class="bg-[#141622] rounded-2xl p-4 border border-white/5 space-y-5 text-xs sm:text-sm text-gray-300 leading-relaxed">
+            <p id="detailGameIntroText"></p>
+
+            <div class="space-y-2">
+              <h3 id="detailHowToPlayHeading" class="text-base font-black text-white">How to Play</h3>
+              <p id="detailHowToPlayText"></p>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-base font-black text-white">Game Rules</h3>
+              <ul id="detailRulesList" class="list-disc pl-5 space-y-2 text-gray-300"></ul>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-base font-black text-white">Features</h3>
+              <ul id="detailFeaturesList" class="list-disc pl-5 space-y-1.5 text-gray-300"></ul>
+            </div>
+
+            <div class="space-y-1.5">
+              <h3 class="text-base font-black text-white">Developer</h3>
+              <p>Developed and published by <span class="text-purple-400 font-bold">IndroGames</span>.</p>
+            </div>
+
+            <div class="space-y-1.5">
+              <h3 class="text-base font-black text-white">Controls</h3>
+              <p id="detailControlsText">Tap on mobile or use the left mouse button on desktop to interact and play.</p>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-base font-black text-white">FAQ</h3>
+              <div>
+                <h4 class="font-extrabold text-white text-sm mb-1">Can I play this game on mobile?</h4>
+                <p>Yes, you can play directly in your mobile or desktop browser with zero downloads required.</p>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-white text-sm mb-1">Is it completely free to play?</h4>
+                <p>Yes, all games on IndroGames are 100% free to play anytime.</p>
+              </div>
+            </div>
+
+            <!-- Gameplay Preview Card -->
+            <div class="space-y-2.5 pt-1">
+              <h3 class="text-base font-black text-white">Gameplay Preview</h3>
+              <div onclick="launchActiveGame()" class="relative aspect-video rounded-xl overflow-hidden bg-black border border-white/10 cursor-pointer group">
+                <img id="detailGameplayPreviewImg" src="" alt="Gameplay Preview" class="w-full h-full object-cover opacity-85 group-hover:scale-105 transition duration-300" />
+                <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <div class="w-14 h-10 rounded-xl bg-black/80 group-hover:bg-[#6842ff] flex items-center justify-center text-white shadow-lg transition">
+                    <i class="fas fa-play text-base ml-0.5"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -550,10 +646,9 @@
     </div>
   </div>
 
-  <!-- ==================== EDIT YOUR PROFILE MODAL (Matches Screenshot) ==================== -->
+  <!-- ==================== EDIT YOUR PROFILE MODAL ==================== -->
   <div id="editProfileModal" class="fixed inset-0 z-50 bg-[#141622] hidden flex-col overflow-y-auto">
     <div class="max-w-md w-full mx-auto px-4 py-4 space-y-5 flex-1">
-      <!-- Top Header -->
       <div class="relative flex items-center justify-center py-1">
         <h2 class="text-base font-extrabold text-white">Edit your profile</h2>
         <button onclick="closeEditProfileModal()" class="absolute right-0 w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-200 text-xl">
@@ -561,7 +656,6 @@
         </button>
       </div>
 
-      <!-- Cover Banner + Circular Avatar with Camera Badges -->
       <div class="relative pb-9">
         <div class="relative h-32 w-full rounded-xl overflow-hidden bg-[#1c1f30]">
           <img id="editCoverPreview" src="" alt="Cover Preview" class="w-full h-full object-cover" />
@@ -570,7 +664,6 @@
           </button>
         </div>
 
-        <!-- Centered Avatar Overlapping Bottom of Cover -->
         <div class="absolute left-1/2 -translate-x-1/2 bottom-0">
           <div class="relative w-20 h-20 rounded-full bg-[#fde047] border-4 border-[#141622] overflow-hidden shadow-xl">
             <img id="editAvatarPreview" src="" alt="Avatar Preview" class="w-full h-full object-cover" />
@@ -581,7 +674,6 @@
         </div>
       </div>
 
-      <!-- Username & Country Fields -->
       <div class="space-y-3">
         <div class="bg-[#141622] border border-white/15 focus-within:border-[#6842ff] rounded-xl px-3.5 py-2">
           <label class="block text-[11px] text-gray-400 font-medium">Username</label>
@@ -601,7 +693,6 @@
         </div>
       </div>
 
-      <!-- Personal Details Section -->
       <div class="space-y-3 pt-2">
         <div>
           <h3 class="text-base font-extrabold text-white">Personal Details</h3>
@@ -626,7 +717,6 @@
         </div>
       </div>
 
-      <!-- Save Button -->
       <div class="pt-3 pb-6">
         <button onclick="saveProfileChanges()" class="w-full bg-[#6842ff] hover:bg-[#5732e8] text-white font-extrabold text-sm py-3.5 rounded-full shadow-lg transition">
           Save changes
@@ -681,18 +771,35 @@
 
   <script>
     // =========================================================================
-    // 1. GAMES DATABASE
+    // 1. GAMES DATABASE (Full Metadata, Rules, Features & Controls)
     // =========================================================================
     const GAMES_DB = [
       {
         id: "ludo-classic",
         title: "Ludo Classic",
         category: "Board",
-        rating: "8.8/10",
-        likesText: "12.4K",
-        tags: ["Board", "Multiplayer"],
+        rating: "8.8",
+        likesText: "194K",
+        votesText: "194K likes and 4.8K dislikes",
+        orientation: "Portrait",
+        tags: ["Board", "Mobile", "Classic", "2D", "Multiplayer", "Casual"],
         featured: true,
-        description: "Roll the dice and race your tokens to the center in this classic multiplayer board game.",
+        intro: "Ludo Classic is a timeless multiplayer board game where the objective is to race all four of your colored tokens from the starting yard to the designated home triangle.",
+        howToPlay: "Start a match against the computer or challenge up to 4 players locally or online. Choose your color, roll the dice on your turn, and move your tokens strategically around the board.",
+        rules: [
+          "Roll a 6 to move a token out of your base onto the starting square.",
+          "Rolling a 6 grants a bonus roll, but three consecutive 6s forfeit your turn.",
+          "Landing on a square occupied by an opponent's token sends their token back to base and grants you a bonus roll.",
+          "Star squares are safe zones where tokens cannot be captured.",
+          "Move all four tokens into the home triangle on exact dice rolls to win."
+        ],
+        features: [
+          "2-player and 4-player multiplayer modes",
+          "Smart computer AI mode for solo practice",
+          "Smooth dark-mode board interface with instant dice animations",
+          "Built-in turn timer and quick match controls"
+        ],
+        controls: "Tap the dice on mobile or click with the left mouse button on desktop to roll and select a token.",
         image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=600&q=80",
         url: "games/ludo.html"
       },
@@ -700,11 +807,26 @@
         id: "grand-chess",
         title: "Grand Chess",
         category: "Board",
-        rating: "9.1/10",
-        likesText: "9.8K",
-        tags: ["Board", "Strategy", "Multiplayer"],
+        rating: "9.1",
+        likesText: "98.2K",
+        votesText: "98.2K likes and 2.1K dislikes",
+        orientation: "Portrait & Landscape",
+        tags: ["Board", "Strategy", "Classic", "2D", "Multiplayer"],
         featured: false,
-        description: "Test your tactical skills on the 64-square board against smart AI or local friends.",
+        intro: "Grand Chess brings the ultimate game of strategy and foresight directly to your browser with clean visual move indicators and responsive controls.",
+        howToPlay: "Command your army of 16 pieces across the 64-square board. Plan openings, control the center, and trap your opponent's king in checkmate.",
+        rules: [
+          "White always moves first, followed by alternating turns.",
+          "Each piece moves in its distinct pattern across ranks, files, or diagonals.",
+          "Special moves including castling, en passant, and pawn promotion are fully supported.",
+          "The game ends when a king is placed in checkmate or a draw condition is reached."
+        ],
+        features: [
+          "Legal move highlighting for intuitive play",
+          "Player vs AI and 2-player pass-and-play modes",
+          "Captured piece tracker and move history"
+        ],
+        controls: "Tap or click a piece to view valid squares, then select the destination square to move.",
         image: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=600&q=80",
         url: "games/chess.html"
       },
@@ -712,11 +834,26 @@
         id: "call-break",
         title: "Call Break Pro",
         category: "Card",
-        rating: "8.4/10",
-        likesText: "8.2K",
-        tags: ["Card", "Strategy"],
+        rating: "8.4",
+        likesText: "64.5K",
+        votesText: "64.5K likes and 1.9K dislikes",
+        orientation: "Portrait",
+        tags: ["Card", "Strategy", "Classic", "2D", "Casual"],
         featured: false,
-        description: "Bid your tricks wisely and dominate the spade trump rounds in this strategic card game.",
+        intro: "Call Break Pro is a competitive trick-taking card game played with a standard 52-card deck where Spades act as the permanent trump suit.",
+        howToPlay: "At the start of each round, inspect your 13 cards and bid the number of tricks you expect to win. Play higher cards in the led suit or trump with Spades to secure your bid.",
+        rules: [
+          "Players must follow the suit of the first card played if they hold one.",
+          "If unable to follow suit, players must play a Spade trump card if available.",
+          "Failing to meet your declared bid results in negative points equal to your bid.",
+          "Scores are tallied across 5 rounds to crown the overall winner."
+        ],
+        features: [
+          "Intelligent card-playing AI opponents",
+          "Clear score sheet tracking bids and overtricks",
+          "Fast-paced rounds optimized for mobile screens"
+        ],
+        controls: "Tap or click any highlighted valid card in your hand to play it to the center table.",
         image: "https://images.unsplash.com/photo-1541278107931-e006523892df?auto=format&fit=crop&w=600&q=80",
         url: "games/callbreak.html"
       },
@@ -724,11 +861,25 @@
         id: "ultimate-tictactoe",
         title: "Ultimate Tic-Tac-Toe",
         category: "Board",
-        rating: "8.6/10",
-        likesText: "6.5K",
-        tags: ["Board", "Puzzle", "Strategy", "Multiplayer"],
+        rating: "8.6",
+        likesText: "41.8K",
+        votesText: "41.8K likes and 950 dislikes",
+        orientation: "Portrait",
+        tags: ["Board", "Puzzle", "Strategy", "2D", "Multiplayer"],
         featured: false,
-        description: "Nine interconnected Tic-Tac-Toe boards where every move dictates your opponent's next grid.",
+        intro: "Ultimate Tic-Tac-Toe elevates the classic 3x3 grid into nine interconnected mini-boards where every move determines where your opponent plays next.",
+        howToPlay: "Win three small Tic-Tac-Toe boards in a row horizontally, vertically, or diagonally to claim victory on the grand board.",
+        rules: [
+          "Your move inside a mini-board sends your opponent to the corresponding mini-board on the main grid.",
+          "If sent to a mini-board that is already won or full, your opponent may play anywhere.",
+          "Win three mini-boards in a line to win the match."
+        ],
+        features: [
+          "Highlighted active board zones so you never lose track",
+          "Deep tactical gameplay beyond traditional Tic-Tac-Toe",
+          "Instant local 2-player and AI modes"
+        ],
+        controls: "Tap or click inside any highlighted active mini-grid cell to place your X or O.",
         image: "https://images.unsplash.com/photo-1668901382969-8c73e450a1f5?auto=format&fit=crop&w=600&q=80",
         url: "games/ultimate-tictactoe.html"
       },
@@ -736,11 +887,25 @@
         id: "2048-puzzle",
         title: "2048 Neon",
         category: "Puzzle",
-        rating: "8.5/10",
-        likesText: "7.1K",
-        tags: ["Puzzle", "Strategy"],
+        rating: "8.5",
+        likesText: "52.0K",
+        votesText: "52.0K likes and 1.2K dislikes",
+        orientation: "Portrait & Landscape",
+        tags: ["Puzzle", "Strategy", "2D", "Casual"],
         featured: false,
-        description: "Slide and merge matching neon number tiles to reach the elusive 2048 block.",
+        intro: "2048 Neon is an addictive number-merging puzzle game set on a sleek 4x4 grid.",
+        howToPlay: "Slide numbered tiles in four directions to combine matching values and build up to the 2048 tile.",
+        rules: [
+          "Every swipe or arrow press shifts all tiles on the board simultaneously.",
+          "Two tiles with the same number merge into one tile with double the value.",
+          "The game ends when the grid fills up and no valid merges remain."
+        ],
+        features: [
+          "Smooth swipe gestures for mobile and arrow keys for PC",
+          "High-score persistence",
+          "Vibrant neon dark-mode visuals"
+        ],
+        controls: "Swipe up, down, left, or right on touchscreens, or use the Arrow keys on desktop.",
         image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=600&q=80",
         url: "games/2048.html"
       }
@@ -762,9 +927,9 @@
     ];
 
     // =========================================================================
-    // 2. LOCAL STORAGE STATE (Ready for Firebase sync)
+    // 2. LOCAL STORAGE STATE
     // =========================================================================
-    let userState = JSON.parse(localStorage.getItem("indro_games_state_v2")) || {
+    let userState = JSON.parse(localStorage.getItem("indro_games_state_v3")) || {
       username: "Indro007",
       country: "India",
       birthday: "1 January 1995",
@@ -783,7 +948,7 @@
     let tempCoverIndex = userState.coverIndex || 0;
 
     function saveState() {
-      localStorage.setItem("indro_games_state_v2", JSON.stringify(userState));
+      localStorage.setItem("indro_games_state_v3", JSON.stringify(userState));
       updateProfileUI();
     }
 
@@ -870,7 +1035,7 @@
     }
 
     // =========================================================================
-    // 4. GAME DETAILS (PRE-PLAY PAGE) & GAME LAUNCHER
+    // 4. GAME DETAILS (FULL PRE-PLAY + METADATA + GUIDE PAGE)
     // =========================================================================
     function openGameDetails(gameId) {
       const game = GAMES_DB.find(g => g.id === gameId);
@@ -878,20 +1043,51 @@
 
       activeGameId = game.id;
 
-      // Populate Details UI
+      // Top Hero & Action Bar
       document.getElementById("detailBackdropImg").src = game.image;
       document.getElementById("detailThumbImg").src = game.image;
       document.getElementById("detailGameTitle").innerText = game.title;
-      document.getElementById("detailGameRating").innerText = game.rating || "8.5/10";
-      document.getElementById("detailGameCategory").innerHTML = `<i class="fas fa-gamepad text-sky-400"></i> ${game.category}`;
-      document.getElementById("detailLikeCount").innerText = game.likesText || "5.4K";
-      document.getElementById("detailGameDesc").innerText = game.description || "Play directly in your browser with zero downloads.";
+      document.getElementById("detailGameRating").innerText = `${game.rating}/10`;
+      document.getElementById("detailGameCategory").innerHTML = `<i class="fas fa-chess-board text-sky-400"></i> ${game.category}`;
+      document.getElementById("detailLikeCount").innerText = game.likesText;
 
-      // Related Games
+      // Related Games Grid
       const related = GAMES_DB.filter(g => g.id !== game.id);
       document.getElementById("detailRelatedGrid").innerHTML = related.map(createSquareCard).join("");
 
-      // Hide other views and main header on mobile for full-bleed backdrop look
+      // Metadata Card
+      document.getElementById("metaBreadcrumbCat").innerText = game.category;
+      document.getElementById("metaBreadcrumbCat").onclick = () => openCategoryView(game.category);
+      document.getElementById("metaGameHeading").innerText = game.title;
+      document.getElementById("metaRatingVal").innerText = game.rating;
+      document.getElementById("metaVotesVal").innerText = game.votesText;
+      document.getElementById("metaOrientationVal").innerText = game.orientation;
+
+      // Tag Chips with Game Counts
+      const tagChipsHtml = game.tags.map(tag => {
+        const count = tag === "Mobile" || tag === "2D"
+          ? GAMES_DB.length
+          : GAMES_DB.filter(g => g.tags.includes(tag)).length;
+        return `
+          <button onclick="openCategoryView('${tag === 'Mobile' || tag === '2D' ? 'All' : tag}')"
+            class="bg-[#1c1f30] hover:bg-[#262a40] px-3 py-1.5 rounded-lg text-xs font-extrabold text-white flex items-center gap-1.5 transition">
+            <span>${tag}</span>
+            <span class="text-purple-400">${count}</span>
+          </button>
+        `;
+      }).join("");
+      document.getElementById("metaTagChips").innerHTML = tagChipsHtml;
+
+      // Rich Description, How to Play, Rules, Features & Preview
+      document.getElementById("detailGameIntroText").innerText = game.intro;
+      document.getElementById("detailHowToPlayHeading").innerText = `How to Play ${game.title}`;
+      document.getElementById("detailHowToPlayText").innerText = game.howToPlay;
+      document.getElementById("detailRulesList").innerHTML = game.rules.map(r => `<li>${r}</li>`).join("");
+      document.getElementById("detailFeaturesList").innerHTML = game.features.map(f => `<li>${f}</li>`).join("");
+      document.getElementById("detailControlsText").innerText = game.controls;
+      document.getElementById("detailGameplayPreviewImg").src = game.image;
+
+      // Switch View
       ["home", "search", "mygames", "you"].forEach(name => {
         document.getElementById(`view-${name}`).classList.add("hidden");
       });
@@ -915,7 +1111,6 @@
       document.getElementById("activeGameTitle").innerText = game.title;
       document.getElementById("gameFrame").src = game.url;
 
-      // Save to Continue Playing / Recent
       userState.recentIds = [game.id, ...userState.recentIds.filter(id => id !== game.id)].slice(0, 12);
       saveState();
       renderContinuePlaying();
@@ -979,7 +1174,6 @@
       const isLiked = userState.likedIds.includes(activeGameId);
       const isDisliked = userState.dislikedIds.includes(activeGameId);
 
-      // Detail screen buttons
       const dLike = document.getElementById("detailLikeBtn");
       const dDislike = document.getElementById("detailDislikeBtn");
       const dBookmark = document.getElementById("detailBookmarkBtn");
@@ -1000,7 +1194,6 @@
           : `<i class="far fa-bookmark text-base"></i>`;
       }
 
-      // Fullscreen player buttons
       const pBookmark = document.getElementById("playerBookmarkBtn");
       const pLike = document.getElementById("playerLikeBtn");
 
