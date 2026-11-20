@@ -1,1 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>LudoLive - Play Ludo Online</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="ludolive.css" />
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- Ambient Golden Particles -->
+  <div class="ambient-dots" id="globalDots"></div>
+
+  <!-- ==================== 1. LOBBY / LANDING VIEW ==================== -->
+  <div id="lobbyView" class="relative z-10 flex-1 flex flex-col max-w-xl w-full mx-auto px-4 pb-12">
+
+    <header class="py-3.5 flex items-center justify-between border-b border-white/10">
+      <div onclick="switchLobbyTab('play')" class="flex items-center gap-2.5 cursor-pointer">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-rose-500 to-indigo-600 p-0.5 shadow-lg">
+          <div class="w-full h-full bg-[#111424] rounded-[10px] grid grid-cols-2 gap-0.5 p-1.5">
+            <span class="rounded-sm bg-rose-500"></span>
+            <span class="rounded-sm bg-emerald-400"></span>
+            <span class="rounded-sm bg-amber-400"></span>
+            <span class="rounded-sm bg-sky-400"></span>
+          </div>
+        </div>
+        <span class="text-lg font-black tracking-tight">Ludo<span class="text-[#f5b942]">Live</span></span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="themeToggleBtn" onclick="toggleAppearanceTheme()" class="hdr-btn w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-300 transition" title="Toggle Dark/Light Theme">
+          <i class="fas fa-sun text-sm"></i>
+        </button>
+        <button onclick="openStatsPage()" class="hdr-btn w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-300 transition" title="Statistics">
+          <i class="fas fa-chart-simple text-sm"></i>
+        </button>
+        <button id="lobbySoundBtn" onclick="toggleSound()" class="hdr-btn w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-300 transition" title="Sound">
+          <i class="fas fa-volume-high text-sm"></i>
+        </button>
+        <button onclick="openSettingsPage()" class="hdr-btn w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-300 transition" title="Settings">
+          <i class="fas fa-gear text-sm"></i>
+        </button>
+      </div>
+    </header>
+
+    <nav class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-3 border-b border-white/5 text-xs sm:text-sm font-bold">
+      <button onclick="switchLobbyTab('play')" id="ltab-play" class="ltab-active px-3.5 py-1.5 rounded-lg bg-white/15 text-white shrink-0">Play</button>
+      <button onclick="switchLobbyTab('rules')" id="ltab-rules" class="ltab-inactive px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white shrink-0">Rules</button>
+      <button onclick="switchLobbyTab('howto')" id="ltab-howto" class="ltab-inactive px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white shrink-0">How to Play</button>
+      <button onclick="switchLobbyTab('guides')" id="ltab-guides" class="ltab-inactive px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white shrink-0">Guides</button>
+      <button onclick="switchLobbyTab('faq')" id="ltab-faq" class="ltab-inactive px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white shrink-0">FAQ</button>
+    </nav>
+
+    <!-- TAB 1: PLAY -->
+    <div id="lobby-play" class="space-y-5 pt-6">
+      <div class="text-center space-y-3">
+        <h1 class="text-4xl sm:text-5xl font-black tracking-tight leading-[1.1]">
+          Play Ludo online,<br />
+          <span class="gradient-headline">beautifully<br />reimagined.</span>
+        </h1>
+        <p class="hero-desc text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+          Free multiplayer Ludo for 2–6 players, right in your browser. Challenge a clever AI, pass one device around the table, or invite friends into a realtime room. No login, no download.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+          <span class="feat-pill px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-gray-200">
+            <i class="fas fa-check text-emerald-400 mr-1"></i> 100% free
+          </span>
+          <span class="feat-pill px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-gray-200">
+            <i class="fas fa-check text-emerald-400 mr-1"></i> No login required
+          </span>
+          <span class="feat-pill px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-gray-200">
+            <i class="fas fa-check text-emerald-400 mr-1"></i> 2–6 players
+          </span>
+          <span class="feat-pill px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-gray-200">
+            <i class="fas fa-check text-emerald-400 mr-1"></i> Mobile & desktop
+          </span>
+        </div>
+      </div>
+
+      <!-- Mode Card 1: Play with AI -->
+      <div class="mode-card-ai rounded-3xl bg-gradient-to-b from-[#1e2547] to-[#14182e] border border-indigo-400/20 p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-center gap-4 py-2">
+          <div class="relative">
+            <div id="lobbyUserAvatar" class="w-14 h-14 rounded-full bg-rose-500/20 border-2 border-rose-500 overflow-hidden"></div>
+            <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-[#14182e]"></span>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-black text-indigo-400">
+            <span>VS</span>
+            <div class="w-11 h-11 rounded-xl bg-[#f5e6c8] text-[#1a1a1a] flex items-center justify-center shadow-md text-xl">
+              <i class="fas fa-dice-five"></i>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="w-14 h-14 rounded-full bg-sky-500/20 border-2 border-sky-400 flex items-center justify-center text-2xl text-sky-400">
+              <i class="fas fa-robot"></i>
+            </div>
+            <span class="absolute -bottom-1 -right-1 bg-sky-500 text-[9px] font-black px-1.5 py-0.5 rounded-full text-black">AI</span>
+          </div>
+        </div>
+        <div>
+          <h2 class="mode-card-title text-xl font-black text-white">Play with AI</h2>
+          <p class="mode-card-sub text-xs sm:text-sm text-gray-300 mt-1">Face a strategic AI with three difficulty levels. Works fully offline.</p>
+        </div>
+        <button onclick="selectGameMode('ai')" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#5865f2] to-[#4752c4] hover:opacity-95 font-extrabold text-sm text-white shadow-lg transition">
+          Play now →
+        </button>
+      </div>
+
+      <!-- Mode Card 2: Play with Friends -->
+      <div class="mode-card-friends rounded-3xl bg-gradient-to-b from-[#2b1f47] to-[#171329] border border-purple-400/20 p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-center gap-2 py-2">
+          <div class="w-10 h-10 rounded-full border-2 border-rose-500 bg-rose-500/20 overflow-hidden" data-av="ananya"></div>
+          <div class="w-12 h-12 rounded-full border-2 border-amber-400 bg-amber-400/20 overflow-hidden" data-av="arjun"></div>
+          <div class="w-11 h-11 rounded-xl bg-[#f5e6c8] text-[#1a1a1a] flex items-center justify-center shadow-md text-xl mx-1">
+            <i class="fas fa-dice-three"></i>
+          </div>
+          <div class="w-12 h-12 rounded-full border-2 border-emerald-400 bg-emerald-400/20 overflow-hidden" data-av="boo"></div>
+          <div class="w-10 h-10 rounded-full border-2 border-purple-400 bg-purple-400/20 overflow-hidden" data-av="meera"></div>
+        </div>
+        <div>
+          <h2 class="mode-card-title text-xl font-black text-white">Play with Friends</h2>
+          <p class="mode-card-sub text-xs sm:text-sm text-gray-300 mt-1">Pass one device around the table. 2–6 players, no internet needed.</p>
+        </div>
+        <button onclick="selectGameMode('local')" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] hover:opacity-95 font-extrabold text-sm text-white shadow-lg transition">
+          Play now →
+        </button>
+      </div>
+
+      <!-- Mode Card 3: Play Online -->
+      <div class="mode-card-online rounded-3xl bg-gradient-to-b from-[#13382e] to-[#0f221d] border border-emerald-400/20 p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-center gap-3 py-2">
+          <div class="relative">
+            <div class="w-14 h-14 rounded-full border-2 border-emerald-400 bg-emerald-500/20 overflow-hidden" data-av="zayn"></div>
+            <span class="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#0f221d]"></span>
+          </div>
+          <div class="border-t-2 border-dashed border-emerald-400/40 w-8"></div>
+          <div class="w-11 h-11 rounded-xl bg-[#f5e6c8] text-[#1a1a1a] flex items-center justify-center shadow-md text-xl">
+            <i class="fas fa-dice-six"></i>
+          </div>
+          <div class="border-t-2 border-dashed border-emerald-400/40 w-8"></div>
+          <div class="relative">
+            <div class="w-14 h-14 rounded-full border-2 border-purple-400 bg-purple-500/20 overflow-hidden" data-av="amira"></div>
+            <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-black flex items-center justify-center text-[10px]">
+              <i class="fas fa-globe"></i>
+            </span>
+          </div>
+        </div>
+        <div>
+          <h2 class="mode-card-title text-xl font-black text-white">Play Online</h2>
+          <p class="mode-card-sub text-xs sm:text-sm text-gray-300 mt-1">Create a private room, share the code and play with up to 6 friends in realtime.</p>
+        </div>
+        <button onclick="openOnlineLobbyModal()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#10b981] to-[#059669] hover:opacity-95 font-extrabold text-sm text-white shadow-lg transition">
+          Play now →
+        </button>
+      </div>
+
+      <!-- Customize Card -->
+      <div onclick="openCustomizeModal()" class="mode-card-custom rounded-3xl bg-[#16192b] hover:bg-[#1c2036] border border-white/10 p-4 flex items-center justify-between cursor-pointer transition">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-400 text-2xl">
+            <i class="fas fa-dice"></i>
+          </div>
+          <div>
+            <h3 class="mode-card-title text-base font-black text-white">Customize</h3>
+            <p class="mode-card-sub text-xs text-gray-400">Dice skins & board themes — all free.</p>
+          </div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-[#f5b942] text-black flex items-center justify-center font-black">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: RULES -->
+    <div id="lobby-rules" class="hidden space-y-4 pt-6 text-sm text-gray-300 leading-relaxed">
+      <h2 class="info-heading text-2xl font-black text-white">Official Ludo Rules</h2>
+      <div class="info-panel bg-[#151828] rounded-2xl p-4 border border-white/10 space-y-3">
+        <p><strong class="text-white">1. Starting the Race:</strong> Roll a <span class="text-amber-500 font-bold">6</span> to move any token out of your colored home triangle onto your starting square.</p>
+        <p><strong class="text-white">2. Bonus Turns:</strong> Rolling a 6 awards an extra roll. Rolling three 6s in a row forfeits the turn.</p>
+        <p><strong class="text-white">3. Capturing Opponents:</strong> Landing on a non-safe square occupied by an opponent's token sends their token back to their starting yard and grants you a bonus roll.</p>
+        <p><strong class="text-white">4. Safe Squares (Stars):</strong> Squares marked with a star or colored starting squares are safe zones where no token can be captured.</p>
+        <p><strong class="text-white">5. Reaching Home:</strong> Complete one full circuit around the board and enter your colored home stretch. An exact roll is required to enter the center home triangle.</p>
+      </div>
+    </div>
+
+    <!-- TAB 3: HOW TO PLAY -->
+    <div id="lobby-howto" class="hidden space-y-4 pt-6 text-sm text-gray-300 leading-relaxed">
+      <h2 class="info-heading text-2xl font-black text-white">How to Play</h2>
+      <div class="info-panel bg-[#151828] rounded-2xl p-4 border border-white/10 space-y-3">
+        <p><strong class="text-amber-500">Step 1:</strong> Choose <strong>Play with AI</strong>, <strong>Play with Friends</strong>, or <strong>Play Online</strong>.</p>
+        <p><strong class="text-amber-500">Step 2:</strong> Select 2 to 6 players. Choosing 5 players automatically loads the <strong>Pentagon Board</strong>, and 6 players loads the <strong>Hexagon Board</strong>.</p>
+        <p><strong class="text-amber-500">Step 3:</strong> Tap the glowing 3D dice inside your player card when it is your turn, then tap any highlighted token to move.</p>
+      </div>
+    </div>
+
+    <!-- TAB 4: GUIDES -->
+    <div id="lobby-guides" class="hidden space-y-4 pt-6 text-sm text-gray-300 leading-relaxed">
+      <h2 class="info-heading text-2xl font-black text-white">Winning Strategy Guides</h2>
+      <div class="info-panel bg-[#151828] rounded-2xl p-4 border border-white/10 space-y-3">
+        <p><strong class="text-emerald-500">Spread Your Tokens:</strong> Bring out at least two tokens early so you always have a safe move when rolling low numbers.</p>
+        <p><strong class="text-emerald-500">Control Star Zones:</strong> Park tokens on star squares right ahead of opponent home yards to pressure their newly spawned pieces.</p>
+        <p><strong class="text-emerald-500">Pentagon & Hexagon Tactics:</strong> On 5 and 6-player boards, the outer track is longer—prioritize chaining captures for extra turns.</p>
+      </div>
+    </div>
+
+    <!-- TAB 5: FAQ -->
+    <div id="lobby-faq" class="hidden space-y-4 pt-6 text-sm text-gray-300 leading-relaxed">
+      <h2 class="info-heading text-2xl font-black text-white">Frequently Asked Questions</h2>
+      <div class="info-panel bg-[#151828] rounded-2xl p-4 border border-white/10 space-y-3">
+        <div>
+          <h4 class="font-bold text-white">How do 5-player and 6-player boards work?</h4>
+          <p class="text-xs text-gray-400 mt-1">Selecting 5 players generates a symmetrical 5-arm Pentagon Ludo board, and 6 players generates a 6-arm Hexagon Ludo board with full rules and safe stars.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-white">Can I play with friends on separate phones?</h4>
+          <p class="text-xs text-gray-400 mt-1">Yes! Tap "Play Online", create a room, and share the 6-digit Room Code with your friends.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. PLAYER COUNT MODAL (2-6 PLAYERS) ==================== -->
+  <div id="playerCountModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[#131626] border border-white/10 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl relative text-white">
+      <button onclick="closePlayerCountModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-300">
+        <i class="fas fa-xmark"></i>
+      </button>
+
+      <div class="text-center space-y-1.5 pt-1">
+        <div class="w-12 h-12 rounded-2xl bg-amber-400/15 border border-amber-400/30 mx-auto flex items-center justify-center text-amber-300 text-xl">
+          <i class="fas fa-user-group"></i>
+        </div>
+        <h2 class="text-xl font-black">How many players will play?</h2>
+        <p id="countModalSub" class="text-xs text-gray-400">Everyone plays on this one device, taking it in turns.</p>
+      </div>
+
+      <div id="aiDifficultyBox" class="hidden bg-[#1a1e33] p-2 rounded-2xl grid grid-cols-3 gap-1.5 text-xs font-extrabold">
+        <button onclick="setAiDifficulty('easy')" id="diff-easy" class="py-2 rounded-xl text-gray-400">Easy</button>
+        <button onclick="setAiDifficulty('medium')" id="diff-medium" class="py-2 rounded-xl bg-[#f5b942] text-black">Medium</button>
+        <button onclick="setAiDifficulty('hard')" id="diff-hard" class="py-2 rounded-xl text-gray-400">Hard</button>
+      </div>
+
+      <div class="space-y-2.5">
+        <button onclick="openPlayerSetup(2)" class="w-full bg-[#1a1e33] hover:bg-[#222742] border border-white/10 rounded-2xl p-3.5 flex items-center justify-between transition">
+          <div class="flex items-center gap-3.5">
+            <span class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 font-black flex items-center justify-center">2</span>
+            <div class="text-left">
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-sm">2 Players</span>
+                <span class="text-xs"><i class="fas fa-user text-rose-400"></i> <i class="fas fa-user text-amber-400"></i></span>
+              </div>
+              <p class="text-[11px] text-gray-400">Head to head — the quick duel</p>
+            </div>
+          </div>
+          <i class="fas fa-arrow-right text-xs text-gray-400"></i>
+        </button>
+
+        <button onclick="openPlayerSetup(3)" class="w-full bg-[#1a1e33] hover:bg-[#222742] border border-white/10 rounded-2xl p-3.5 flex items-center justify-between transition">
+          <div class="flex items-center gap-3.5">
+            <span class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 font-black flex items-center justify-center">3</span>
+            <div class="text-left">
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-sm">3 Players</span>
+                <span class="text-xs"><i class="fas fa-user text-rose-400"></i> <i class="fas fa-user text-amber-400"></i> <i class="fas fa-user text-emerald-400"></i></span>
+              </div>
+              <p class="text-[11px] text-gray-400">A three-way race for home</p>
+            </div>
+          </div>
+          <i class="fas fa-arrow-right text-xs text-gray-400"></i>
+        </button>
+
+        <button onclick="openPlayerSetup(4)" class="w-full bg-[#1a1e33] hover:bg-[#222742] border border-white/10 rounded-2xl p-3.5 flex items-center justify-between transition">
+          <div class="flex items-center gap-3.5">
+            <span class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 font-black flex items-center justify-center">4</span>
+            <div class="text-left">
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-sm">4 Players</span>
+                <span class="text-xs"><i class="fas fa-user text-rose-400"></i> <i class="fas fa-user text-amber-400"></i> <i class="fas fa-user text-emerald-400"></i> <i class="fas fa-user text-sky-400"></i></span>
+              </div>
+              <p class="text-[11px] text-gray-400">The full table, the classic square board</p>
+            </div>
+          </div>
+          <i class="fas fa-arrow-right text-xs text-gray-400"></i>
+        </button>
+
+        <button onclick="openPlayerSetup(5)" class="w-full bg-[#1a1e33] hover:bg-[#222742] border border-white/10 rounded-2xl p-3.5 flex items-center justify-between transition">
+          <div class="flex items-center gap-3.5">
+            <span class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 font-black flex items-center justify-center">5</span>
+            <div class="text-left">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-extrabold text-sm">5 Players</span>
+                <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30">PENTAGON BOARD</span>
+              </div>
+              <p class="text-[11px] text-gray-400">Five seats on a pentagon board</p>
+            </div>
+          </div>
+          <i class="fas fa-arrow-right text-xs text-gray-400"></i>
+        </button>
+
+        <button onclick="openPlayerSetup(6)" class="w-full bg-[#1a1e33] hover:bg-[#222742] border border-white/10 rounded-2xl p-3.5 flex items-center justify-between transition">
+          <div class="flex items-center gap-3.5">
+            <span class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 font-black flex items-center justify-center">6</span>
+            <div class="text-left">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-extrabold text-sm">6 Players</span>
+                <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30">HEXAGON BOARD</span>
+              </div>
+              <p class="text-[11px] text-gray-400">Six seats on a hexagon board</p>
+            </div>
+          </div>
+          <i class="fas fa-arrow-right text-xs text-gray-400"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2b. PLAY WITH AI SETUP SCREEN ==================== -->
+  <div id="aiSetupView" class="subpage-shell">
+    <div class="ai-wrap">
+      <div class="ai-head">
+        <button class="ai-back subpage-back" onclick="closeAiSetup(true)" aria-label="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 5l-7 7 7 7"/></svg>
+        </button>
+        <h1 class="ai-title subpage-title">Play with AI</h1>
+      </div>
+
+      <div class="ai-card glass-box ai-rise">
+        <div class="ai-label">Your color</div>
+        <div class="ai-orbs" id="aiOrbs"></div>
+      </div>
+
+      <div class="ai-card glass-box ai-rise">
+        <div class="ai-label">Opponents</div>
+        <div class="ai-seg seg-track" id="aiOppSeg">
+          <span class="ai-thumb"></span>
+          <button type="button" data-v="1" onclick="aiPickOpp(1)">1</button>
+          <button type="button" data-v="2" onclick="aiPickOpp(2)">2</button>
+          <button type="button" data-v="3" onclick="aiPickOpp(3)">3</button>
+          <button type="button" data-v="4" onclick="aiPickOpp(4)">4</button>
+          <button type="button" data-v="5" onclick="aiPickOpp(5)">5</button>
+        </div>
+        <div class="ai-hint" id="aiHint">2 players · the classic square board</div>
+      </div>
+
+      <div class="ai-card glass-box ai-rise">
+        <div class="ai-label">Difficulty</div>
+        <div class="ai-seg seg-track" id="aiDiffSeg">
+          <span class="ai-thumb"></span>
+          <button type="button" data-v="easy" onclick="aiPickDiff('easy')">Easy</button>
+          <button type="button" data-v="medium" onclick="aiPickDiff('medium')">Medium</button>
+          <button type="button" data-v="hard" onclick="aiPickDiff('hard')">Hard</button>
+        </div>
+      </div>
+
+      <button class="ai-start ai-rise" onclick="aiStart()">Start game</button>
+    </div>
+  </div>
+
+  <!-- ==================== 3. PLAYER CUSTOMIZATION SETUP VIEW ==================== -->
+  <div id="setupView" class="hidden relative z-10 flex-1 flex flex-col max-w-lg w-full mx-auto px-4 pb-10">
+    <div class="py-4 flex items-center justify-between">
+      <button onclick="closeSetupView()" class="hdr-btn w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center">
+        <i class="fas fa-arrow-left text-sm"></i>
+      </button>
+      <h2 id="setupTitle" class="text-lg font-black">Play with Friends</h2>
+      <div class="w-10"></div>
+    </div>
+
+    <div class="glass-box bg-[#151828] border border-white/10 rounded-2xl p-3.5 flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-xl bg-amber-400/15 text-amber-400 flex items-center justify-center shrink-0">
+        <i class="fas fa-users"></i>
+      </div>
+      <p id="setupSubtitle" class="text-xs text-gray-300 leading-relaxed">
+        <strong>6 players</strong> on this device. Names and avatars are ready to go — edit any of them, or just start.
+      </p>
+    </div>
+
+    <div id="playerSetupCards" class="space-y-3 flex-1"></div>
+
+    <div class="pt-5 space-y-3">
+      <button onclick="startMatchFromSetup()" class="w-full py-4 rounded-2xl bg-[#f5b942] hover:bg-[#e5a932] text-black font-black text-base shadow-xl flex items-center justify-center gap-2 transition">
+        <i class="fas fa-play text-sm"></i> Start game
+      </button>
+      <button onclick="closeSetupView(); openPlayerCountModal();" class="w-full py-2 text-xs font-bold text-gray-400 hover:text-white flex items-center justify-center gap-2">
+        <span>Change table size</span>
+        <span class="w-6 h-3.5 rounded-full bg-white/20 inline-block relative"><span class="w-2.5 h-2.5 rounded-full bg-white absolute right-0.5 top-0.5"></span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 4. PLAY ONLINE ROOM MODAL (FIREBASE) ==================== -->
+  <div id="onlineModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[#131626] border border-white/10 rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl relative text-white">
+      <button onclick="closeOnlineModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-300">
+        <i class="fas fa-xmark"></i>
+      </button>
+
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 mx-auto flex items-center justify-center text-emerald-300 text-xl">
+          <i class="fas fa-globe"></i>
+        </div>
+        <h2 class="text-xl font-black">Online Multiplayer Room</h2>
+        <p class="text-xs text-gray-400">Create a room or join with a 6-digit code</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Your Display Name</label>
+          <input type="text" id="onlinePlayerName" value="Lucky Tiger" class="w-full bg-[#1c2036] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none" />
+        </div>
+
+        <div id="onlineCreateJoinBox" class="space-y-3">
+          <div class="bg-[#1a1e33] p-3.5 rounded-2xl border border-white/10 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-emerald-400 uppercase">Create New Room</span>
+              <select id="onlineMaxPlayers" class="bg-[#111424] text-xs font-bold px-2.5 py-1 rounded-lg border border-white/10">
+                <option value="2">2 Players</option>
+                <option value="4" selected>4 Players</option>
+                <option value="5">5 Players (Pentagon)</option>
+                <option value="6">6 Players (Hexagon)</option>
+              </select>
+            </div>
+            <button onclick="createOnlineRoom()" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm transition">
+              Create Room & Get Code
+            </button>
+          </div>
+
+          <div class="bg-[#1a1e33] p-3.5 rounded-2xl border border-white/10 space-y-2.5">
+            <span class="block text-xs font-extrabold text-sky-400 uppercase">Join Existing Room</span>
+            <div class="flex gap-2">
+              <input type="text" id="joinRoomCodeInput" maxlength="6" placeholder="ENTER CODE" class="flex-1 bg-[#111424] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm font-black uppercase tracking-widest text-center focus:outline-none" />
+              <button onclick="joinOnlineRoom()" class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-black font-black text-sm">
+                Join
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="onlineWaitingBox" class="hidden bg-[#1a1e33] p-4 rounded-2xl border border-emerald-400/30 space-y-3 text-center">
+          <p class="text-xs text-gray-400">Share this Room Code with friends:</p>
+          <div onclick="copyRoomCode()" class="inline-flex items-center gap-2 bg-[#0b0d17] border border-emerald-400/40 px-5 py-2 rounded-xl cursor-pointer">
+            <span id="displayRoomCode" class="text-2xl font-black tracking-widest text-emerald-400">------</span>
+            <i class="fas fa-copy text-xs text-gray-400"></i>
+          </div>
+          <div id="onlineRoomPlayersList" class="space-y-1.5 text-left pt-2"></div>
+          <button id="startOnlineHostBtn" onclick="startOnlineMatchHost()" class="hidden w-full py-3 rounded-xl bg-[#f5b942] text-black font-black text-sm">
+            Start Online Match
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5. STATISTICS PAGE ==================== -->
+  <div id="statsView" class="subpage-shell">
+    <div class="sp-wrap">
+      <div class="sp-head">
+        <div class="sp-head-left">
+          <button class="sp-back subpage-back" onclick="closeStatsPage()" aria-label="Back"><i class="fas fa-arrow-left"></i></button>
+          <div class="sp-title subpage-title">Statistics</div>
+        </div>
+        <div class="st-user-pill">
+          <span id="statsPlayerName">Lucky Tiger</span>
+          <div class="st-av" id="statsPlayerAvatar"></div>
+        </div>
+      </div>
+      <div id="statsContentArea"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 6. CUSTOMIZE PAGE ==================== -->
+  <div id="customizeView" class="subpage-shell">
+    <div class="sp-wrap">
+      <div class="sp-head">
+        <div class="sp-head-left">
+          <button class="sp-back subpage-back" onclick="closeCustomizeModal()" aria-label="Back"><i class="fas fa-arrow-left"></i></button>
+          <div class="sp-title subpage-title">Customize</div>
+        </div>
+      </div>
+
+      <div class="cz-preview glass-box" id="czPreviewCard">
+        <button class="cz-expand" onclick="openFullPreview()" aria-label="Full preview"><i class="fas fa-expand"></i></button>
+        <div class="cz-stage" onclick="rollPreviewDice()">
+          <div class="cz-ring" id="czRing"></div>
+          <div class="cz-float">
+            <div class="cz-tilt">
+              <div class="cz-cube" id="czCube"></div>
+            </div>
+          </div>
+        </div>
+        <div class="cz-name val-main" id="czName">Royal dice · Classic theme</div>
+        <div class="cz-sub">Tap the dice to roll — this dice and theme will be used while you play</div>
+      </div>
+
+      <div class="cz-card glass-box">
+        <h3>🎲 Dice</h3>
+        <p>Choose your dice — this never changes the background</p>
+        <div class="cz-grid" id="czDiceGrid"></div>
+      </div>
+
+      <div class="cz-card glass-box">
+        <h3>🎨 Theme</h3>
+        <p>Choose your game background — this never changes the dice</p>
+        <div class="cz-grid" id="czThemeGrid"></div>
+      </div>
+
+      <div class="cz-foot">Cosmetics are yours alone — other players keep their own look, and games play exactly the same.</div>
+    </div>
+  </div>
+
+  <!-- Full preview overlay -->
+  <div id="czPreview">
+    <div class="cz-pv-top">
+      <div class="cz-pill">Preview · not a real match</div>
+      <button class="cz-x" onclick="closeFullPreview()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="cz-pv-body">
+      <div class="cz-pods" id="czPvTop"></div>
+      <div id="czPvBoard"></div>
+      <div class="cz-chev"><i class="fas fa-chevron-up"></i></div>
+      <div class="cz-pods" id="czPvBottom"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 7. SETTINGS PAGE ==================== -->
+  <div id="settingsView" class="subpage-shell">
+    <div class="sp-wrap">
+      <div class="sp-head">
+        <div class="sp-head-left">
+          <button class="sp-back subpage-back" onclick="closeSettingsPage()" aria-label="Back"><i class="fas fa-arrow-left"></i></button>
+          <div class="sp-title subpage-title">Settings</div>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">PROFILE</div>
+      <div class="set-card glass-box">
+        <label class="set-field-lbl" for="setDisplayName">Display name</label>
+        <input id="setDisplayName" type="text" maxlength="20" class="set-input" value="Lucky Tiger" oninput="onProfileNameInput(this.value)" />
+        <div class="set-helper">3–20 characters. Shorter names are ignored.</div>
+
+        <div class="flex items-center justify-between mb-2">
+          <span class="set-field-lbl mb-0">Avatar</span>
+          <span class="text-xs font-semibold sub-muted text-[#8c93ae]">26 characters</span>
+        </div>
+
+        <div class="av-preview-row">
+          <div class="av-preview-circle" id="setSelectedAvIcon"></div>
+          <div>
+            <div class="text-sm font-extrabold val-main" id="setSelectedAvName">Arjun</div>
+            <div class="text-xs sub-muted text-[#8c93ae]" id="setSelectedAvTag">Laid-back gamer</div>
+          </div>
+        </div>
+
+        <div class="av-tabs" id="setAvTabs">
+          <button type="button" class="av-tab on" data-cat="all" onclick="filterSettingsAvatars('all')">All</button>
+          <button type="button" class="av-tab" data-cat="male" onclick="filterSettingsAvatars('male')">Male</button>
+          <button type="button" class="av-tab" data-cat="female" onclick="filterSettingsAvatars('female')">Female</button>
+          <button type="button" class="av-tab" data-cat="characters" onclick="filterSettingsAvatars('characters')">Characters</button>
+        </div>
+
+        <div class="av-grid" id="setAvGrid"></div>
+
+        <div class="mt-5 pt-4 border-t border-white/10">
+          <span class="set-field-lbl">Favorite color</span>
+          <div class="ai-orbs mt-2" id="setFavOrbs"></div>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">APPEARANCE</div>
+      <div class="set-card glass-box space-y-4">
+        <div>
+          <span class="set-field-lbl">Theme</span>
+          <div class="set-seg seg-track" id="setThemeSeg">
+            <button type="button" data-v="dark" onclick="setAppearanceTheme('dark')">Dark</button>
+            <button type="button" data-v="light" onclick="setAppearanceTheme('light')">Light</button>
+          </div>
+        </div>
+        <div>
+          <span class="set-field-lbl">Animation speed</span>
+          <div class="set-seg seg-track" id="setAnimSeg">
+            <button type="button" data-v="relaxed" onclick="setAnimationSpeed('relaxed')">Relaxed</button>
+            <button type="button" data-v="normal" onclick="setAnimationSpeed('normal')">Normal</button>
+            <button type="button" data-v="fast" onclick="setAnimationSpeed('fast')">Fast</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">CUSTOMIZE</div>
+      <div class="set-card glass-box space-y-5">
+        <div>
+          <h3 class="text-base font-bold m-0">🎲 Dice</h3>
+          <p class="text-xs text-[#8c93ae] mt-1 mb-3">Choose your dice — this never changes the background</p>
+          <div class="cz-grid" id="setDiceGrid"></div>
+        </div>
+        <div class="pt-2 border-t border-white/10">
+          <h3 class="text-base font-bold m-0">🎨 Theme</h3>
+          <p class="text-xs text-[#8c93ae] mt-1 mb-3">Choose your game background — this never changes the dice</p>
+          <div class="cz-grid" id="setBgThemeGrid"></div>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">AUDIO</div>
+      <div class="set-card glass-box space-y-4">
+        <div class="set-toggle-row">
+          <div>
+            <div class="text-sm font-bold val-main">Sound effects</div>
+            <div class="text-xs sub-muted text-[#8c93ae]">Dice, moves, captures and wins</div>
+          </div>
+          <button type="button" id="setSfxSwitch" class="set-switch on" onclick="toggleSfxSetting()" aria-label="Sound effects"></button>
+        </div>
+
+        <div class="set-toggle-row">
+          <div>
+            <div class="text-sm font-bold val-main">Background music</div>
+            <div class="text-xs sub-muted text-[#8c93ae]">Original tunes — upbeat in menus, calm during games</div>
+          </div>
+          <button type="button" id="setMusicSwitch" class="set-switch" onclick="toggleMusicSetting()" aria-label="Background music"></button>
+        </div>
+
+        <div class="pt-3 border-t border-white/10">
+          <div class="text-[11px] font-extrabold tracking-wider uppercase text-[#8c93ae]">MIXER</div>
+          <div class="mix-row">
+            <div class="mix-lbl"><i class="fas fa-volume-high"></i> Master</div>
+            <input type="range" min="0" max="100" value="0" id="mixMaster" class="mix-slider" oninput="updateMixer('master', this.value)" />
+            <div class="mix-val" id="mixMasterVal">0</div>
+          </div>
+          <div class="mix-row">
+            <div class="mix-lbl"><i class="fas fa-wand-magic-sparkles"></i> Effects</div>
+            <input type="range" min="0" max="100" value="100" id="mixEffects" class="mix-slider" oninput="updateMixer('effects', this.value)" />
+            <div class="mix-val" id="mixEffectsVal">100</div>
+          </div>
+          <div class="mix-row">
+            <div class="mix-lbl"><i class="fas fa-music"></i> Music</div>
+            <input type="range" min="0" max="100" value="60" id="mixMusic" class="mix-slider" oninput="updateMixer('music', this.value)" />
+            <div class="mix-val" id="mixMusicVal">60</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">GAMEPLAY</div>
+      <div class="set-card glass-box space-y-4">
+        <div>
+          <span class="set-field-lbl">Default AI difficulty</span>
+          <div class="set-seg seg-track" id="setAiDiffSeg">
+            <button type="button" data-v="easy" onclick="setDefaultAiDiff('easy')">Easy</button>
+            <button type="button" data-v="medium" onclick="setDefaultAiDiff('medium')">Medium</button>
+            <button type="button" data-v="hard" onclick="setDefaultAiDiff('hard')">Hard</button>
+          </div>
+        </div>
+        <div>
+          <span class="set-field-lbl">Dice timer</span>
+          <div class="text-xs sub-muted text-[#8c93ae] -mt-1 mb-2.5">Time to roll before the turn is skipped. Choosing a token is untimed.</div>
+          <div class="set-seg seg-track" id="setTimerSeg">
+            <button type="button" data-v="0" onclick="setDiceTimerSec(0)">Off</button>
+            <button type="button" data-v="10" onclick="setDiceTimerSec(10)">10s</button>
+            <button type="button" data-v="30" onclick="setDiceTimerSec(30)">30s</button>
+            <button type="button" data-v="60" onclick="setDiceTimerSec(60)">60s</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">PRIVACY</div>
+      <div class="set-card glass-box">
+        <div class="set-toggle-row">
+          <div>
+            <div class="text-sm font-bold val-main">Analytics cookies</div>
+            <div class="text-xs sub-muted text-[#8c93ae]">Measurement stays cookieless — nothing is stored on this device.</div>
+          </div>
+          <button type="button" id="setAnalyticsSwitch" class="set-switch" onclick="toggleAnalyticsSetting()" aria-label="Analytics cookies"></button>
+        </div>
+      </div>
+
+      <div class="set-sec-lbl">DATA</div>
+      <div class="set-card glass-box">
+        <button type="button" class="reset-danger-btn" onclick="resetAllUserData()">
+          <i class="fas fa-trash-can"></i> Reset all data
+        </button>
+        <div class="text-xs text-center sub-muted text-[#8c93ae] mt-2.5">
+          Clears your profile, settings, statistics and saved games on this device.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 8. ACTIVE GAMEPLAY VIEW ==================== -->
+  <div id="gameView" class="hidden fixed inset-0 z-40 flex flex-col justify-between p-3 sm:p-4 text-white">
+
+    <!-- Top Controls Bar -->
+    <div class="flex items-center justify-between max-w-xl w-full mx-auto pt-1">
+      <button onclick="openLeaveGameModal()" class="gp-top-btn" aria-label="Leave game">
+        <i class="fas fa-arrow-right-from-bracket rotate-180 text-sm"></i>
+      </button>
+
+      <div class="gp-top-pill">
+        <button onclick="togglePauseGame()" id="pauseBtn" title="Pause">
+          <i class="fas fa-pause text-xs"></i>
+        </button>
+        <button onclick="toggleGameFullscreen()" title="Fullscreen">
+          <i class="fas fa-expand text-xs"></i>
+        </button>
+        <button onclick="cycleBoardTheme()" title="Switch Theme">
+          <i class="fas fa-sun text-xs"></i>
+        </button>
+        <button onclick="toggleSound()" id="gameSoundBtn" title="Sound">
+          <i class="fas fa-volume-high text-xs"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Board + Top & Bottom Player Pods -->
+    <div class="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto gap-3 my-1">
+      <div id="topPodsRow" class="grid grid-cols-3 gap-2 w-full"></div>
+
+      <div class="relative w-full aspect-square max-w-[440px] flex items-center justify-center my-0.5">
+        <canvas id="ludoCanvas" class="w-full h-full cursor-pointer"></canvas>
+      </div>
+
+      <div id="bottomPodsRow" class="grid grid-cols-3 gap-2 w-full"></div>
+    </div>
+
+    <!-- Bottom Subtle Helper Hint -->
+    <div class="text-center text-[11px] text-gray-400/80 font-semibold pb-0.5">
+      <span id="gameStatusHint">Tap the dice to roll</span>
+    </div>
+  </div>
+
+  <!-- ==================== 9. LEAVE THE GAME? MODAL ==================== -->
+  <div id="leaveGameModal">
+    <div class="lg-card">
+      <div class="lg-icon-box">
+        <i class="fas fa-arrow-right-from-bracket rotate-180"></i>
+      </div>
+      <h2 class="lg-title">Leave the game?</h2>
+      <p class="lg-desc">
+        This match is still running. Head back and keep playing, or leave the table — your progress in this match is lost.
+      </p>
+      <button type="button" class="lg-btn-leave" onclick="confirmLeaveGame()">
+        <i class="fas fa-arrow-right-from-bracket rotate-180 text-sm"></i>
+        <span>Leave Game</span>
+      </button>
+      <button type="button" class="lg-btn-cancel" onclick="closeLeaveGameModal()">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 10. VICTORY PODIUM MODAL ==================== -->
+  <div id="victoryModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-[#151828] border border-amber-400/30 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl text-white">
+      <div class="w-16 h-16 rounded-full bg-amber-400/20 border-2 border-amber-400 mx-auto flex items-center justify-center text-3xl text-amber-300">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <h2 class="text-2xl font-black text-white">Match Complete!</h2>
+      <div id="podiumList" class="space-y-2 text-left"></div>
+      <div class="grid grid-cols-2 gap-2.5 pt-2">
+        <button onclick="rematchGame()" class="py-3 rounded-xl bg-[#f5b942] text-black font-black text-sm">Play Again</button>
+        <button onclick="returnToLobby()" class="py-3 rounded-xl bg-white/10 text-white font-bold text-sm">Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-[80] bg-[#1e233a] border border-white/15 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl hidden"></div>
+
+  <!-- EXTERNAL GAME ENGINE MODULE -->
+  <script type="module" src="ludolive.js"></script>
+</body>
+</html>
 
