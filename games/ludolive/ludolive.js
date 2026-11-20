@@ -190,6 +190,11 @@ let isPaused = false;
 let gpCubeRotX = -16, gpCubeRotY = 22;
 let boardEffects = [];
 
+// Countdown ring circumference (radius = 23 -> 2 * PI * 23 ≈ 144.51)
+const TIMER_RING_CIRC = 144.51;
+let currentTurnRemaining = 30;
+let currentTurnTotal = 30;
+
 // =========================================================================
 // APPEARANCE THEME & PROFILE SYNC
 // =========================================================================
@@ -1159,7 +1164,6 @@ function buildPolygonBoardGeometry(armsCount) {
   const cellH = cellW * (armsCount === 4 ? 0.95 : 0.90);
   const apothem = R_in * Math.cos(Math.PI / armsCount);
 
-  // Math.PI / 2 makes 4-arm board straight square (Bottom, Left, Top, Right)
   const startAngle = armsCount === 4 ? Math.PI / 2 : (2 * Math.PI) / 3;
   const armAngles = [];
   for (let k = 0; k < armsCount; k++) {
@@ -1590,6 +1594,7 @@ function moveToken(tokenIdx) {
       if (bonusTurn && player.finishedCount < 4) {
         game.diceRolled = false;
         document.getElementById("gameStatusHint").innerText = "Bonus roll! Tap dice again";
+        startTurnTimer();
         renderPlayerPods();
         syncOnlineState();
         maybeTriggerAITurn();
@@ -1613,9 +1618,9 @@ function advanceTurn() {
     loops++;
   } while (game.players[game.turnIdx].finishedCount === 4 && loops <= game.players.length);
 
+  startTurnTimer();
   renderPlayerPods();
   drawBoard();
-  startTurnTimer();
   syncOnlineState();
   maybeTriggerAITurn();
 }
@@ -1634,19 +1639,36 @@ function maybeTriggerAITurn() {
   }
 }
 
+function updateCountdownRingVisual() {
+  const prog = document.getElementById("gpTimerProg");
+  if (!prog || !currentTurnTotal) return;
+  const ratio = Math.max(0, Math.min(1, currentTurnRemaining / currentTurnTotal));
+  prog.style.strokeDashoffset = String(TIMER_RING_CIRC * (1 - ratio));
+  prog.classList.toggle("urgent", currentTurnRemaining <= 9);
+}
+
 function startTurnTimer() {
   clearInterval(turnInterval);
-  if (!userProfile.diceTimer) return;
-  let timeLeft = userProfile.diceTimer;
+  if (!userProfile.diceTimer) {
+    currentTurnTotal = 0;
+    currentTurnRemaining = 0;
+    return;
+  }
+  currentTurnTotal = userProfile.diceTimer;
+  currentTurnRemaining = userProfile.diceTimer;
+  updateCountdownRingVisual();
+
   turnInterval = setInterval(() => {
     if (isPaused || !game) return;
-    timeLeft--;
+    currentTurnRemaining--;
     const badge = document.getElementById("turnTimerBadge");
     if (badge) {
-      badge.innerText = timeLeft;
-      badge.classList.toggle("urgent", timeLeft <= 9);
+      badge.innerText = Math.max(0, currentTurnRemaining);
+      badge.classList.toggle("urgent", currentTurnRemaining <= 9);
     }
-    if (timeLeft <= 0) {
+    updateCountdownRingVisual();
+
+    if (currentTurnRemaining <= 0) {
       clearInterval(turnInterval);
       if (!game.diceRolled) executeDiceRoll();
       else if (game.movableTokens.length > 0) moveToken(game.movableTokens[0]);
@@ -1991,6 +2013,10 @@ function renderPlayerPods() {
     topPlayers.push(game.players[1], game.players[2], game.players[3]);
   }
 
+  const ratio = currentTurnTotal > 0 ? Math.max(0, Math.min(1, currentTurnRemaining / currentTurnTotal)) : 1;
+  const dashOffset = (TIMER_RING_CIRC * (1 - ratio)).toFixed(2);
+  const isUrgent = currentTurnTotal > 0 && currentTurnRemaining <= 9;
+
   const buildPodHTML = (p, isTopRow) => {
     const col = COLOR_PALETTE[p.colorIndex];
     const isTurn = p.id === activePlayer.id;
@@ -2000,7 +2026,15 @@ function renderPlayerPods() {
     }).join("");
 
     const timerBadge = userProfile.diceTimer
-      ? `<span id="turnTimerBadge" class="gp-timer-pill">${userProfile.diceTimer}</span>`
+      ? `<span id="turnTimerBadge" class="gp-timer-pill ${isUrgent ? 'urgent' : ''}">${Math.max(0, currentTurnRemaining)}</span>`
+      : "";
+
+    const countdownRingSVG = userProfile.diceTimer
+      ? `<svg class="gp-timer-svg" viewBox="0 0 54 54">
+           <circle class="gp-timer-track" cx="27" cy="27" r="23"></circle>
+           <circle id="gpTimerProg" class="gp-timer-prog ${isUrgent ? 'urgent' : ''}" cx="27" cy="27" r="23"
+             stroke-dasharray="${TIMER_RING_CIRC}" stroke-dashoffset="${dashOffset}"></circle>
+         </svg>`
       : "";
 
     const arrowHTML = isTurn
@@ -2029,7 +2063,7 @@ function renderPlayerPods() {
 
         ${isTurn ? `
           <button id="activeDiceBox" onclick="handleDiceClick()" class="gp-dice-btn focus:outline-none">
-            <span class="gp-dice-ring"></span>
+            ${countdownRingSVG}
             ${build3DDiceHTML(game.diceVal, true)}
             ${timerBadge}
           </button>
