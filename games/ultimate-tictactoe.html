@@ -993,6 +993,8 @@
 
   function showChatBubble(side, text) {
     if (!S) return;
+    side = String(side).replace(/[^\w-]/g, '');
+    text = String(text).slice(0, 80);
     const gameBox = $('utt-game');
     const old = gameBox.querySelector(`.utt-bubble[data-side="${side}"]`);
     if (old) old.remove();

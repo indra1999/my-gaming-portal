@@ -1234,6 +1234,7 @@
 
   function showChatBubble(absSeat, text) {
     if (!S) return;
+    text = String(text).slice(0, 80);
     const vis = visualSeat(absSeat);
     const table = $('cb-table');
     const old = table.querySelector(`.cb-bubble[data-vis="${vis}"]`);

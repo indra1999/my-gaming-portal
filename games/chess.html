@@ -1083,6 +1083,7 @@
   let clocks = { w: 0, b: 0 };
   let clockInt = null;
   let lastResultText = '';
+  let baseKeys = [];
 
   function up(p) { return p === p.toUpperCase(); }
 
@@ -1195,7 +1196,12 @@
     [[0, 'q'], [7, 'k'], [56, 'Q'], [63, 'K']].forEach(z => {
       if (m.f === z[0] || m.t === z[0]) cr = cr.replace(z[1], '');
     });
-    return { b, t: w ? 'b' : 'w', c: cr, e };
+    const resetClock = p.toUpperCase() === 'P' || st.b[m.t] !== '.' || m.e;
+    return { b, t: w ? 'b' : 'w', c: cr, e, h: resetClock ? 0 : (st.h || 0) + 1 };
+  }
+
+  function posKey(st) {
+    return st.b.join('') + st.t + st.c + st.e;
   }
 
   function inChk(b, t) {
@@ -1543,7 +1549,8 @@
         last,
         flip,
         clocks,
-        meta: matchMeta
+        meta: matchMeta,
+        keys: baseKeys.concat(H.map(x => posKey(x.S)))
       }));
     } catch (e) {}
   }
@@ -1597,7 +1604,9 @@
       flip = saved.flip;
       clocks = saved.clocks || { w: prefs.clockSec, b: prefs.clockSec };
       matchMeta = saved.meta;
+      baseKeys = Array.isArray(saved.keys) ? saved.keys : [];
     } else {
+      baseKeys = [];
       matchMeta = {
         online: Boolean(opts.online),
         mode: opts.mode || 'aiw',
@@ -1605,7 +1614,7 @@
         whiteName: opts.whiteName || 'White',
         blackName: opts.blackName || 'Black'
       };
-      S = { b: INI.split(''), t: 'w', c: 'KQkq', e: -1 };
+      S = { b: INI.split(''), t: 'w', c: 'KQkq', e: -1, h: 0 };
       last = null;
       flip = (matchMeta.online ? matchMeta.mySide === 'b' : matchMeta.mode === 'aib') ? 1 : 0;
       clocks = { w: prefs.clockSec, b: prefs.clockSec };
@@ -1731,6 +1740,14 @@
     saveStats();
   }
 
+  function repCount() {
+    const cur = posKey(S);
+    let n = 1;
+    baseKeys.forEach(k => { if (k === cur) n++; });
+    H.forEach(x => { if (posKey(x.S) === cur) n++; });
+    return n;
+  }
+
   function upd() {
     const ms = legal(S);
     const ck = inChk(S.b, S.t);
@@ -1758,6 +1775,18 @@
       $('cg-st').textContent = 'Draw (Insufficient Material)';
       recordMatchEnd('draw');
       showGameOver('Draw!', 'Insufficient material to checkmate');
+    } else if ((S.h || 0) >= 100) {
+      stopClock();
+      clearSave();
+      $('cg-st').textContent = 'Draw (50-move rule)';
+      recordMatchEnd('draw');
+      showGameOver('Draw!', 'No capture or pawn move in the last 50 moves');
+    } else if (repCount() >= 3) {
+      stopClock();
+      clearSave();
+      $('cg-st').textContent = 'Draw (Threefold repetition)';
+      recordMatchEnd('draw');
+      showGameOver('Draw!', 'The same position occurred three times');
     } else {
       over = 0;
       $('cg-st').textContent = `${turnName}'s Turn` + (ck ? ' — Check!' : '');
