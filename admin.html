@@ -139,7 +139,7 @@
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="text-lg font-black">Published Games (<span id="totalGamesCount">0</span>)</h2>
         <button onclick="seedInitialGames()" class="bg-[#1c1f30] hover:bg-[#262a40] text-xs font-bold px-3.5 py-2 rounded-full text-purple-300">
-          <i class="fas fa-database mr-1"></i> Import Starter 5 Games
+          <i class="fas fa-database mr-1"></i> Import Starter Games
         </button>
       </div>
 
@@ -152,19 +152,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-    const ADMIN_EMAIL = "indromondol2@gmail.com";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBOyPRF0djlFD_rXI1vKilJP3ATk-WEIak",
-      authDomain: "indrogames-web.firebaseapp.com",
-      projectId: "indrogames-web",
-      storageBucket: "indrogames-web.firebasestorage.app",
-      messagingSenderId: "947379986211",
-      appId: "1:947379986211:web:9233d08748015337f63696",
-      measurementId: "G-JF8ND67X5Z"
-    };
+    import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { firebaseConfig, ADMIN_EMAIL, esc, safeUrl } from "./firebase-config.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -172,6 +161,7 @@
     const provider = new GoogleAuthProvider();
 
     let liveGames = [];
+    let unsubscribeGames = null;
 
     onAuthStateChanged(auth, (user) => {
       if (user && user.email === ADMIN_EMAIL) {
@@ -183,6 +173,8 @@
         document.getElementById("gateStatusText").innerText = `Access denied for ${user.email}. Only ${ADMIN_EMAIL} is allowed.`;
         signOut(auth);
       } else {
+        if (unsubscribeGames) { unsubscribeGames(); unsubscribeGames = null; }
+        liveGames = [];
         document.getElementById("loginGate").classList.remove("hidden");
         document.getElementById("adminDashboard").classList.add("hidden");
       }
@@ -197,36 +189,40 @@
     };
 
     window.adminSignOut = async function () {
-      await signOut(auth);
+      try { await signOut(auth); } catch (err) { showToast(err.message); }
     };
 
     function listenToGames() {
-      onSnapshot(collection(db, "games"), (snap) => {
+      if (unsubscribeGames) return;   // never stack duplicate listeners
+      unsubscribeGames = onSnapshot(collection(db, "games"), (snap) => {
         liveGames = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         document.getElementById("totalGamesCount").innerText = liveGames.length;
         renderAdminGames();
+      }, (err) => {
+        console.error("Games listener failed:", err);
+        showToast("Cannot read games: " + err.message);
       });
     }
 
     function renderAdminGames() {
       const container = document.getElementById("adminGamesList");
       if (liveGames.length === 0) {
-        container.innerHTML = `<p class="text-xs text-gray-400 col-span-full py-6 text-center">No games in database yet. Add one above or click Import Starter 5 Games.</p>`;
+        container.innerHTML = `<p class="text-xs text-gray-400 col-span-full py-6 text-center">No games in database yet. Add one above or click Import Starter Games.</p>`;
         return;
       }
 
       container.innerHTML = liveGames.map(g => `
         <div class="bg-[#1c1f30] rounded-xl p-3 flex items-center gap-3 border border-white/5">
-          <img src="${g.image}" class="w-16 h-16 rounded-xl object-cover shrink-0" />
+          <img src="${esc(safeUrl(g.image))}" alt="" class="w-16 h-16 rounded-xl object-cover shrink-0" />
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-1.5">
-              <h3 class="font-extrabold text-sm truncate">${g.title}</h3>
+              <h3 class="font-extrabold text-sm truncate">${esc(g.title)}</h3>
               ${g.featured ? `<span class="bg-[#6842ff] text-[10px] px-1.5 py-0.5 rounded font-bold">Featured</span>` : ""}
             </div>
-            <p class="text-xs text-gray-400">${g.category} • ${g.url}</p>
+            <p class="text-xs text-gray-400">${esc(g.category)} • ${esc(g.url)}</p>
             <div class="flex gap-2 mt-2">
-              <button onclick="editGame('${g.id}')" class="bg-[#262a40] hover:bg-[#6842ff] text-xs font-bold px-2.5 py-1 rounded-lg transition">Edit</button>
-              <button onclick="deleteGame('${g.id}')" class="bg-red-500/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-bold px-2.5 py-1 rounded-lg transition">Delete</button>
+              <button data-id="${esc(g.id)}" onclick="editGame(this.dataset.id)" class="bg-[#262a40] hover:bg-[#6842ff] text-xs font-bold px-2.5 py-1 rounded-lg transition">Edit</button>
+              <button data-id="${esc(g.id)}" onclick="deleteGame(this.dataset.id)" class="bg-red-500/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-bold px-2.5 py-1 rounded-lg transition">Delete</button>
             </div>
           </div>
         </div>
@@ -237,19 +233,36 @@
       e.preventDefault();
       const title = document.getElementById("gTitle").value.trim();
       const existingId = document.getElementById("editGameId").value;
-      const slug = existingId || title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Math.floor(Math.random() * 1000);
+      if (!title) { showToast("Title is required"); return; }
+
+      const url = document.getElementById("gUrl").value.trim();
+      const image = document.getElementById("gImage").value.trim();
+      if (!safeUrl(url)) { showToast("Game URL must be a relative path (games/x.html) or https:// link"); return; }
+      if (!safeUrl(image)) { showToast("Image URL must start with https://"); return; }
+
+      const ratingNum = parseFloat(document.getElementById("gRating").value);
+      const rating = Number.isFinite(ratingNum) && ratingNum >= 0 && ratingNum <= 10 ? ratingNum.toFixed(1) : "8.8";
+
+      // Unicode-safe id (Bengali etc. titles no longer collapse to "-123")
+      const baseSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "game";
+      const slug = existingId || `${baseSlug}-${Date.now().toString(36).slice(-4)}${Math.floor(Math.random() * 36).toString(36)}`;
+
+      const existing = liveGames.find(g => g.id === existingId);
+      const likesText = document.getElementById("gLikesText").value.trim() || "10K";
+      const makeFeatured = document.getElementById("gFeatured").checked;
 
       const gameObj = {
         title,
         category: document.getElementById("gCategory").value,
-        url: document.getElementById("gUrl").value.trim(),
-        image: document.getElementById("gImage").value.trim(),
+        url,
+        image,
         tags: document.getElementById("gTags").value.split(",").map(t => t.trim()).filter(Boolean),
-        rating: document.getElementById("gRating").value.trim() || "8.8",
-        likesText: document.getElementById("gLikesText").value.trim() || "10K",
-        votesText: `${document.getElementById("gLikesText").value.trim() || "10K"} likes`,
-        orientation: "Portrait & Landscape",
-        featured: document.getElementById("gFeatured").checked,
+        rating,
+        likesText,
+        // keep the original "x likes and y dislikes" text if the like count was not changed
+        votesText: existing && existing.likesText === likesText && existing.votesText ? existing.votesText : `${likesText} likes`,
+        orientation: existing && existing.orientation ? existing.orientation : "Portrait & Landscape",
+        featured: makeFeatured,
         intro: document.getElementById("gIntro").value.trim(),
         howToPlay: document.getElementById("gHowToPlay").value.trim(),
         rules: document.getElementById("gRules").value.split("\n").map(r => r.trim()).filter(Boolean),
@@ -258,10 +271,18 @@
       };
 
       try {
-        await setDoc(doc(db, "games", slug), gameObj);
+        const batch = writeBatch(db);
+        batch.set(doc(db, "games", slug), gameObj, { merge: true });
+        // Only one featured game at a time: un-feature all the others in the same atomic write.
+        if (makeFeatured) {
+          liveGames.filter(g => g.featured && g.id !== slug)
+            .forEach(g => batch.update(doc(db, "games", g.id), { featured: false }));
+        }
+        await batch.commit();
         showToast("Game published successfully!");
         resetGameForm();
       } catch (err) {
+        console.error(err);
         showToast("Error: " + err.message);
       }
     };
@@ -299,8 +320,13 @@
 
     window.deleteGame = async function (id) {
       if (!confirm("Delete this game permanently?")) return;
-      await deleteDoc(doc(db, "games", id));
-      showToast("Game deleted");
+      try {
+        await deleteDoc(doc(db, "games", id));
+        showToast("Game deleted");
+      } catch (err) {
+        console.error(err);
+        showToast("Delete failed: " + err.message);
+      }
     };
 
     window.seedInitialGames = async function () {
@@ -394,14 +420,42 @@
           controls: "Swipe on mobile or use Arrow keys on PC.",
           image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=600&q=80",
           url: "games/2048.html"
+        },
+        {
+          id: "ludo-live",
+          title: "Ludo Live",
+          category: "Board",
+          rating: "8.9",
+          likesText: "12.4K",
+          votesText: "12.4K likes and 310 dislikes",
+          orientation: "Portrait",
+          tags: ["Board", "Multiplayer", "Casual", "2D", "Mobile"],
+          featured: false,
+          intro: "Ludo Live is a modern Ludo with online rooms, 2-6 players, custom dice and board themes.",
+          howToPlay: "Play vs AI, with friends on one device, or create an online room and share the code.",
+          rules: ["Roll a 6 to leave the base.", "Capture opponents to send them back.", "Bring all four tokens home to finish."],
+          features: ["Online rooms with a shareable code", "2, 4, 5 or 6 player boards", "Dice skins and board themes"],
+          controls: "Tap the dice to roll, then tap a highlighted token.",
+          image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=600&q=80&sat=-30",
+          url: "games/ludolive/ludolive.html"
         }
       ];
 
-      for (const g of starter) {
-        const { id, ...data } = g;
-        await setDoc(doc(db, "games", id), data);
+      if (!confirm("Import the starter games? Games that already exist will NOT be changed.")) return;
+      try {
+        let added = 0, skipped = 0;
+        for (const g of starter) {
+          const { id, ...data } = g;
+          const ref = doc(db, "games", id);
+          if ((await getDoc(ref)).exists()) { skipped++; continue; }   // never overwrite your edits
+          await setDoc(ref, data);
+          added++;
+        }
+        showToast(`Imported ${added} game(s), skipped ${skipped} existing`);
+      } catch (err) {
+        console.error(err);
+        showToast("Import failed: " + err.message);
       }
-      showToast("All 5 starter games imported!");
     };
 
     function showToast(msg) {

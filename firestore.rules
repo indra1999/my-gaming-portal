@@ -1,0 +1,59 @@
+rules_version = '2';
+
+// Paste this into Firebase Console > Firestore Database > Rules, then Publish.
+// (or: firebase deploy --only firestore:rules)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email == 'indromondol2@gmail.com'
+          && request.auth.token.email_verified == true;
+    }
+
+    // Game catalogue: everyone reads, only the admin writes.
+    match /games/{gameId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Each user can only read/write their own profile document.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Ludo Live online rooms.
+    // - A room can only be fetched by its code (get), never listed/enumerated.
+    // - Basic shape validation stops junk / oversized writes.
+    // - Rooms cannot be deleted by clients (set a TTL policy on `createdAt` to auto-clean).
+    match /ludo_rooms/{code} {
+      allow get: if true;
+      allow list: if false;
+
+      allow create: if code.matches('^[A-Z0-9]{4,12}$')
+                    && request.resource.data.keys().hasOnly(['code', 'maxPlayers', 'status', 'players', 'state', 'createdAt'])
+                    && request.resource.data.code == code
+                    && request.resource.data.status == 'waiting'
+                    && request.resource.data.maxPlayers in [2, 4, 5, 6]
+                    && request.resource.data.players is list
+                    && request.resource.data.players.size() == 1
+                    && request.resource.data.state == null;
+
+      allow update: if request.resource.data.code == resource.data.code
+                    && request.resource.data.maxPlayers == resource.data.maxPlayers
+                    && request.resource.data.players is list
+                    && request.resource.data.players.size() <= resource.data.maxPlayers
+                    && request.resource.data.players.size() >= resource.data.players.size()
+                    && request.resource.data.status in ['waiting', 'playing', 'finished']
+                    // a started match can never go back to "waiting"
+                    && !(resource.data.status != 'waiting' && request.resource.data.status == 'waiting');
+
+      allow delete: if false;
+    }
+
+    // Everything else is locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
