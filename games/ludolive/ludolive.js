@@ -1,15 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBOyPRF0djlFD_rXI1vKilJP3ATk-WEIak",
-  authDomain: "indrogames-web.firebaseapp.com",
-  projectId: "indrogames-web",
-  storageBucket: "indrogames-web.firebasestorage.app",
-  messagingSenderId: "947379986211",
-  appId: "1:947379986211:web:9233d08748015337f63696",
-  measurementId: "G-JF8ND67X5Z"
-};
+import { getFirestore, doc, getDoc, updateDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { firebaseConfig, esc } from "../../firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -182,6 +173,7 @@ let onlineRoomCode = null;
 let onlineMySlot = -1;
 let onlineUnsubscribe = null;
 let isOnlineHost = false;
+let lastOnlineTurnKey = "";
 
 let game = null;
 let boardGeom = null;
@@ -768,7 +760,7 @@ function renderSetupCards() {
             <span style="color:${col.hex}" class="text-[10px] font-black uppercase tracking-wider">PLAYER ${idx + 1} • ${col.name.toUpperCase()}</span>
             ${cfg.isAI ? '<span class="text-[9px] bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded font-bold">AI</span>' : ''}
           </div>
-          <input type="text" value="${cfg.name}" onchange="setupConfigs[${idx}].name = this.value.trim() || 'Player ${idx + 1}'"
+          <input type="text" value="${esc(cfg.name)}" onchange="setupConfigs[${idx}].name = this.value.trim() || 'Player ${idx + 1}'"
             class="set-input w-full bg-[#0e111d] border border-white/10 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-[#f5b942]" />
           <div class="flex items-center gap-2 pt-0.5">
             <span class="text-[10px] font-bold text-gray-500 uppercase mr-1">COLOUR</span>
@@ -812,57 +804,83 @@ window.closeOnlineModal = function () {
   m.classList.remove("flex");
 };
 
+const ROOM_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I confusion
+function generateRoomCode() {
+  const bytes = new Uint8Array(6);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (n) => ROOM_ALPHABET[n % ROOM_ALPHABET.length]).join("");
+}
+
+function cleanPlayerName(raw) {
+  return String(raw || "").replace(/[<>]/g, "").trim().slice(0, 20) || userProfile.name;
+}
+
 window.createOnlineRoom = async function () {
-  const myName = document.getElementById("onlinePlayerName").value.trim() || userProfile.name;
+  const myName = cleanPlayerName(document.getElementById("onlinePlayerName").value);
   const maxPlayers = parseInt(document.getElementById("onlineMaxPlayers").value, 10);
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  onlineRoomCode = code;
-  onlineMySlot = 0;
-  isOnlineHost = true;
-
-  const roomData = {
-    code, maxPlayers, status: "waiting",
-    players: [{ name: myName, colorIndex: userProfile.favColor, avatarId: userProfile.avatarId, isAI: false }],
-    state: null
-  };
 
   try {
-    await setDoc(doc(db, "ludo_rooms", code), roomData);
+    let code = null;
+    // Never overwrite an existing room: retry with a fresh code if the code is taken.
+    for (let attempt = 0; attempt < 6 && !code; attempt++) {
+      const candidate = generateRoomCode();
+      const ref = doc(db, "ludo_rooms", candidate);
+      const created = await runTransaction(db, async (tx) => {
+        const snap = await tx.get(ref);
+        if (snap.exists()) return false;
+        tx.set(ref, {
+          code: candidate, maxPlayers, status: "waiting",
+          players: [{ name: myName, colorIndex: userProfile.favColor, avatarId: userProfile.avatarId, isAI: false }],
+          state: null,
+          createdAt: serverTimestamp()
+        });
+        return true;
+      });
+      if (created) code = candidate;
+    }
+    if (!code) { showToast("Could not create a room, try again"); return; }
+
+    onlineRoomCode = code;
+    onlineMySlot = 0;
+    isOnlineHost = true;
     listenToOnlineRoom(code);
   } catch (err) {
+    console.error("createOnlineRoom failed:", err);
     showToast("Online error: " + err.message);
   }
 };
 
 window.joinOnlineRoom = async function () {
-  const myName = document.getElementById("onlinePlayerName").value.trim() || userProfile.name;
-  const code = document.getElementById("joinRoomCodeInput").value.trim().toUpperCase();
+  const myName = cleanPlayerName(document.getElementById("onlinePlayerName").value);
+  const code = document.getElementById("joinRoomCodeInput").value.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
   if (code.length < 4) { showToast("Enter a valid room code"); return; }
 
   try {
     const ref = doc(db, "ludo_rooms", code);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) { showToast("Room not found!"); return; }
-    const data = snap.data();
-    if (data.status !== "waiting") { showToast("Match already started!"); return; }
-    if (data.players.length >= data.maxPlayers) { showToast("Room is full!"); return; }
+    // Transaction => two people joining at the same moment can never overwrite each other.
+    const slot = await runTransaction(db, async (tx) => {
+      const snap = await tx.get(ref);
+      if (!snap.exists()) throw new Error("Room not found!");
+      const data = snap.data();
+      if (data.status !== "waiting") throw new Error("Match already started!");
+      if (data.players.length >= data.maxPlayers) throw new Error("Room is full!");
+
+      const mySlot = data.players.length;
+      const usedColors = new Set(data.players.map(p => p.colorIndex));
+      const freeColor = [0, 1, 2, 3, 4, 5].find(c => !usedColors.has(c)) ?? mySlot;
+      tx.update(ref, {
+        players: [...data.players, { name: myName, colorIndex: freeColor, avatarId: userProfile.avatarId, isAI: false }]
+      });
+      return mySlot;
+    });
 
     onlineRoomCode = code;
-    onlineMySlot = data.players.length;
+    onlineMySlot = slot;
     isOnlineHost = false;
-
-    const usedColors = new Set(data.players.map(p => p.colorIndex));
-    const freeColor = [0, 1, 2, 3, 4, 5].find(c => !usedColors.has(c)) ?? onlineMySlot;
-
-    const updatedPlayers = [
-      ...data.players,
-      { name: myName, colorIndex: freeColor, avatarId: userProfile.avatarId, isAI: false }
-    ];
-    await updateDoc(ref, { players: updatedPlayers });
     listenToOnlineRoom(code);
   } catch (err) {
-    showToast("Error joining: " + err.message);
+    console.error("joinOnlineRoom failed:", err);
+    showToast(err.message || "Error joining room");
   }
 };
 
@@ -883,7 +901,7 @@ function listenToOnlineRoom(code) {
         <div class="flex items-center justify-between bg-[#111424] px-3 py-2 rounded-xl text-xs font-bold">
           <span class="flex items-center gap-2">
             <span style="background:${c.hex}" class="w-3 h-3 rounded-full"></span>
-            ${p.name} ${i === onlineMySlot ? '(You)' : ''}
+            ${esc(p.name)} ${i === onlineMySlot ? '(You)' : ''}
           </span>
           <span class="text-emerald-400">Ready</span>
         </div>
@@ -895,6 +913,9 @@ function listenToOnlineRoom(code) {
     }
 
     if (data.status === "playing" && data.state) {
+      // Our own pending write echoes back an older copy of the state; ignore it so
+      // we never overwrite fresher local changes.
+      if (snap.metadata.hasPendingWrites && game) return;
       document.getElementById("onlineModal").classList.add("hidden");
       document.getElementById("onlineModal").classList.remove("flex");
       selectedMode = "online";
@@ -906,22 +927,48 @@ function listenToOnlineRoom(code) {
       document.getElementById("gameView").classList.remove("hidden");
       renderPlayerPods();
       drawBoard();
+
+      // Restart the turn timer on every machine whenever the turn / roll phase changes.
+      const turnKey = game.turnIdx + "|" + game.diceRolled + "|" + (game.winners ? game.winners.length : 0);
+      if (turnKey !== lastOnlineTurnKey) {
+        lastOnlineTurnKey = turnKey;
+        startTurnTimer();
+        const hint = document.getElementById("gameStatusHint");
+        if (hint && !game.diceRolled) {
+          hint.innerText = game.turnIdx === onlineMySlot ? "Your turn — tap the dice" : `${game.players[game.turnIdx].name}'s turn`;
+        }
+      }
     }
   });
 }
 
 window.startOnlineMatchHost = async function () {
-  const ref = doc(db, "ludo_rooms", onlineRoomCode);
-  const snap = await getDoc(ref);
-  const data = snap.data();
-  const initialGame = createMatchObject(data.players, data.players.length <= 4 ? 4 : data.players.length);
-  await updateDoc(ref, { status: "playing", state: initialGame });
+  if (!isOnlineHost || !onlineRoomCode) return;
+  try {
+    const ref = doc(db, "ludo_rooms", onlineRoomCode);
+    await runTransaction(db, async (tx) => {
+      const snap = await tx.get(ref);
+      if (!snap.exists()) throw new Error("Room no longer exists");
+      const data = snap.data();
+      if (data.status !== "waiting") return;
+      if (data.players.length < 2) throw new Error("Need at least 2 players");
+      const initialGame = createMatchObject(data.players, data.players.length <= 4 ? 4 : data.players.length);
+      tx.update(ref, { status: "playing", state: initialGame });
+    });
+  } catch (err) {
+    console.error("startOnlineMatchHost failed:", err);
+    showToast(err.message || "Could not start the match");
+  }
 };
 
 window.copyRoomCode = function () {
   if (!onlineRoomCode) return;
-  navigator.clipboard.writeText(onlineRoomCode);
-  showToast("Room code copied: " + onlineRoomCode);
+  const done = () => showToast("Room code copied: " + onlineRoomCode);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(onlineRoomCode).then(done).catch(() => showToast("Room code: " + onlineRoomCode));
+  } else {
+    showToast("Room code: " + onlineRoomCode);
+  }
 };
 
 // =========================================================================
@@ -1115,7 +1162,7 @@ function czPod(name, hex, charId, isMe) {
   return `<div class="cz-pod ${isMe ? "me" : ""}" style="--pc:${hex}">
     <div style="display:flex;align-items:center;gap:10px;min-width:0">
       <div class="av">${getAvatarSVG(charId)}</div>
-      <div><div class="nm">${name}</div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+      <div><div class="nm">${esc(name)}</div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
     </div>${dice}</div>`;
 }
 
@@ -1686,6 +1733,12 @@ function startTurnTimer() {
     updateCountdownRingVisual();
 
     if (currentTurnRemaining <= 0) {
+      if (selectedMode === "online") {
+        // Only the player whose turn it is acts. If they dropped, the host takes over after 5s.
+        const myTurn = game.turnIdx === onlineMySlot;
+        const hostTakeover = isOnlineHost && currentTurnRemaining <= -5;
+        if (!myTurn && !hostTakeover) return;
+      }
       clearInterval(turnInterval);
       if (!game.diceRolled) executeDiceRoll();
       else if (game.movableTokens.length > 0) moveToken(game.movableTokens[0]);
@@ -1698,7 +1751,10 @@ async function syncOnlineState() {
   if (selectedMode === "online" && onlineRoomCode) {
     try {
       await updateDoc(doc(db, "ludo_rooms", onlineRoomCode), { state: game });
-    } catch (e) {}
+    } catch (e) {
+      console.error("Online sync failed:", e);
+      showToast("Connection problem — retrying on next move");
+    }
   }
 }
 
@@ -2125,7 +2181,7 @@ function renderPlayerPods() {
           <div class="min-w-0">
             <div class="flex items-center gap-1">
               <span style="color:${col.hex}" class="text-[9.5px] font-black shrink-0">P${p.id + 1}</span>
-              <span class="text-[11px] font-extrabold text-white truncate">${p.name}</span>
+              <span class="text-[11px] font-extrabold text-white truncate">${esc(p.name)}</span>
             </div>
             ${subRow}
           </div>
@@ -2191,7 +2247,7 @@ function endMatch() {
         <span class="flex items-center gap-2.5 text-sm font-extrabold">
           <span class="text-amber-400">#${p.rank}</span>
           <span style="background:${col.hex}" class="w-3 h-3 rounded-full"></span>
-          <span>${p.name}</span>
+          <span>${esc(p.name)}</span>
         </span>
         <span class="text-xs text-gray-400">${p.finishedCount}/4 Home</span>
       </div>
